@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logic Lab 邏輯任務基地</title>
+<meta name="description" content="為 2e 自學者設計的漢字千字文、數學、自然科學學習基地 / A bilingual self-learning hub: Hanzi families, math engine, science detective.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=17">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+</head>
+<body>
+<div id="root"><div style="font-family:sans-serif;text-align:center;padding:60px 20px;color:#666">⏳ 載入中 Loading…<br><small>若超過 10 秒仍停在這裡,下方會出現紅色錯誤診斷,請截圖回報</small></div></div>
+<script>
+(function(){
+  function show(msg){
+    var d=document.getElementById('errbox');
+    if(!d){d=document.createElement('div');d.id='errbox';
+      d.style.cssText='position:fixed;left:10px;right:10px;bottom:10px;z-index:99999;background:#B3261E;color:#fff;padding:14px 16px;border-radius:12px;font:13px/1.5 monospace;max-height:40vh;overflow:auto';
+      d.innerHTML='<b>⚠ 系統錯誤(請整段截圖回報)/ Error — screenshot this box</b>';
+      document.body.appendChild(d);}
+    var p=document.createElement('div');
+    p.textContent=msg;d.appendChild(p);
+  }
+  window.addEventListener('error',function(e){
+    show((e.message||'unknown')+'  @'+String(e.filename||'').split('/').pop()+':'+(e.lineno||'?'));
+  });
+  window.addEventListener('unhandledrejection',function(e){show('Promise: '+String(e.reason))});
+})();
+</script>
+<script src="js/data.js?v=17"></script>
+<script type="text/babel" data-presets="react" src="js/app.js?v=17"></script>
+</body>
+</html>
