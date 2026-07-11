@@ -425,3 +425,39 @@
     border:2px solid rgba(233,168,32,.6);padding:12px 26px;border-radius:14px;
     animation:beastBorn .6s ease both}
   @media(prefers-reduced-motion:reduce){.shrinePet,.hatchEgg{animation:none}}
+  /* ── 塔防場景主題(每5波自動切換)── */
+  .tdboard.sc1{background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.10) 0 6px,transparent 7px),linear-gradient(135deg,#d8b36a,#c9a055 50%,#e0bd74)}
+  .tdboard.sc1 .tdroad{stroke:#a8783c}
+  .tdboard.sc2{background:radial-gradient(circle at 70% 20%,rgba(255,255,255,.25) 0 7px,transparent 8px),linear-gradient(135deg,#cfe3ec,#b7d2de 50%,#dceaf1)}
+  .tdboard.sc2 .tdroad{stroke:#8fb0bf}
+  .tdboard.sc3{background:radial-gradient(circle at 30% 80%,rgba(255,120,50,.25) 0 8px,transparent 9px),linear-gradient(135deg,#6b3f38,#59332e 50%,#7a463c)}
+  .tdboard.sc3 .tdroad{stroke:#c96a3c}
+  .tdboard.sc4{background:radial-gradient(circle at 80% 15%,rgba(255,255,220,.18) 0 3px,transparent 4px),radial-gradient(circle at 15% 60%,rgba(255,255,220,.12) 0 2px,transparent 3px),linear-gradient(135deg,#232a4d,#1b2140 50%,#2b3158)}
+  .tdboard.sc4 .tdroad{stroke:#565f8f}
+  .tdscene{font-size:12px;opacity:.85;background:rgba(255,255,255,.12);padding:3px 10px;border-radius:999px}
+  .tdctrl{display:flex;gap:6px}
+  .tdcbtn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);color:#fff;
+    border-radius:8px;padding:4px 10px;font-family:inherit;font-weight:900;cursor:pointer;font-size:13px}
+  .tdcbtn.on{background:var(--sun);border-color:var(--sun);color:#3a2c00}
+  .tdstoryOverlay{position:absolute;inset:0;z-index:12;background:rgba(20,26,40,.78);
+    display:flex;align-items:center;justify-content:center;padding:18px}
+  .tdstoryBox{display:flex;gap:14px;background:var(--card);border:3px solid var(--sun);
+    border-radius:16px;padding:18px 20px;max-width:480px;align-items:flex-start;
+    animation:beastBorn .5s cubic-bezier(.2,1.4,.4,1) both}
+  .tdnpc{font-size:52px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25))}
+  .tdstoryTxt b{font-size:15px}
+  .tdstoryTxt p{font-size:14px;line-height:1.7;margin:8px 0 12px}
+  .tdpauseMask{position:absolute;inset:0;z-index:11;background:rgba(20,26,40,.55);color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:900;font-size:24px;text-align:center;letter-spacing:3px}
+  .tdpauseMask small{font-size:13px;font-weight:700;letter-spacing:0;margin-top:8px;opacity:.85}
+  /* ── 農場四季 + 天氣 + NPC ── */
+  .farmboard.season1{background:radial-gradient(circle at 8% 12%,rgba(255,255,255,.12) 0 5px,transparent 6px),linear-gradient(135deg,#7db95c,#6cab4c 50%,#83bf63)}
+  .farmboard.season2{background:radial-gradient(circle at 8% 12%,rgba(255,255,255,.10) 0 5px,transparent 6px),linear-gradient(135deg,#b9a054,#a89043 50%,#c4ad63)}
+  .farmboard.season3{background:radial-gradient(circle at 8% 12%,rgba(255,255,255,.22) 0 5px,transparent 6px),linear-gradient(135deg,#b9c9d8,#a3b7c9 50%,#c8d6e2)}
+  .farmboard.raining{box-shadow:inset 0 0 60px rgba(40,80,140,.35)}
+  .fmarket{background:var(--sun);color:#3a2c00;padding:3px 10px;border-radius:999px;font-size:12.5px}
+  .fnpc{display:flex;gap:12px;align-items:center;background:var(--card);border:2px solid var(--line);
+    border-left:6px solid var(--moss);border-radius:14px;padding:10px 16px;margin-top:12px}
+  .fnpcface{font-size:32px}
+  .fnpc p{font-size:13.5px;font-weight:700;line-height:1.6;margin:0}

@@ -610,8 +610,6 @@ function PlayPage({state,actions,goHome}){
   const [poke,setPoke]=useState(false);
   const [bubble,setBubble]=useState('');
   const [hatch,setHatch]=useState(null);
-  if(mode==='match')return <MatchGame level={state.subjects.hanzi.level}
-    best={state.best.match} onBest={actions.bestMatch} exit={()=>setMode('hub')}/>;
   if(mode==='storm')return <StormGame level={state.subjects.math.level}
     best={state.best.storm} onBest={actions.bestStorm} exit={()=>setMode('hub')}/>;
   if(mode==='defense')return <DefenseGame level={state.subjects.math.level}
@@ -643,15 +641,6 @@ function PlayPage({state,actions,goHome}){
           <div className="gbest">農場金幣 Coins:{state.farm.coins} · 已收成 {state.farm.harvested}</div>
           <button className="btn solid" onClick={()=>setMode('farm')}>
             進入農場 Enter(免費 free)
-          </button>
-        </div>
-        <div className="gamecard">
-          <div className="ge">🀄</div>
-          <b>漢英翻牌 Match Pairs</b>
-          <p>把漢字和英文意思配成對,步數越少越厲害。 / Match characters to their meanings in the fewest moves.</p>
-          <div className="gbest">最佳紀錄 Best:{state.best.match?`${state.best.match} 步 moves`:'——'}</div>
-          <button className="btn solid" disabled={state.xp<PLAY_COST} onClick={()=>tryPlay('match')}>
-            開始 Play(−{PLAY_COST} XP)
           </button>
         </div>
         <div className="gamecard">
@@ -740,58 +729,7 @@ function PlayPage({state,actions,goHome}){
   );
 }
 
-/* ── 小遊戲一:漢英翻牌 ── */
-function MatchGame({level,best,onBest,exit}){
-  const [cards]=useState(()=>{
-    const src=(HANZI[level]&&HANZI[level].length?HANZI[level]:HANZI[1]).flatMap(g=>g.chars);
-    const six=shuffle(src).slice(0,6);
-    return shuffle(six.flatMap((ch,i)=>[
-      {p:i,label:ch.c,kai:true},{p:i,label:ch.en,kai:false},
-    ]));
-  });
-  const [open,setOpen]=useState([]);
-  const [done,setDone]=useState([]);
-  const [moves,setMoves]=useState(0);
-  const [lock,setLock]=useState(false);
-  const won=done.length===6;
-  useEffect(()=>{if(won)onBest(moves)},[won]);
-  const flip=i=>{
-    if(lock||won||open.includes(i)||done.includes(cards[i].p))return;
-    if(open.length===0){setOpen([i]);return}
-    const j=open[0];
-    if(j===i)return;
-    setMoves(m=>m+1);
-    if(cards[j].p===cards[i].p){setDone(d=>[...d,cards[i].p]);setOpen([])}
-    else{setOpen([j,i]);setLock(true);setTimeout(()=>{setOpen([]);setLock(false)},850)}
-  };
-  return (
-    <div className="sprint" style={{'--ac':'var(--cobalt)'}}>
-      <button className="back" onClick={exit}>← 回遊樂園 Back to arcade</button>
-      <div className="page-head"><h2>漢英翻牌 Match Pairs</h2>
-        <span className="num" style={{fontWeight:700}}>步數 Moves:{moves}</span></div>
-      <div className="mgrid">
-        {cards.map((c,i)=>{
-          const faceUp=open.includes(i)||done.includes(c.p);
-          return (
-            <button key={i} className={`mcard ${faceUp?'up':''} ${done.includes(c.p)?'won':''}`}
-              onClick={()=>flip(i)}>
-              {faceUp?<span className={c.kai?'kai':''} style={c.kai?{fontSize:34}:null}>{c.label}</span>:'?'}
-            </button>
-          );
-        })}
-      </div>
-      {won&&(
-        <div className="qcard result" style={{marginTop:18}}>
-          <div className="score num">{moves} 步</div>
-          <p>全部配對成功! / All matched!{best&&moves<best?' 新紀錄 New record! 🎉':''}</p>
-          <button className="btn solid" style={{marginTop:14}} onClick={exit}>回遊樂園 Back</button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── 小遊戲二:速算風暴 ── */
+/* ── 小遊戲一:速算風暴 ── */
 function StormGame({level,best,onBest,exit}){
   const [t,setT]=useState(45);
   const [q,setQ]=useState(()=>pick(MATH_GEN[level])());
@@ -836,7 +774,7 @@ function StormGame({level,best,onBest,exit}){
   );
 }
 
-/* ── 小遊戲三:知識塔防(即時制)── */
+/* ── 小遊戲二:知識塔防(即時制)── */
 const TD_WAY=[[-3,22],[38,22],[38,52],[12,52],[12,80],[60,80],[60,40],[85,40],[85,106]];
 const TD_SEGS=(()=>{const s=[];let acc=0;
   for(let i=0;i<TD_WAY.length-1;i++){
@@ -862,9 +800,9 @@ const TD_TOWERS={
   mage:{emoji:'🔮',name:'法師塔',ne:'Mage',cost:110,range:24,dmg:18,rate:1200},
 };
 const TD_FOES=[
-  {emoji:'👾',hp:16,spd:26,gold:2},
-  {emoji:'🐗',hp:34,spd:19,gold:3},
-  {emoji:'🛡️',hp:70,spd:13,gold:5},
+  {emoji:'👾',hp:16,spd:26,gold:4},
+  {emoji:'🐗',hp:34,spd:19,gold:6},
+  {emoji:'🛡️',hp:70,spd:13,gold:10},
 ];
 function tdQueue(w){
   const n=Math.min(4+w*2,16);const q=[];
@@ -872,14 +810,29 @@ function tdQueue(w){
     const r=Math.random(),t=(w<3||r<0.5)?TD_FOES[0]:(r<0.85||w<5)?TD_FOES[1]:TD_FOES[2];
     q.push({...t,hp:Math.round(t.hp*(1+(w-1)*0.35))});
   }
-  if(w%5===0)q.push({emoji:'🐲',hp:100+70*w,spd:10,gold:25,big:true});
+  if(w%5===0)q.push({emoji:'🐲',hp:100+70*w,spd:10,gold:40,big:true});
   return q.map(t=>({...t,max:t.hp}));
 }
 
+const TD_SCENES=[
+  {name:'翠風草原 Emerald Plains',cls:'sc0'},
+  {name:'黃沙戈壁 Golden Desert',cls:'sc1'},
+  {name:'霜雪凍原 Frost Tundra',cls:'sc2'},
+  {name:'熔岩火山 Magma Peak',cls:'sc3'},
+  {name:'永夜暗域 Eternal Night',cls:'sc4'},
+];
+const TD_STORY={
+  1:'混沌軍團入侵邏輯王國!指揮官,這裡是最後的堡壘——用你的頭腦守住它。 / The Chaos Legion invades the Logic Kingdom! Commander, this fortress is our last stand.',
+  5:'偵察回報:敵軍穿越黃沙戈壁而來,首領是一頭厚甲巨龍。準備迎接第一場硬仗! / Scouts report a desert legion led by an armored dragon. Brace for your first true battle!',
+  10:'我們被逼進霜雪凍原。寒冰塔在這裡如魚得水——地利,也是兵法的一部分。 / We fall back to the Frost Tundra. Frost towers thrive here — terrain is strategy too.',
+  15:'前方就是熔岩火山,混沌軍團的老巢。牠們會傾巢而出,決戰將至! / Ahead lies Magma Peak, the Legion lair. They will come with everything. The final battle nears!',
+  20:'永夜暗域……傳說中沒有指揮官撐過這裡。今晚,我們改寫傳說。 / The Eternal Night… no commander in legend survived this far. Tonight, we rewrite the legend.',
+};
 function DefenseGame({level,best,onBest,exit}){
   const g=useRef(null);
-  if(!g.current)g.current={gold:130,lives:10,wave:1,phase:'break',breakT:2600,
-    queue:tdQueue(1),spawnT:0,foes:[],towers:{},shots:[],pops:[],shake:0,over:false,reported:false,uid:1};
+  if(!g.current)g.current={gold:150,lives:10,wave:1,phase:'break',breakT:2600,
+    queue:tdQueue(1),spawnT:0,foes:[],towers:{},shots:[],pops:[],shake:0,over:false,reported:false,uid:1,
+    paused:false,speed:1,story:TD_STORY[1]||null};
   const [,setTick]=useState(0);
   const [sel,setSel]=useState(null);
   const genFor=w=>pick(MATH_GEN[Math.max(1,Math.min(6,level+Math.floor((w-1)/4)))])();
@@ -888,8 +841,9 @@ function DefenseGame({level,best,onBest,exit}){
 
   useEffect(()=>{
     const id=setInterval(()=>{
-      const s=g.current,dt=80;
-      if(s.over)return;
+      const s=g.current;
+      if(s.over||s.paused||s.story)return;
+      const dt=80*s.speed;
       /* 波次節奏 */
       if(s.phase==='break'){s.breakT-=dt;if(s.breakT<=0)s.phase='wave';}
       else{
@@ -936,8 +890,9 @@ function DefenseGame({level,best,onBest,exit}){
       }
       /* 波次結束 */
       if(s.phase==='wave'&&!s.queue.length&&!s.foes.length){
-        s.wave+=1;s.gold+=20;s.phase='break';s.breakT=3200;s.queue=tdQueue(s.wave);
-        s.pops.push({x:50,y:50,txt:'波次獎勵 +20🪙',cls:'gold',ttl:1100});
+        s.wave+=1;s.gold+=25;s.phase='break';s.breakT=3200;s.queue=tdQueue(s.wave);
+        s.pops.push({x:50,y:50,txt:'波次獎勵 +25🪙',cls:'gold',ttl:1100});
+        if(TD_STORY[s.wave])s.story=TD_STORY[s.wave];
       }
       /* 特效衰減 */
       s.shake=Math.max(0,s.shake-dt);
@@ -954,7 +909,7 @@ function DefenseGame({level,best,onBest,exit}){
   const answer=i=>{
     if(picked!==null||s.over)return;
     setPicked(i);
-    if(i===q.ans){s.gold+=15;s.pops.push({x:50,y:14,txt:'軍費 +15🪙',cls:'gold',ttl:900});}
+    if(i===q.ans){s.gold+=20;s.pops.push({x:50,y:14,txt:'錦囊軍費 +20🪙',cls:'gold',ttl:900});}
     setTimeout(()=>{setPicked(null);setQ(genFor(s.wave));},i===q.ans?350:900);
   };
   const build=type=>{
@@ -975,10 +930,15 @@ function DefenseGame({level,best,onBest,exit}){
         <span>🪙 <b className="num">{s.gold}</b></span>
         <span>❤️ <b className="num">{s.lives}</b></span>
         <span>🌊 第 <b className="num">{s.wave}</b> 波</span>
+        <span className="tdscene">{TD_SCENES[Math.floor((s.wave-1)/5)%TD_SCENES.length].name}</span>
+        <span className="tdctrl">
+          <button className={`tdcbtn ${s.paused?'on':''}`} onClick={()=>{s.paused=!s.paused}}>{s.paused?'▶':'⏸'}</button>
+          <button className={`tdcbtn ${s.speed===2?'on':''}`} onClick={()=>{s.speed=s.speed===1?2:1}}>⏩{s.speed===2?'×2':''}</button>
+        </span>
         <span className="tdbest">最佳 Best:{Math.max(best||0,s.over?s.wave:0)||'—'}</span>
       </div>
 
-      <div className={`tdboard ${s.shake>0?'shake':''}`} onClick={()=>setSel(null)}>
+      <div className={`tdboard ${TD_SCENES[Math.floor((s.wave-1)/5)%TD_SCENES.length].cls} ${s.shake>0?'shake':''}`} onClick={()=>setSel(null)}>
         <svg className="tdsvg" viewBox="0 0 100 100" preserveAspectRatio="none">
           <polyline points={TD_WAY.map(p=>p.join(',')).join(' ')} className="tdroad"/>
           <polyline points={TD_WAY.map(p=>p.join(',')).join(' ')} className="tdroadline"/>
@@ -1014,12 +974,28 @@ function DefenseGame({level,best,onBest,exit}){
         {s.pops.map((e,i)=>(
           <span key={i} className={`tdpop ${e.cls}`} style={{left:e.x+'%',top:e.y+'%'}}>{e.txt}</span>
         ))}
-        {s.phase==='break'&&!s.over&&(
+        {s.story&&!s.over&&(
+          <div className="tdstoryOverlay" onClick={e=>e.stopPropagation()}>
+            <div className="tdstoryBox">
+              <div className="tdnpc">🦉</div>
+              <div className="tdstoryTxt">
+                <b>軍師墨老 Sage Mo</b>
+                <p>{s.story}</p>
+                <button className="btn solid" onClick={()=>{s.story=null}}>整軍出擊 To battle!</button>
+              </div>
+            </div>
+          </div>
+        )}
+        {s.paused&&!s.over&&!s.story&&(
+          <div className="tdpauseMask">⏸ 暫停中 PAUSED<br/><small>看清局勢,想好再打——暫停是指揮官的權利。</small></div>
+        )}
+        {s.phase==='break'&&!s.over&&!s.story&&(
           <div className="tdbanner">⚔️ 第 {s.wave} 波來襲 Wave {s.wave} incoming…</div>
         )}
         {s.over&&(
           <div className="tdover">
             <div className="hero-eyebrow">基地陷落 BASE FALLEN</div>
+            <p style={{fontSize:14}}>🦉 墨老:「勝敗乃兵家常事。看清這次是哪一波守不住的——整軍,再來。」 / Defeat teaches what victory cannot. Regroup and return.</p>
             <div className="score num">堅守到第 {s.wave} 波</div>
             <p>{s.wave>(best||0)?'新紀錄 New record! 🎉':`最佳紀錄 Best:第 ${Math.max(best||0,s.wave)} 波`}</p>
             <button className="btn solid" onClick={exit}>回遊樂園 Back</button>
@@ -1051,7 +1027,7 @@ function DefenseGame({level,best,onBest,exit}){
       </div>
 
       <div className="tdq">
-        <div className="tdqhead">💰 答題籌軍費 Answer to fund the war(+15🪙)</div>
+        <div className="tdqhead">🧠 軍師錦囊:答對一題,墨老立刻撥發 +20🪙(想快速蓋塔就靠這個)</div>
         <div className="qtext" style={{fontSize:17}}>{q.q}</div>
         <div className="tdopts">
           {q.options.map((o,i)=>(
@@ -1065,7 +1041,7 @@ function DefenseGame({level,best,onBest,exit}){
   );
 }
 
-/* ── 小遊戲四:邏輯農場 v2(星露谷式:田地網格+日夜循環+體力)── */
+/* ── 小遊戲三:邏輯農場(星露谷式)── */
 const FARM_CROPS=[
   {id:'radish',name:'蘿蔔',ne:'Radish',seed:5,sell:12,stages:['🌱','🌿','🥕']},
   {id:'tomato',name:'番茄',ne:'Tomato',seed:10,sell:28,stages:['🌱','🌿','🪴','🍅']},
@@ -1075,6 +1051,14 @@ const FARM_CROPS=[
 const FARM_SEASONS=['🌸 春 Spring','☀️ 夏 Summer','🍂 秋 Autumn','❄️ 冬 Winter'];
 const FARM_TILES=24, FARM_EMAX=40;
 
+const FARM_TIPS=[
+  '禾寶:「澆過水的作物,睡一覺才會長大——睡前巡一次田,是農夫的儀式。」 / Water first, then sleep — crops grow overnight.',
+  '禾寶:「西瓜要等五天,但每天賺得最多。有耐心的人賺大錢!」 / Melons take five days but earn the most per day.',
+  '禾寶:「體力不夠?答幾題就回來了。腦力就是農場的太陽能。」 / Out of energy? Answers are this farm\u2019s solar power.',
+  '禾寶:「市集日每五天一次,記得留作物等好價錢!」 / Market day comes every fifth day — save crops for the premium!',
+  '禾寶:「下雨天是老天爺幫你澆水,省下的體力拿去開新田吧。」 / Rain waters everything — spend the saved energy planting more.',
+];
+const FARM_WEATHER={sun:{e:'☀️',n:'晴天 Sunny'},rain:{e:'🌧️',n:'雨天 Rainy(全田自動澆水!)'}};
 function FarmGame({farm,hanziLv,mathLv,update,exit}){
   const [tool,setTool]=useState('plant');      // plant | water | harvest | clear
   const [cropSel,setCropSel]=useState('radish');
@@ -1142,8 +1126,10 @@ function FarmGame({farm,hanziLv,mathLv,update,exit}){
       if(!t)return;
       const c=FARM_CROPS.find(c=>c.id===t.crop);
       if(t.stage<c.stages.length-1)return;
-      update(f=>{f.coins+=c.sell;f.harvested+=1;f.tiles[i]=null;});
-      pop(p.x,p.y,`+${c.sell}🪙`,'gold');
+      const market=(farm.day||1)%5===0;
+      const price=market?Math.round(c.sell*1.5):c.sell;
+      update(f=>{f.coins+=price;f.harvested+=1;f.tiles[i]=null;});
+      pop(p.x,p.y,`+${price}🪙${market?' 市集價!':''}`,'gold');
     }else if(tool==='clear'){
       if(!t)return;
       if(farm.energy<1){pop(p.x,p.y,'體力不足!','hurt');return;}
@@ -1159,11 +1145,15 @@ function FarmGame({farm,hanziLv,mathLv,update,exit}){
       update(f=>{
         f.day+=1;
         f.energy=Math.min(FARM_EMAX,(f.energy||0)+4);
+        const rain=Math.random()<0.25;
+        f.weather=rain?'rain':'sun';
         f.tiles=f.tiles.map(t=>{
           if(!t)return t;
           const c=FARM_CROPS.find(c=>c.id===t.crop);
           const grown=t.watered&&t.stage<c.stages.length-1;
-          return {...t,stage:t.stage+(grown?1:0),watered:false};
+          const nt={...t,stage:t.stage+(grown?1:0),watered:false};
+          if(rain&&nt.stage<c.stages.length-1)nt.watered=true; /* 雨天:老天爺代勞 */
+          return nt;
         });
       });
       setSleeping(false);
@@ -1179,12 +1169,14 @@ function FarmGame({farm,hanziLv,mathLv,update,exit}){
       <button className="back" onClick={exit}>← 回遊樂園 Back to arcade</button>
       <div className="fhud">
         <span>📅 第 <b className="num">{farm.day||1}</b> 天 · {season}</span>
+        <span>{FARM_WEATHER[farm.weather||'sun'].e} {FARM_WEATHER[farm.weather||'sun'].n}</span>
+        {(farm.day||1)%5===0&&<span className="fmarket">🦝 市集日!收購價 ×1.5</span>}
         <span>🪙 <b className="num">{farm.coins}</b></span>
         <span className="fenergy">⚡ <i className="fbar"><b style={{width:ePct+'%'}}/></i> <span className="num">{farm.energy||0}/{FARM_EMAX}</span></span>
         <span>🧺 <b className="num">{farm.harvested}</b></span>
       </div>
 
-      <div className="farmboard">
+      <div className={`farmboard season${Math.floor(((farm.day||1)-1)/7)%4} ${farm.weather==='rain'?'raining':''}`}>
         <div className="fgrid">
           {farm.tiles.map((t,i)=>{
             const c=t&&FARM_CROPS.find(c=>c.id===t.crop);
@@ -1210,7 +1202,7 @@ function FarmGame({farm,hanziLv,mathLv,update,exit}){
           <span key={e.id} className={`tdpop ${e.cls}`} style={{left:e.x+'%',top:e.y+'%'}}>{e.txt}</span>
         ))}
         {sleeping&&(
-          <div className="fnight">🌙 第 {farm.day} 夜…澆過水的作物悄悄長大了 / Watered crops grow through the night…</div>
+          <div className="fnight">🌙 第 {farm.day} 夜…澆過水的作物悄悄長大了<br/><small>明天的天氣是……?</small></div>
         )}
       </div>
 
@@ -1258,7 +1250,10 @@ function FarmGame({farm,hanziLv,mathLv,update,exit}){
           </div>
         )}
       </div>
-      <p className="note" style={{marginTop:12}}>🔑 農場定律:只有「澆過水」的作物,睡覺後才會長大;越晚熟的作物,每天賺得越多。規劃你的一天——體力要花在哪? / Only watered crops grow overnight. Slow crops earn more per day. Plan where your energy goes.</p>
+      <div className="fnpc">
+        <span className="fnpcface">🐹</span>
+        <p>{FARM_TIPS[((farm.day||1)-1)%FARM_TIPS.length]}</p>
+      </div>
     </div>
   );
 }
