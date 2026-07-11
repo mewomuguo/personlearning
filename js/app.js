@@ -800,9 +800,9 @@ const TD_TOWERS={
   mage:{emoji:'🔮',name:'法師塔',ne:'Mage',cost:110,range:24,dmg:18,rate:1200},
 };
 const TD_FOES=[
-  {emoji:'👾',hp:16,spd:26,gold:4},
-  {emoji:'🐗',hp:34,spd:19,gold:6},
-  {emoji:'🛡️',hp:70,spd:13,gold:10},
+  {emoji:'👾',hp:16,spd:21,gold:4},
+  {emoji:'🐗',hp:34,spd:15,gold:6},
+  {emoji:'🛡️',hp:70,spd:10.5,gold:10},
 ];
 function tdQueue(w){
   const n=Math.min(4+w*2,16);const q=[];
@@ -810,7 +810,7 @@ function tdQueue(w){
     const r=Math.random(),t=(w<3||r<0.5)?TD_FOES[0]:(r<0.85||w<5)?TD_FOES[1]:TD_FOES[2];
     q.push({...t,hp:Math.round(t.hp*(1+(w-1)*0.35))});
   }
-  if(w%5===0)q.push({emoji:'🐲',hp:100+70*w,spd:10,gold:40,big:true});
+  if(w%5===0)q.push({emoji:'🐲',hp:100+70*w,spd:8,gold:40,big:true});
   return q.map(t=>({...t,max:t.hp}));
 }
 
@@ -933,7 +933,10 @@ function DefenseGame({level,best,onBest,exit}){
         <span className="tdscene">{TD_SCENES[Math.floor((s.wave-1)/5)%TD_SCENES.length].name}</span>
         <span className="tdctrl">
           <button className={`tdcbtn ${s.paused?'on':''}`} onClick={()=>{s.paused=!s.paused}}>{s.paused?'▶':'⏸'}</button>
-          <button className={`tdcbtn ${s.speed===2?'on':''}`} onClick={()=>{s.speed=s.speed===1?2:1}}>⏩{s.speed===2?'×2':''}</button>
+          <button className={`tdcbtn ${s.speed!==1?'on':''}`}
+            onClick={()=>{const gears=[0.5,1,1.5,2];s.speed=gears[(gears.indexOf(s.speed)+1)%gears.length]}}>
+            {s.speed===0.5?'🐢×0.5':s.speed===1?'▶×1':s.speed===1.5?'⏩×1.5':'⚡×2'}
+          </button>
         </span>
         <span className="tdbest">最佳 Best:{Math.max(best||0,s.over?s.wave:0)||'—'}</span>
       </div>
