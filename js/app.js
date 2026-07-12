@@ -37,6 +37,13 @@ function mc(q,en,answer,distractors,why){
   const opts=shuffle([answer,...ds.slice(0,3)]);
   return {q,en,options:opts.map(String),ans:opts.indexOf(answer),why};
 }
+function fi(q,en,answer,distractors,why){
+  /* 填答模式包裝器:純數字或分數 → 衝刺改輸入作答;遊戲場景仍用 options */
+  const o=mc(q,en,answer,distractors,why);
+  const s=String(answer);
+  if(/^-?\d+(\.\d+)?$/.test(s)||/^\d+\/\d+$/.test(s)){o.mode='input';o.answer=s;}
+  return o;
+}
 /* 產生靠近正解的數字干擾項 */
 function nearNums(ans,spread){
   const s=new Set();
@@ -49,12 +56,12 @@ function nearNums(ans,spread){
 
 /* ── 數學題型地圖(科目頁顯示)── */
 const MATH_TOPICS={
-  1:['20 以內加減 Add and subtract within 20','比大小 Compare numbers','數列偵探 Sequence detective','逆向工程 Find the missing number','生活應用題 Word problems','🏆 奧數:排隊陷阱 Line-up trap','🏆 奧數:圖形週期 Shape cycles'],
-  2:['二位數加減 Two-digit add and subtract','九九乘法 Times tables','倍增數列 Doubling sequences','買東西 Money problems','乘法逆向 Reverse multiplication','🏆 奧數:植樹問題 Fencepost problem','🏆 奧數:數字偵探 Digit detective'],
-  3:['乘除運算 Multiply and divide','分數入門 Fraction basics','餘數偵探 Remainder detective','時間計算 Time math','周長 Perimeter','🏆 奧數:雞兔同籠 Chickens and rabbits','🏆 奧數:星期週期 Weekday cycles'],
-  4:['多位數乘法 Multi-digit multiplication','同分母分數 Same-denominator fractions','面積 Area','三角形內角 Triangle angles','小數加法 Decimal addition','遞增數列 Accelerating sequences','🏆 奧數:高斯求和 Gauss summation','🏆 奧數:和差問題 Sum and difference'],
-  5:['異分母分數 Unlike fractions','小數運算 Decimals','體積 Volume','因數偵探 Factor detective','最小公倍數 LCM','分數乘法 Fraction times whole','🏆 奧數:鴿籠原理 Pigeonhole principle','🏆 奧數:平均逆推 Reverse averages'],
-  6:['比與比值 Ratios','速率 Speed','分數小數互換 Fractions to decimals','百分率 Percentages','圓周長 Circumference','未知數方程 Solve for x','🏆 奧數:工程問題 Work-rate problems','🏆 奧數:費波那契 Fibonacci detective'],
+  1:['20 以內加減 Add and subtract within 20','比大小 Compare numbers','數列偵探 Sequence detective','逆向工程 Find the missing number','生活應用題 Word problems','🏆 奧數:排隊陷阱 Line-up trap','🏆 奧數:圖形週期 Shape cycles','錢幣計算 Coin counting','兩步驟推理 Two-step stories'],
+  2:['二位數加減 Two-digit add and subtract','九九乘法 Times tables','倍增數列 Doubling sequences','買東西 Money problems','乘法逆向 Reverse multiplication','🏆 奧數:植樹問題 Fencepost problem','🏆 奧數:數字偵探 Digit detective','平分問題 Equal sharing','單位換算 Unit conversion'],
+  3:['乘除運算 Multiply and divide','分數入門 Fraction basics','餘數偵探 Remainder detective','時間計算 Time math','周長 Perimeter','🏆 奧數:雞兔同籠 Chickens and rabbits','🏆 奧數:星期週期 Weekday cycles','三位數計算 Three-digit math','單位換算 Unit conversion'],
+  4:['多位數乘法 Multi-digit multiplication','同分母分數 Same-denominator fractions','面積 Area','三角形內角 Triangle angles','小數加法 Decimal addition','遞增數列 Accelerating sequences','🏆 奧數:高斯求和 Gauss summation','🏆 奧數:和差問題 Sum and difference','倍數關係 Times-as-many','小數減法 Decimal subtraction'],
+  5:['異分母分數 Unlike fractions','小數運算 Decimals','體積 Volume','因數偵探 Factor detective','最小公倍數 LCM','分數乘法 Fraction times whole','🏆 奧數:鴿籠原理 Pigeonhole principle','🏆 奧數:平均逆推 Reverse averages','最大公因數 GCF','小數除法 Decimal division'],
+  6:['比與比值 Ratios','速率 Speed','分數小數互換 Fractions to decimals','百分率 Percentages','圓周長 Circumference','未知數方程 Solve for x','🏆 奧數:工程問題 Work-rate problems','🏆 奧數:費波那契 Fibonacci detective','圓面積 Circle area','速率反推 Solve for time'],
 };
 
 /* ── 出題引擎:每級 6 種生成器,「為什麼」全雙語 ── */
@@ -64,117 +71,141 @@ const MATH_GEN = {
     ()=>{const a=ri(2,9),b=ri(2,10);const k=10-a;const steps=(b>=k)
       ?[`① 把 ${b} 拆成 ${k} 和 ${b-k}。`,`② ${a} + ${k} = 10(先補滿 10)。`,`③ 10 + ${b-k} = ${a+b}。`]
       :[`① 從 ${a} 開始往上數 ${b} 格,到 ${a+b}。`];
-      return mc(`${a} + ${b} = ?`,`What is ${a} plus ${b}?`,a+b,nearNums(a+b,3),
+      return fi(`${a} + ${b} = ?`,`What is ${a} plus ${b}?`,a+b,nearNums(a+b,3),
       [`🔑 湊十法:10 是最好用的中繼站,先補滿它。`,...steps,`✔ 驗算:${a+b} − ${b} = ${a},回得去,正確!`,`EN: Split ${b} to fill up to ten, then add whats left.`])},
-    ()=>{const a=ri(8,20),b=ri(1,a-1);return mc(`${a} − ${b} = ?`,`What is ${a} minus ${b}?`,a-b,nearNums(a-b,3),
+    ()=>{const a=ri(8,20),b=ri(1,a-1);return fi(`${a} − ${b} = ?`,`What is ${a} minus ${b}?`,a-b,nearNums(a-b,3),
       [`🔑 減法在量「距離」:從 ${b} 到 ${a} 有多遠。`,`① 從 ${b} 往上數到 ${a},共走 ${a-b} 步。`,`✔ 驗算:${b} + ${a-b} = ${a},拼得回去 ✓`,`EN: Count up from ${b} to ${a}; the gap is the answer.`])},
-    ()=>{let a=ri(1,20),b=ri(1,20);if(a===b)b+=1;const big=Math.max(a,b);return mc(`${a} 和 ${b},哪個比較大?`,`Which is bigger, ${a} or ${b}?`,big,[Math.min(a,b),big+ri(1,5),Math.max(0,Math.min(a,b)-ri(1,3))],
+    ()=>{let a=ri(1,20),b=ri(1,20);if(a===b)b+=1;const big=Math.max(a,b);return fi(`${a} 和 ${b},哪個比較大?`,`Which is bigger, ${a} or ${b}?`,big,[Math.min(a,b),big+ri(1,5),Math.max(0,Math.min(a,b)-ri(1,3))],
       [`🔑 數線規則:越右邊的數越大。`,`① 想像數線,找到 ${Math.min(a,b)} 和 ${big} 的位置。`,`② ${big} 在右邊 → 比較大。`,`EN: On the number line, further right means bigger.`])},
-    ()=>{const s=ri(1,6),d=ri(1,3);const seq=[s,s+d,s+2*d,s+3*d,s+4*d];return mc(`數列偵探:${seq[0]}, ${seq[1]}, ${seq[2]}, ?, ${seq[4]}。? 是多少?`,`Sequence detective: ${seq[0]}, ${seq[1]}, ${seq[2]}, ?, ${seq[4]}. What is missing?`,seq[3],nearNums(seq[3],3),
+    ()=>{const s=ri(1,6),d=ri(1,3);const seq=[s,s+d,s+2*d,s+3*d,s+4*d];return fi(`數列偵探:${seq[0]}, ${seq[1]}, ${seq[2]}, ?, ${seq[4]}。? 是多少?`,`Sequence detective: ${seq[0]}, ${seq[1]}, ${seq[2]}, ?, ${seq[4]}. What is missing?`,seq[3],nearNums(seq[3],3),
       [`🔑 數列三步驟:找差 → 驗證 → 預測。`,`① 相鄰的差:${seq[1]}−${seq[0]}=${d}、${seq[2]}−${seq[1]}=${d},固定 +${d}。`,`② 缺格 = ${seq[2]} + ${d} = ${seq[3]}。`,`✔ 驗算:${seq[3]} + ${d} = ${seq[4]},接得上最後一項 ✓`,`EN: The common difference is ${d}; use it to fill the gap.`])},
-    ()=>{const a=ri(1,10),b=ri(1,10);return mc(`${a} + ? = ${a+b},? 是多少?`,`${a} plus what equals ${a+b}?`,b,nearNums(b,3),
+    ()=>{const a=ri(1,10),b=ri(1,10);return fi(`${a} + ? = ${a+b},? 是多少?`,`${a} plus what equals ${a+b}?`,b,nearNums(b,3),
       [`🔑 加法的反面是減法:未知的部分 = 全部 − 已知。`,`① ${a+b} − ${a} = ${b}。`,`✔ 驗算:${a} + ${b} = ${a+b} ✓`,`EN: The missing part equals the whole minus the known part.`])},
     ()=>{const a=ri(5,15),b=ri(1,a-1);const t=pick([
       {q:`小貓有 ${a} 顆彈珠,送出 ${b} 顆,還剩幾顆?`,en:`A cat has ${a} marbles and gives away ${b}. How many are left?`,ans:a-b,
        why:[`🔑 剩下 = 原有 − 送出(找關鍵字:「送出」=減)。`,`① ${a} − ${b} = ${a-b}。`,`✔ 驗算:剩的 ${a-b} + 送的 ${b} = ${a} ✓`,`EN: Left = start minus given away.`]},
       {q:`盒子裡有 ${a} 顆糖,又放進 ${b} 顆,總共幾顆?`,en:`A box has ${a} candies; ${b} more go in. Total?`,ans:a+b,
        why:[`🔑 總共 = 原有 + 新加(關鍵字:「又放進」=加)。`,`① ${a} + ${b} = ${a+b}。`,`✔ 驗算:${a+b} − ${b} = ${a} ✓`,`EN: Total = start plus added.`]},
-    ]);return mc(t.q,t.en,t.ans,nearNums(t.ans,3),t.why)},
-    ()=>{const a=ri(2,8),b=ri(2,8);return mc(`🏆 小奇排隊,前面有 ${a} 個人、後面有 ${b} 個人。這一排總共幾個人?`,`Chi stands in line with ${a} people ahead and ${b} behind. How many people in total?`,a+b+1,[a+b,a+b+2,Math.max(1,a+b-1)],
+    ]);return fi(t.q,t.en,t.ans,nearNums(t.ans,3),t.why)},
+    ()=>{const a=ri(2,8),b=ri(2,8);return fi(`🏆 小奇排隊,前面有 ${a} 個人、後面有 ${b} 個人。這一排總共幾個人?`,`Chi stands in line with ${a} people ahead and ${b} behind. How many people in total?`,a+b+1,[a+b,a+b+2,Math.max(1,a+b-1)],
       [`🔑 奧數陷阱:總數 = 前面 + 後面 + 自己!`,`① 前後合計:${a} + ${b} = ${a+b}(小奇還沒被算進去)。`,`② 加上小奇:${a+b} + 1 = ${a+b+1}。`,`💡 心法:題目裡「隱形的人事物」最愛躲進答案。`,`EN: The hidden +1 is you — count yourself in.`])},
     ()=>{const cyc=pick([['○','△'],['○','○','△'],['△','□','○']]);const n=ri(5,12);const L=cyc.length;const posi=((n-1)%L)+1;const ans=cyc[(n-1)%L];const others=shuffle(['○','△','□','☆'].filter(x=>x!==ans)).slice(0,3);
-      return mc(`🏆 圖形排隊:${Array.from({length:6},(_,i)=>cyc[i%L]).join(' ')} …一直重複。第 ${n} 個是什麼?`,`The pattern repeats forever. What is shape number ${n}?`,ans,others,
+      return fi(`🏆 圖形排隊:${Array.from({length:6},(_,i)=>cyc[i%L]).join(' ')} …一直重複。第 ${n} 個是什麼?`,`The pattern repeats forever. What is shape number ${n}?`,ans,others,
       [`🔑 週期問題:找出重複的「一組」,用餘數定位。`,`① 一組是「${cyc.join('')}」,長度 ${L}。`,`② 第 ${n} 個對應組內第 ${posi} 個 → ${ans}。`,`💡 找到週期後,第 1000 個也不用一個一個數。`,`EN: Find the repeating block, then locate by remainder.`])},
+    ()=>{const f=ri(1,3),o=ri(1,4);return fi(`小奇有 ${f} 個 5 元硬幣和 ${o} 個 1 元硬幣,總共多少元?`,`Chi has ${f} five-dollar coins and ${o} one-dollar coins. Total?`,f*5+o,nearNums(f*5+o,3),
+      [`🔑 錢幣計算:先算同種硬幣的小計,再相加。`,`① 5 元硬幣:${f} × 5 = ${f*5} 元。`,`② 1 元硬幣:${o} × 1 = ${o} 元。`,`③ 合計:${f*5} + ${o} = ${f*5+o} 元。`,`✔ 驗算:${f*5+o} − ${o} = ${f*5},是 5 的倍數 ✓`,`EN: Subtotal each coin type, then add.`])},
+    ()=>{const a=ri(6,12),b=ri(2,6),c=ri(1,5);return fi(`公車上有 ${a} 人,到站後上來 ${b} 人、下去 ${c} 人。現在車上幾人?`,`A bus has ${a} riders; ${b} board and ${c} leave. How many now?`,a+b-c,nearNums(a+b-c,3),
+      [`🔑 兩步驟問題:一步一步來,別急著一次算完。`,`① 上車後:${a} + ${b} = ${a+b} 人。`,`② 下車後:${a+b} − ${c} = ${a+b-c} 人。`,`✔ 驗算:${a+b-c} + ${c} − ${b} = ${a},倒推回起點 ✓`,`EN: Two steps: add the boarders, then subtract the leavers.`])},
   ],
   2:[
-    ()=>{const a=ri(11,89),b=ri(11,99-a);const at=Math.floor(a/10)*10,bt=Math.floor(b/10)*10;return mc(`${a} + ${b} = ?`,`${a} plus ${b}?`,a+b,nearNums(a+b,10),
+    ()=>{const a=ri(11,89),b=ri(11,99-a);const at=Math.floor(a/10)*10,bt=Math.floor(b/10)*10;return fi(`${a} + ${b} = ?`,`${a} plus ${b}?`,a+b,nearNums(a+b,10),
       [`🔑 分位相加:十位跟十位、個位跟個位。`,`① 十位:${at} + ${bt} = ${at+bt}。`,`② 個位:${a%10} + ${b%10} = ${a%10+b%10}。`,`③ 合併:${at+bt} + ${a%10+b%10} = ${a+b}。`,`✔ 驗算:${a+b} − ${b} = ${a} ✓`,`EN: Add tens with tens, ones with ones, then combine.`])},
-    ()=>{const a=ri(30,99),b=ri(11,a-10);const bt=Math.floor(b/10)*10;return mc(`${a} − ${b} = ?`,`${a} minus ${b}?`,a-b,nearNums(a-b,10),
+    ()=>{const a=ri(30,99),b=ri(11,a-10);const bt=Math.floor(b/10)*10;return fi(`${a} − ${b} = ?`,`${a} minus ${b}?`,a-b,nearNums(a-b,10),
       [`🔑 拆著減:先減整十,再減個位。`,`① ${a} − ${bt} = ${a-bt}。`,`② ${a-bt} − ${b%10} = ${a-b}。`,`✔ 驗算:${a-b} + ${b} = ${a} ✓`,`EN: Subtract the tens first, then the ones.`])},
-    ()=>{const a=ri(2,9),b=ri(2,9);return mc(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,a),
+    ()=>{const a=ri(2,9),b=ri(2,9);return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,a),
       [`🔑 乘法 = 加法的快捷鍵:${a}×${b} 就是 ${b} 個 ${a}。`,`① 九九乘法表:${a}×${b} = ${a*b}。`,`② 忘了的話用鄰居推:${a}×${b-1} = ${a*(b-1)},再加一個 ${a} → ${a*b}。`,`EN: One times-table fact, or build it from the neighbor fact.`])},
-    ()=>{const s=ri(2,5);return mc(`數列偵探:${s}, ${s*2}, ${s*4}, ?。下一個是多少?`,`Sequence detective: ${s}, ${s*2}, ${s*4}, ?. What comes next?`,s*8,[s*6,s*5,s*8+s],
+    ()=>{const s=ri(2,5);return fi(`數列偵探:${s}, ${s*2}, ${s*4}, ?。下一個是多少?`,`Sequence detective: ${s}, ${s*2}, ${s*4}, ?. What comes next?`,s*8,[s*6,s*5,s*8+s],
       [`🔑 差不固定時,改查「倍率」。`,`① ${s*2}÷${s}=2、${s*4}÷${s*2}=2 → 每次 ×2。`,`② 下一個:${s*4} × 2 = ${s*8}。`,`✔ 倍增數列長超快——這就是「指數成長」的雛形!`,`EN: When differences fail, check ratios: it doubles.`])},
-    ()=>{const p=ri(5,20),n=ri(2,5);return mc(`一枝筆 ${p} 元,買 ${n} 枝要多少元?`,`One pen costs ${p} dollars. How much for ${n} pens?`,p*n,nearNums(p*n,p),
+    ()=>{const p=ri(5,20),n=ri(2,5);return fi(`一枝筆 ${p} 元,買 ${n} 枝要多少元?`,`One pen costs ${p} dollars. How much for ${n} pens?`,p*n,nearNums(p*n,p),
       [`🔑 總價 = 單價 × 數量。`,`① ${p} × ${n} = ${p*n} 元。`,`② 也可以連加驗證:${Array.from({length:n},()=>p).join('+')} = ${p*n}。`,`EN: Total = price per item times how many.`])},
-    ()=>{const b=ri(2,9),q=ri(2,9);return mc(`? × ${b} = ${b*q},? 是多少?`,`What times ${b} equals ${b*q}?`,q,nearNums(q,3),
+    ()=>{const b=ri(2,9),q=ri(2,9);return fi(`? × ${b} = ${b*q},? 是多少?`,`What times ${b} equals ${b*q}?`,q,nearNums(q,3),
       [`🔑 除法是乘法的逆向偵探。`,`① ? = ${b*q} ÷ ${b} = ${q}。`,`✔ 驗算:${q} × ${b} = ${b*q} ✓`,`EN: Division undoes multiplication.`])},
-    ()=>{const d=pick([2,3,5]),k=ri(4,9);const L=d*k;return mc(`🏆 一條 ${L} 公尺的直路,每 ${d} 公尺種一棵樹(頭尾都種),共種幾棵?`,`A ${L} m road gets a tree every ${d} m, both ends included. How many trees?`,k+1,[k,k+2,Math.max(1,k-1)],
+    ()=>{const d=pick([2,3,5]),k=ri(4,9);const L=d*k;return fi(`🏆 一條 ${L} 公尺的直路,每 ${d} 公尺種一棵樹(頭尾都種),共種幾棵?`,`A ${L} m road gets a tree every ${d} m, both ends included. How many trees?`,k+1,[k,k+2,Math.max(1,k-1)],
       [`🔑 柵欄陷阱:頭尾都種時,樹永遠比「段」多 1。`,`① 段數:${L} ÷ ${d} = ${k} 段。`,`② 樹:${k} + 1 = ${k+1} 棵。`,`✔ 畫小圖驗證:3 段的路 |—|—|—| 有 4 棵 ✓ 規則成立。`,`EN: Segments plus one — the famous fencepost trap.`])},
-    ()=>{const u=ri(0,7),t=ri(u+1,9);const num=t*10+u;return mc(`🏆 數字偵探:我是兩位數,兩個數字加起來是 ${t+u},十位比個位大 ${t-u}。我是誰?`,`A two-digit number: digits sum to ${t+u}, tens digit exceeds ones by ${t-u}. Which number am I?`,num,nearNums(num,10),
+    ()=>{const u=ri(0,7),t=ri(u+1,9);const num=t*10+u;return fi(`🏆 數字偵探:我是兩位數,兩個數字加起來是 ${t+u},十位比個位大 ${t-u}。我是誰?`,`A two-digit number: digits sum to ${t+u}, tens digit exceeds ones by ${t-u}. Which number am I?`,num,nearNums(num,10),
       [`🔑 和差問題:大的 = (和+差)÷2。`,`① 十位 = (${t+u} + ${t-u}) ÷ 2 = ${t}。`,`② 個位 = ${t+u} − ${t} = ${u} → 答案 ${num}。`,`✔ 檢查:${t}+${u}=${t+u} ✓、${t}−${u}=${t-u} ✓`,`EN: Sum and difference together pin down both digits.`])},
+    ()=>{const b=ri(2,9),k=ri(2,9);return fi(`${b*k} 顆糖平分給 ${b} 個人,每人分到幾顆?`,`${b*k} candies shared equally among ${b} people. Each gets?`,k,nearNums(k,3),
+      [`🔑 平分=除法:總數 ÷ 人數 = 每人份。`,`① ${b*k} ÷ ${b} = ${k}。`,`✔ 驗算:${k} × ${b} = ${b*k},剛好分完 ✓`,`EN: Sharing equally is division: total over people.`])},
+    ()=>{const a=ri(2,9);return fi(`${a} 公尺是幾公分?`,`How many centimeters is ${a} meters?`,a*100,[a*10,a*1000,a*100+10],
+      [`🔑 單位換算:1 公尺 = 100 公分(公=×100 的暗號)。`,`① ${a} × 100 = ${a*100} 公分。`,`✔ 反向:${a*100} 公分 ÷ 100 = ${a} 公尺 ✓`,`EN: One meter is 100 centimeters; multiply by 100.`])},
   ],
   3:[
-    ()=>{const a=ri(3,9),b=ri(12,25);const bt=Math.floor(b/10)*10;return mc(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,a*2),
+    ()=>{const a=ri(3,9),b=ri(12,25);const bt=Math.floor(b/10)*10;return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,a*2),
       [`🔑 拆開算(分配律):把 ${b} 拆成 ${bt} 和 ${b%10}。`,`① ${a} × ${bt} = ${a*bt}。`,`② ${a} × ${b%10} = ${a*(b%10)}。`,`③ 相加:${a*bt} + ${a*(b%10)} = ${a*b}。`,`EN: Split ${b} into tens and ones, multiply each, add.`])},
-    ()=>{const b=ri(3,9),q=ri(3,12);return mc(`${b*q} ÷ ${b} = ?`,`${b*q} divided by ${b}?`,q,nearNums(q,3),
+    ()=>{const b=ri(3,9),q=ri(3,12);return fi(`${b*q} ÷ ${b} = ?`,`${b*q} divided by ${b}?`,q,nearNums(q,3),
       [`🔑 除法反問乘法:「${b} 乘多少等於 ${b*q}?」`,`① 想乘法表:${b} × ${q} = ${b*q}。`,`② 所以答案是 ${q}。`,`✔ 驗算:${q} × ${b} = ${b*q} ✓`,`EN: Division asks the multiplication question backwards.`])},
-    ()=>{const d=pick([2,3,4,6,8]),n=ri(1,d-1);const whole=d*ri(2,6);const ans=whole/d*n;return mc(`${whole} 的 ${n}/${d} 是多少?`,`What is ${n}/${d} of ${whole}?`,ans,nearNums(ans,4),
+    ()=>{const d=pick([2,3,4,6,8]),n=ri(1,d-1);const whole=d*ri(2,6);const ans=whole/d*n;return fi(`${whole} 的 ${n}/${d} 是多少?`,`What is ${n}/${d} of ${whole}?`,ans,nearNums(ans,4),
       [`🔑 分數 = 先切再拿。`,`① 切:${whole} ÷ ${d} = ${whole/d}(每一份的大小)。`,`② 拿:${whole/d} × ${n} = ${ans}(拿 ${n} 份)。`,`✔ 驗算:拿滿 ${d} 份 = ${whole/d}×${d} = ${whole},回到全部 ✓`,`EN: Cut into ${d} parts, then take ${n} of them.`])},
-    ()=>{const b=ri(3,9),q=ri(3,9),r=ri(1,b-1);const a=b*q+r;return mc(`${a} ÷ ${b} = 商多少、餘多少?`,`${a} divided by ${b}: quotient and remainder?`,`商 ${q} 餘 ${r}`,[`商 ${q+1} 餘 ${r}`,`商 ${q} 餘 ${r===1?2:r-1}`,`商 ${q-1} 餘 ${r}`],
+    ()=>{const b=ri(3,9),q=ri(3,9),r=ri(1,b-1);const a=b*q+r;return fi(`${a} ÷ ${b} = 商多少、餘多少?`,`${a} divided by ${b}: quotient and remainder?`,`商 ${q} 餘 ${r}`,[`商 ${q+1} 餘 ${r}`,`商 ${q} 餘 ${r===1?2:r-1}`,`商 ${q-1} 餘 ${r}`],
       [`🔑 商 = 裝滿幾組;餘 = 裝不下的零頭(必須小於 ${b})。`,`① ${b} × ${q} = ${b*q}(最接近又不超過 ${a})。`,`② ${a} − ${b*q} = ${r}。`,`✔ 驗算:${b}×${q}+${r} = ${a} ✓`,`EN: Multiply back up; the leftover is the remainder.`])},
-    ()=>{const st=ri(1,8),len=ri(1,3);return mc(`電影 ${st} 點開始,演 ${len} 小時,幾點結束?`,`A movie starts at ${st} and runs ${len} hours. When does it end?`,st+len,nearNums(st+len,2),
+    ()=>{const st=ri(1,8),len=ri(1,3);return fi(`電影 ${st} 點開始,演 ${len} 小時,幾點結束?`,`A movie starts at ${st} and runs ${len} hours. When does it end?`,st+len,nearNums(st+len,2),
       [`🔑 結束 = 開始 + 經過。`,`① ${st} + ${len} = ${st+len} 點。`,`✔ 倒推驗算:${st+len} − ${len} = ${st},回到開場 ✓`,`EN: End time = start time plus duration.`])},
-    ()=>{const l=ri(4,15),w=ri(3,l);return mc(`長 ${l} 公分、寬 ${w} 公分的長方形,周長是多少公分?`,`Perimeter of a ${l} by ${w} rectangle?`,2*(l+w),[l*w,l+w,2*l+w],
+    ()=>{const l=ri(4,15),w=ri(3,l);return fi(`長 ${l} 公分、寬 ${w} 公分的長方形,周長是多少公分?`,`Perimeter of a ${l} by ${w} rectangle?`,2*(l+w),[l*w,l+w,2*l+w],
       [`🔑 周長 = 繞一圈:兩條長 + 兩條寬。`,`① 半圈:${l} + ${w} = ${l+w}。`,`② 一圈:${l+w} × 2 = ${2*(l+w)}。`,`✔ 逐邊加驗算:${l}+${w}+${l}+${w} = ${2*(l+w)} ✓`,`EN: Perimeter is the full lap around: (L+W) times two.`])},
-    ()=>{const c=ri(2,6),r=ri(2,6);const h=c+r,l=2*c+4*r;return mc(`🏆 雞兔同籠:籠裡共 ${h} 個頭、${l} 隻腳。兔子有幾隻?`,`Chickens and rabbits share a cage: ${h} heads, ${l} legs. How many rabbits?`,r,nearNums(r,2),
+    ()=>{const c=ri(2,6),r=ri(2,6);const h=c+r,l=2*c+4*r;return fi(`🏆 雞兔同籠:籠裡共 ${h} 個頭、${l} 隻腳。兔子有幾隻?`,`Chickens and rabbits share a cage: ${h} heads, ${l} legs. How many rabbits?`,r,nearNums(r,2),
       [`🔑 假設法:先假設全部是雞,看腳多出多少。`,`① 全雞的話:${h} × 2 = ${2*h} 隻腳。`,`② 實際多出:${l} − ${2*h} = ${l-2*h} 隻腳。`,`③ 每把一隻雞換成兔,腳多 2 → 兔 = ${l-2*h} ÷ 2 = ${r} 隻。`,`✔ 驗算:兔 ${r}×4 + 雞 ${c}×2 = ${l} 隻腳 ✓`,`EN: Assume all chickens, count extra legs, divide by two.`])},
-    ()=>{const days=['日','一','二','三','四','五','六'];const s=ri(0,6),n=ri(8,30);const e=(s+n)%7;return mc(`🏆 今天星期${days[s]},再過 ${n} 天是星期幾?`,`Today is ${'Sun Mon Tue Wed Thu Fri Sat'.split(' ')[s]}. What day is it ${n} days later?`,`星期${days[e]}`,shuffle(days.filter((_,i)=>i!==e)).slice(0,3).map(x=>`星期${x}`),
+    ()=>{const days=['日','一','二','三','四','五','六'];const s=ri(0,6),n=ri(8,30);const e=(s+n)%7;return fi(`🏆 今天星期${days[s]},再過 ${n} 天是星期幾?`,`Today is ${'Sun Mon Tue Wed Thu Fri Sat'.split(' ')[s]}. What day is it ${n} days later?`,`星期${days[e]}`,shuffle(days.filter((_,i)=>i!==e)).slice(0,3).map(x=>`星期${x}`),
       [`🔑 星期是「循環 7」的世界,只有餘數重要。`,`① ${n} ÷ 7 = ${Math.floor(n/7)} 週…餘 ${n%7} 天(整週可以直接丟掉)。`,`② 星期${days[s]} 往後 ${n%7} 天 → 星期${days[e]}。`,`💡 一萬天後是星期幾,也是同一招。`,`EN: Whole weeks vanish; only the remainder moves the day.`])},
+    ()=>{const a=ri(120,480),b=ri(120,499);return fi(`${a} + ${b} = ?`,`${a} plus ${b}?`,a+b,nearNums(a+b,40),
+      [`🔑 三位數加法:百位、十位、個位各自對齊相加。`,`① 百位:${Math.floor(a/100)*100} + ${Math.floor(b/100)*100} = ${Math.floor(a/100)*100+Math.floor(b/100)*100}。`,`② 剩下的:${a%100} + ${b%100} = ${a%100+b%100}。`,`③ 合併:${a+b}。`,`✔ 估算:約 ${Math.round(a/100)*100}+${Math.round(b/100)*100}=${Math.round(a/100)*100+Math.round(b/100)*100},接近 ✓`,`EN: Add hundreds, tens and ones in their own columns.`])},
+    ()=>{const t=pick([{q:'公斤是幾公克',u:1000,ue:'kilograms in grams'},{q:'小時是幾分鐘',u:60,ue:'hours in minutes'}]);const a=ri(2,9);return fi(`${a} ${t.q}?`,`${a} ${t.ue}?`,a*t.u,[a*t.u/10,a*t.u*10,a*t.u+t.u/10],
+      [`🔑 單位換算:先記住「1 大單位=多少小單位」這把鑰匙(這題是 ${t.u})。`,`① ${a} × ${t.u} = ${a*t.u}。`,`✔ 反向除回去:${a*t.u} ÷ ${t.u} = ${a} ✓`,`EN: Multiply by the conversion key: ${t.u}.`])},
   ],
   4:[
-    ()=>{const a=ri(12,40),b=ri(12,40);const bt=Math.floor(b/10)*10;return mc(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,30),
+    ()=>{const a=ri(12,40),b=ri(12,40);const bt=Math.floor(b/10)*10;return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,30),
       [`🔑 大數乘法一樣用「拆開算」:把 ${b} 拆成 ${bt} 和 ${b%10}。`,`① ${a} × ${bt} = ${a*bt}。`,`② ${a} × ${b%10} = ${a*(b%10)}。`,`③ 相加:${a*bt} + ${a*(b%10)} = ${a*b}。`,`✔ 估算檢查:約 ${Math.round(a/10)*10}×${bt} = ${Math.round(a/10)*10*bt},數量級接近 ✓`,`EN: Split into tens and ones, multiply each part, add.`])},
-    ()=>{const d=pick([5,7,8,9,11]);const n1=ri(1,d-2),n2=ri(1,d-n1-1);return mc(`${n1}/${d} + ${n2}/${d} = ?`,`${n1}/${d} plus ${n2}/${d}?`,`${n1+n2}/${d}`,[`${n1+n2}/${d*2}`,`${n1+n2+1}/${d}`,`${n1*n2}/${d}`],
+    ()=>{const d=pick([5,7,8,9,11]);const n1=ri(1,d-2),n2=ri(1,d-n1-1);return fi(`${n1}/${d} + ${n2}/${d} = ?`,`${n1}/${d} plus ${n2}/${d}?`,`${n1+n2}/${d}`,[`${n1+n2}/${d*2}`,`${n1+n2+1}/${d}`,`${n1*n2}/${d}`],
       [`🔑 分母 = 切法。切法相同,只加「拿的份數」。`,`① 份數相加:${n1} + ${n2} = ${n1+n2}。`,`② 切法不變:分母仍是 ${d} → ${n1+n2}/${d}。`,`⚠ 最常見的錯:把分母也加起來(${d}+${d}=${d*2})——那等於改變了切法!`,`EN: Same slice size — add only the counts, never the denominators.`])},
-    ()=>{const w=ri(3,12),h=ri(3,12);return mc(`長 ${w}、寬 ${h} 公分的長方形,面積是多少平方公分?`,`Area of a ${w} by ${h} rectangle?`,w*h,nearNums(w*h,10),
+    ()=>{const w=ri(3,12),h=ri(3,12);return fi(`長 ${w}、寬 ${h} 公分的長方形,面積是多少平方公分?`,`Area of a ${w} by ${h} rectangle?`,w*h,nearNums(w*h,10),
       [`🔑 面積 = 數 1×1 小方塊:每排 ${w} 塊、共 ${h} 排。`,`① ${w} × ${h} = ${w*h} 平方公分。`,`✔ 換方向數:${h} × ${w} = ${w*h},一樣 ✓(乘法交換律!)`,`EN: Count unit squares: ${w} per row times ${h} rows.`])},
-    ()=>{const a=ri(30,80),b=ri(30,140-a);return mc(`三角形兩個角是 ${a}° 和 ${b}°,第三個角是幾度?`,`A triangle has angles ${a}° and ${b}°. The third angle?`,180-a-b,nearNums(180-a-b,15),
+    ()=>{const a=ri(30,80),b=ri(30,140-a);return fi(`三角形兩個角是 ${a}° 和 ${b}°,第三個角是幾度?`,`A triangle has angles ${a}° and ${b}°. The third angle?`,180-a-b,nearNums(180-a-b,15),
       [`🔑 鐵律:任何三角形的內角和都是 180°——撕下三個角拼起來剛好一條直線!`,`① 已知兩角:${a} + ${b} = ${a+b}。`,`② 第三角:180 − ${a+b} = ${180-a-b}。`,`✔ 驗算:${a} + ${b} + ${180-a-b} = 180 ✓`,`EN: The three angles of any triangle always total 180 degrees.`])},
-    ()=>{const a=ri(10,99)/10,b=ri(10,99)/10;const s=Math.round((a+b)*10)/10;return mc(`${a} + ${b} = ?`,`${a} plus ${b}?`,s,[Math.round((s+0.3)*10)/10,Math.round((s-0.2)*10)/10,Math.round((s+1)*10)/10],
+    ()=>{const a=ri(10,99)/10,b=ri(10,99)/10;const s=Math.round((a+b)*10)/10;return fi(`${a} + ${b} = ?`,`${a} plus ${b}?`,s,[Math.round((s+0.3)*10)/10,Math.round((s-0.2)*10)/10,Math.round((s+1)*10)/10],
       [`🔑 小數點 = 「個位在哪裡」的座標,先對齊再加。`,`① 小數點對齊,像直式加法一樣算。`,`② ${a} + ${b} = ${s}。`,`✔ 估算檢查:約 ${Math.round(a)} + ${Math.round(b)} = ${Math.round(a)+Math.round(b)},和 ${s} 接近 ✓`,`EN: Line up the decimal points, then add as usual.`])},
-    ()=>{const s=ri(1,8),d=ri(2,4);const t=[s,s+d,s+2*d+2,s+3*d+6];const next=s+4*d+12;return mc(`數列偵探:${t[0]}, ${t[1]}, ${t[2]}, ${t[3]}, ?。下一個?`,`Sequence detective: ${t[0]}, ${t[1]}, ${t[2]}, ${t[3]}, ?. Next?`,next,nearNums(next,4),
+    ()=>{const s=ri(1,8),d=ri(2,4);const t=[s,s+d,s+2*d+2,s+3*d+6];const next=s+4*d+12;return fi(`數列偵探:${t[0]}, ${t[1]}, ${t[2]}, ${t[3]}, ?。下一個?`,`Sequence detective: ${t[0]}, ${t[1]}, ${t[2]}, ${t[3]}, ?. Next?`,next,nearNums(next,4),
       [`🔑 一階差不固定?往下挖一層,看「差的差」。`,`① 差:+${d}, +${d+2}, +${d+4} → 差本身每次多 2。`,`② 下一個差 = +${d+6}。`,`③ ${t[3]} + ${d+6} = ${next}。`,`💡 這叫「二階規律」——你剛用了微積分的思考雛形。`,`EN: When gaps change, study the gaps of the gaps.`])},
-    ()=>{const n=pick([10,20,30,40,50,100]);return mc(`🏆 1+2+3+…+${n} = ?(想想高斯 9 歲時怎麼算)`,`What is 1+2+...+${n}? (Gauss cracked this at age nine)`,n*(n+1)/2,nearNums(n*(n+1)/2,n),
+    ()=>{const n=pick([10,20,30,40,50,100]);return fi(`🏆 1+2+3+…+${n} = ?(想想高斯 9 歲時怎麼算)`,`What is 1+2+...+${n}? (Gauss cracked this at age nine)`,n*(n+1)/2,nearNums(n*(n+1)/2,n),
       [`🔑 頭尾配對:1+${n}、2+${n-1}、3+${n-2}…每一對都是 ${n+1}!`,`① 總共可以配 ${n} ÷ 2 = ${n/2} 對。`,`② ${n+1} × ${n/2} = ${n*(n+1)/2}。`,`💡 高斯九歲想出這招——正是你的年紀。這是「萬用工具」:任何等差數列都適用。`,`EN: Pair first with last; every pair sums to ${n+1}.`])},
-    ()=>{const small=ri(5,20),big=small+ri(3,15);const s=big+small,d=big-small;return mc(`🏆 兩個數的和是 ${s}、差是 ${d}。比較大的數是多少?`,`Two numbers: sum ${s}, difference ${d}. The larger one is?`,big,nearNums(big,4),
+    ()=>{const small=ri(5,20),big=small+ri(3,15);const s=big+small,d=big-small;return fi(`🏆 兩個數的和是 ${s}、差是 ${d}。比較大的數是多少?`,`Two numbers: sum ${s}, difference ${d}. The larger one is?`,big,nearNums(big,4),
       [`🔑 和差公式:大 = (和+差)÷2。想像把「差」補給小的,兩人就一樣大。`,`① (${s} + ${d}) ÷ 2 = ${big}。`,`② 小的 = ${s} − ${big} = ${small}。`,`✔ 驗算:${big}+${small}=${s} ✓、${big}−${small}=${d} ✓`,`EN: Larger = (sum + difference) divided by two.`])},
+    ()=>{const b=ri(3,9),k=ri(3,9);return fi(`${b*k} 是 ${b} 的幾倍?`,`${b*k} is how many times ${b}?`,k,nearNums(k,3),
+      [`🔑 「幾倍」就是除法:大 ÷ 小 = 倍數。`,`① ${b*k} ÷ ${b} = ${k}。`,`✔ 驗算:${b} × ${k} = ${b*k} ✓`,`EN: Times-as-many means divide the big by the small.`])},
+    ()=>{const a=ri(50,99)/10,b=ri(10,Math.round(a*10)-5)/10;const d=Math.round((a-b)*10)/10;return fi(`${a} − ${b} = ?`,`${a} minus ${b}?`,d,[Math.round((d+0.3)*10)/10,Math.round((d-0.2)*10)/10,Math.round((d+1)*10)/10],
+      [`🔑 小數減法:小數點對齊,像整數一樣借位。`,`① 對齊小數點,${a} − ${b}。`,`② 得 ${d}。`,`✔ 驗算:${d} + ${b} = ${a} ✓`,`EN: Line up the decimal points, then subtract as usual.`])},
   ],
   5:[
-    ()=>{const pairs=[[2,4],[3,6],[2,6],[4,8],[3,9],[2,8]];const [d1,d2]=pick(pairs);const n2=ri(1,d2-1);const L=d2;const s=`${L/d1+n2}/${L}`;return mc(`1/${d1} + ${n2}/${d2} = ?`,`1/${d1} plus ${n2}/${d2}?`,s,[`${1+n2}/${d1+d2}`,`${n2}/${L}`,`${L/d1+n2+1}/${L}`],
+    ()=>{const pairs=[[2,4],[3,6],[2,6],[4,8],[3,9],[2,8]];const [d1,d2]=pick(pairs);const n2=ri(1,d2-1);const L=d2;const s=`${L/d1+n2}/${L}`;return fi(`1/${d1} + ${n2}/${d2} = ?`,`1/${d1} plus ${n2}/${d2}?`,s,[`${1+n2}/${d1+d2}`,`${n2}/${L}`,`${L/d1+n2+1}/${L}`],
       [`🔑 切法不同不能直接加 → 先「通分」統一切法。`,`① 1/${d1} 每份切成 ${L/d1} 小份:1/${d1} = ${L/d1}/${L}(大小沒變,只是切更細)。`,`② 現在切法相同了:${L/d1}/${L} + ${n2}/${L} = ${s}。`,`⚠ 陷阱:分母直接相加(${d1}+${d2})是最常見的錯!`,`EN: Convert to a common denominator first, then add the counts.`])},
-    ()=>{const a=ri(2,9),b=ri(11,99)/10;const p=Math.round(a*b*10)/10;return mc(`${a} × ${b} = ?`,`${a} times ${b}?`,p,[Math.round((p+a)*10)/10,Math.round((p-a/2)*10)/10,Math.round(p*10+1)/10],
+    ()=>{const a=ri(2,9),b=ri(11,99)/10;const p=Math.round(a*b*10)/10;return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,p,[Math.round((p+a)*10)/10,Math.round((p-a/2)*10)/10,Math.round(p*10+1)/10],
       [`🔑 先忽略小數點當整數乘,最後再把點放回去。`,`① 當整數:${a} × ${b*10} = ${a*b*10}。`,`② ${b} 有一位小數 → 答案點回一位:${p}。`,`✔ 估算:${a} × ${Math.round(b)} = ${a*Math.round(b)},和 ${p} 接近 ✓`,`EN: Multiply as whole numbers, then restore the decimal point.`])},
-    ()=>{const l=ri(2,8),w=ri(2,8),h=ri(2,8);return mc(`長 ${l}、寬 ${w}、高 ${h} 公分的長方體,體積是多少立方公分?`,`Volume of a ${l} by ${w} by ${h} box?`,l*w*h,nearNums(l*w*h,20),
+    ()=>{const l=ri(2,8),w=ri(2,8),h=ri(2,8);return fi(`長 ${l}、寬 ${w}、高 ${h} 公分的長方體,體積是多少立方公分?`,`Volume of a ${l} by ${w} by ${h} box?`,l*w*h,nearNums(l*w*h,20),
       [`🔑 體積 = 一層的方塊數 × 疊幾層。`,`① 底層:${l} × ${w} = ${l*w} 塊。`,`② 疊 ${h} 層:${l*w} × ${h} = ${l*w*h} 立方公分。`,`✔ 換個方向疊(${w}×${h} 為底)答案一樣 ✓`,`EN: One layer of cubes, times the number of layers.`])},
-    ()=>{const N=pick([12,18,24,30,36]);const fs=[];for(let i=2;i<N;i++)if(N%i===0)fs.push(i);const ans=pick(fs);const non=[];let x=2;while(non.length<3){if(N%x!==0&&x!==ans)non.push(x);x++}return mc(`哪一個是 ${N} 的因數?`,`Which one is a factor of ${N}?`,ans,non,
+    ()=>{const N=pick([12,18,24,30,36]);const fs=[];for(let i=2;i<N;i++)if(N%i===0)fs.push(i);const ans=pick(fs);const non=[];let x=2;while(non.length<3){if(N%x!==0&&x!==ans)non.push(x);x++}return fi(`哪一個是 ${N} 的因數?`,`Which one is a factor of ${N}?`,ans,non,
       [`🔑 因數 = 能整除、零餘數的數。`,`① 測試:${N} ÷ ${ans} = ${N/ans},整除 ✓`,`② 其他選項除 ${N} 都會留下餘數。`,`💡 小技巧:因數成雙出現——${ans} × ${N/ans} = ${N},找到一個就送一個。`,`EN: A factor divides in exactly; factors always come in pairs.`])},
-    ()=>{const t=pick([[4,6,12],[6,8,24],[3,5,15],[4,10,20],[6,9,18]]);return mc(`${t[0]} 和 ${t[1]} 的最小公倍數是?`,`Least common multiple of ${t[0]} and ${t[1]}?`,t[2],[t[0]*t[1],t[2]*2,t[2]+t[0]],
+    ()=>{const t=pick([[4,6,12],[6,8,24],[3,5,15],[4,10,20],[6,9,18]]);return fi(`${t[0]} 和 ${t[1]} 的最小公倍數是?`,`Least common multiple of ${t[0]} and ${t[1]}?`,t[2],[t[0]*t[1],t[2]*2,t[2]+t[0]],
       [`🔑 最小公倍數 = 兩排倍數第一次「相遇」的地方。`,`① ${t[0]} 的倍數:${t[0]}, ${t[0]*2}, ${t[0]*3}, …`,`② ${t[1]} 的倍數:${t[1]}, ${t[1]*2}, …`,`③ 第一個共同出現的:${t[2]}。`,`⚠ 陷阱:不一定是相乘!${t[0]}×${t[1]}=${t[0]*t[1]},比 ${t[2]} 大。`,`EN: List multiples and find the first meeting point — not always the product.`])},
-    ()=>{const d=pick([3,4,5,6,8]);const n=ri(1,d-1);const k=d*ri(1,3);return mc(`${n}/${d} × ${k} = ?`,`${n}/${d} times ${k}?`,n*k/d,nearNums(n*k/d,4),
+    ()=>{const d=pick([3,4,5,6,8]);const n=ri(1,d-1);const k=d*ri(1,3);return fi(`${n}/${d} × ${k} = ?`,`${n}/${d} times ${k}?`,n*k/d,nearNums(n*k/d,4),
       [`🔑 分數乘整數 = ${k} 個 ${n}/${d} 疊起來。`,`① 分子先乘:${n} × ${k} = ${n*k}。`,`② ${n*k} ÷ ${d} = ${n*k/d}(剛好整除)。`,`✔ 反推:${n*k/d} × ${d} ÷ ${k} = ${n} ✓`,`EN: Multiply the top by ${k}, then divide by the bottom.`])},
-    ()=>{const c=ri(2,5);return mc(`🏆 抽屜裡混著 ${c} 種顏色的襪子。閉著眼最少拿幾隻,才「保證」湊出一雙同色?`,`A drawer holds socks in ${c} colors. Fewest picks to GUARANTEE a matching pair?`,c+1,[c,c*2+1,c+3],
+    ()=>{const c=ri(2,5);return fi(`🏆 抽屜裡混著 ${c} 種顏色的襪子。閉著眼最少拿幾隻,才「保證」湊出一雙同色?`,`A drawer holds socks in ${c} colors. Fewest picks to GUARANTEE a matching pair?`,c+1,[c,c*2+1,c+3],
       [`🔑 鴿籠原理:「保證」型題目要想「最壞情況」。`,`① 最倒楣的情況:前 ${c} 隻剛好每色各一隻,還湊不成雙。`,`② 第 ${c+1} 隻無論什麼顏色,一定和手上某隻同色!`,`💡 心法:保證 = 最壞情況 + 1。這是正式的組合數學。`,`EN: Pigeonhole: survive the worst case, then one more pick wins.`])},
-    ()=>{const b=ri(70,85),a=b+ri(-5,5);const third=3*a-2*b;return mc(`🏆 小奇三次測驗平均 ${a} 分,前兩次平均 ${b} 分。第三次考了幾分?`,`Three tests average ${a}; the first two average ${b}. The third score?`,third,nearNums(third,5),
+    ()=>{const b=ri(70,85),a=b+ri(-5,5);const third=3*a-2*b;return fi(`🏆 小奇三次測驗平均 ${a} 分,前兩次平均 ${b} 分。第三次考了幾分?`,`Three tests average ${a}; the first two average ${b}. The third score?`,third,nearNums(third,5),
       [`🔑 平均是總和的偽裝——先把它變回總和。`,`① 三次總分:${a} × 3 = ${3*a}。`,`② 前兩次總分:${b} × 2 = ${2*b}。`,`③ 第三次:${3*a} − ${2*b} = ${third}。`,`✔ 驗算:(${2*b} + ${third}) ÷ 3 = ${a} ✓`,`EN: Turn every average back into a total, then subtract.`])},
+    ()=>{const t=pick([[12,18,6],[8,12,4],[15,20,5],[18,24,6],[16,24,8],[9,12,3]]);return fi(`${t[0]} 和 ${t[1]} 的最大公因數是?`,`Greatest common factor of ${t[0]} and ${t[1]}?`,t[2],[t[2]*2,Math.max(1,t[2]-1),t[2]+2],
+      [`🔑 最大公因數=兩個數「都能被整除」的最大數。`,`① ${t[0]} 的因數裡找、${t[1]} 的因數裡找,共同的取最大。`,`② ${t[0]}÷${t[2]}=${t[0]/t[2]}、${t[1]}÷${t[2]}=${t[1]/t[2]},都整除 ✓`,`💡 它是約分的鑰匙:${t[0]}/${t[1]} 用 ${t[2]} 約分 = ${t[0]/t[2]}/${t[1]/t[2]}。`,`EN: The largest number dividing both — the key to simplifying fractions.`])},
+    ()=>{const c=ri(2,5);const ans=ri(11,49)/10;const a=Math.round(ans*c*10)/10;return fi(`${a} ÷ ${c} = ?`,`${a} divided by ${c}?`,ans,[Math.round((ans+0.5)*10)/10,Math.round((ans-0.3)*10)/10,Math.round(ans*c*10)/10],
+      [`🔑 小數除以整數:照整數除,小數點直直落下來。`,`① ${a*10} ÷ ${c} = ${ans*10}(先當整數)。`,`② 小數點放回:${ans}。`,`✔ 驗算:${ans} × ${c} = ${a} ✓`,`EN: Divide as whole numbers; the decimal point drops straight down.`])},
   ],
   6:[
-    ()=>{const k=ri(2,6),a=ri(2,9),b=ri(2,9);return mc(`${a}:${b} = ${a*k}:?`,`${a}:${b} equals ${a*k}:what?`,b*k,nearNums(b*k,6),
+    ()=>{const k=ri(2,6),a=ri(2,9),b=ri(2,9);return fi(`${a}:${b} = ${a*k}:?`,`${a}:${b} equals ${a*k}:what?`,b*k,nearNums(b*k,6),
       [`🔑 比 = 倍率關係,兩邊必須一起縮放。`,`① 左邊:${a} → ${a*k},放大了 ${k} 倍。`,`② 右邊同樣 ×${k}:${b} × ${k} = ${b*k}。`,`✔ 驗算:${a*k}:${b*k} 同除 ${k} 回到 ${a}:${b} ✓`,`EN: A ratio scales both sides by the same factor.`])},
-    ()=>{const v=ri(4,20)*5,t=ri(2,6);return mc(`一台車每小時走 ${v} 公里,${t} 小時走多遠?`,`A car travels ${v} km per hour for ${t} hours. How far?`,v*t,nearNums(v*t,25),
+    ()=>{const v=ri(4,20)*5,t=ri(2,6);return fi(`一台車每小時走 ${v} 公里,${t} 小時走多遠?`,`A car travels ${v} km per hour for ${t} hours. How far?`,v*t,nearNums(v*t,25),
       [`🔑 速率 = 「每 1 小時」的距離,是一種單位化思考。`,`① 每小時 ${v} 公里 × ${t} 小時 = ${v*t} 公里。`,`✔ 反推:${v*t} ÷ ${t} = ${v} 公里/小時,回到速率 ✓`,`EN: Speed is distance per one hour; multiply by the hours.`])},
-    ()=>{const d=pick([2,4,5,10]);const n=ri(1,d-1);const dec=n/d;return mc(`${n}/${d} 等於哪個小數?`,`${n}/${d} as a decimal?`,dec,[Math.round((dec+0.1)*100)/100,Math.round(dec/2*100)/100,Math.round((dec+0.25)*100)/100],
+    ()=>{const d=pick([2,4,5,10]);const n=ri(1,d-1);const dec=n/d;return fi(`${n}/${d} 等於哪個小數?`,`${n}/${d} as a decimal?`,dec,[Math.round((dec+0.1)*100)/100,Math.round(dec/2*100)/100,Math.round((dec+0.25)*100)/100],
       [`🔑 分數線其實就是「÷」:${n}/${d} = ${n} ÷ ${d}。`,`① ${n} ÷ ${d} = ${dec}。`,`💡 常用轉換值得記住:1/2=0.5、1/4=0.25、1/5=0.2、1/10=0.1——它們是同一個數的兩套衣服。`,`EN: The fraction bar is a division sign in disguise.`])},
-    ()=>{const p=pick([10,20,25,50]);const b=pick([40,60,80,120,200]);return mc(`${b} 的 ${p}% 是多少?`,`What is ${p}% of ${b}?`,p*b/100,nearNums(p*b/100,8),
+    ()=>{const p=pick([10,20,25,50]);const b=pick([40,60,80,120,200]);return fi(`${b} 的 ${p}% 是多少?`,`What is ${p}% of ${b}?`,p*b/100,nearNums(p*b/100,8),
       [`🔑 % = 「每 100 份中的份數」:${p}% = ${p}/100。`,`① ${b} × ${p}/100 = ${p*b/100}。`,`💡 心算捷徑:先算 10% = ${b/10},再組合(${p}% = ${p/10} 個 10%)。`,`✔ 檢查:${p*b/100} ÷ ${b} = ${p/100},回到 ${p}% ✓`,`EN: Percent means per hundred; anchor on 10 percent and scale.`])},
-    ()=>{const d=ri(2,10);const c=Math.round(314*d)/100;return mc(`直徑 ${d} 公分的圓,圓周長是多少公分?(圓周率用 3.14)`,`Circumference of a circle with diameter ${d} cm? (use 3.14)`,c,[Math.round((3.14*(d+1))*100)/100,Math.round((3.14*d/2)*100)/100,Math.round((3.14*d+3)*100)/100],
+    ()=>{const d=ri(2,10);const c=Math.round(314*d)/100;return fi(`直徑 ${d} 公分的圓,圓周長是多少公分?(圓周率用 3.14)`,`Circumference of a circle with diameter ${d} cm? (use 3.14)`,c,[Math.round((3.14*(d+1))*100)/100,Math.round((3.14*d/2)*100)/100,Math.round((3.14*d+3)*100)/100],
       [`🔑 圓周率的意義:繞一圈是直徑的幾倍?答案永遠約 3.14,任何圓都一樣!`,`① 圓周長 = 3.14 × ${d} = ${c} 公分。`,`✔ 粗估:直徑的 3 倍多一點 → 比 ${3*d} 大一些 ✓`,`💡 這個「任何圓都一樣」的常數,人類研究了四千年。`,`EN: Pi says every circle is about 3.14 diameters around.`])},
-    ()=>{const a=ri(2,9),x=ri(2,9),b=ri(1,15);const c=a*x+b;return mc(`如果 ${a} × x + ${b} = ${c},那 x = ?`,`If ${a}x + ${b} = ${c}, what is x?`,x,nearNums(x,3),
+    ()=>{const a=ri(2,9),x=ri(2,9),b=ri(1,15);const c=a*x+b;return fi(`如果 ${a} × x + ${b} = ${c},那 x = ?`,`If ${a}x + ${b} = ${c}, what is x?`,x,nearNums(x,3),
       [`🔑 解方程 = 逆向拆包裹:最後包上去的,最先拆掉。`,`① x 先被 ×${a}、再被 +${b} → 拆的順序相反。`,`② 兩邊同減 ${b}:${a}x = ${c} − ${b} = ${a*x}。`,`③ 兩邊同除 ${a}:x = ${a*x} ÷ ${a} = ${x}。`,`✔ 代回檢查:${a}×${x}+${b} = ${c} ✓`,`EN: Undo the operations in reverse order: subtract, then divide.`])},
-    ()=>{const t=pick([[6,3,2],[4,4,2],[6,6,3],[10,10,5],[12,6,4],[12,4,3],[15,10,6],[8,8,4],[20,5,4]]);return mc(`🏆 一件工作,A 單獨做要 ${t[0]} 天、B 單獨做要 ${t[1]} 天。兩人合作要幾天?`,`A job takes A ${t[0]} days alone, B ${t[1]} days alone. Together?`,t[2],nearNums(t[2],3),
+    ()=>{const t=pick([[6,3,2],[4,4,2],[6,6,3],[10,10,5],[12,6,4],[12,4,3],[15,10,6],[8,8,4],[20,5,4]]);return fi(`🏆 一件工作,A 單獨做要 ${t[0]} 天、B 單獨做要 ${t[1]} 天。兩人合作要幾天?`,`A job takes A ${t[0]} days alone, B ${t[1]} days alone. Together?`,t[2],nearNums(t[2],3),
       [`🔑 工程問題心法:把整件工作當成「1」,比較每天的速度。`,`① A 每天做 1/${t[0]}、B 每天做 1/${t[1]}。`,`② 合作每天:1/${t[0]} + 1/${t[1]} = 1/${t[2]}。`,`③ 做完「1」需要 ${t[2]} 天。`,`✔ 驗算:${t[2]}/${t[0]} + ${t[2]}/${t[1]} = 1(整件工作)✓`,`EN: Call the job one whole, add the daily rates, invert.`])},
-    ()=>{const s1=ri(1,3),s2=ri(1,4);const t=[s1,s2];for(let i=2;i<6;i++)t.push(t[i-1]+t[i-2]);return mc(`🏆 數列偵探終極版:${t.slice(0,5).join(', ')}, ?。下一個是?`,`Ultimate sequence detective: ${t.slice(0,5).join(', ')}, ?. Next?`,t[5],nearNums(t[5],4),
+    ()=>{const s1=ri(1,3),s2=ri(1,4);const t=[s1,s2];for(let i=2;i<6;i++)t.push(t[i-1]+t[i-2]);return fi(`🏆 數列偵探終極版:${t.slice(0,5).join(', ')}, ?。下一個是?`,`Ultimate sequence detective: ${t.slice(0,5).join(', ')}, ?. Next?`,t[5],nearNums(t[5],4),
       [`🔑 差不固定、倍率也不固定?第三招:每項 = 前兩項相加!`,`① 驗證:${t[0]}+${t[1]}=${t[2]} ✓、${t[1]}+${t[2]}=${t[3]} ✓、${t[2]}+${t[3]}=${t[4]} ✓`,`② 下一項:${t[3]} + ${t[4]} = ${t[5]}。`,`💡 這是費波那契數列——向日葵種子的螺旋、鳳梨表皮、鸚鵡螺殼裡都藏著它。`,`EN: Each term is the sum of the previous two — the Fibonacci rule.`])},
+    ()=>{const r=ri(2,6);const area=Math.round(314*r*r)/100;return fi(`半徑 ${r} 公分的圓,面積是多少平方公分?(圓周率用 3.14)`,`Area of a circle with radius ${r} cm? (use 3.14)`,area,[Math.round(314*2*r)/100,Math.round(314*(r+1)*(r+1))/100,Math.round(314*r)/100],
+      [`🔑 圓面積 = 圓周率 × 半徑 × 半徑(半徑要乘「兩次」!)。`,`① ${r} × ${r} = ${r*r}。`,`② 3.14 × ${r*r} = ${area}。`,`⚠ 陷阱:3.14 × ${r} × 2 = ${Math.round(314*2*r)/100} 是「圓周長」,不是面積!`,`EN: Area is pi times radius squared — square the radius first.`])},
+    ()=>{const v=ri(4,12)*10,t=ri(2,6);return fi(`一台車每小時走 ${v} 公里,走 ${v*t} 公里要幾小時?`,`At ${v} km per hour, how many hours to cover ${v*t} km?`,t,nearNums(t,2),
+      [`🔑 速率三兄弟:距離 = 速率 × 時間 → 時間 = 距離 ÷ 速率。`,`① ${v*t} ÷ ${v} = ${t} 小時。`,`✔ 驗算:${v} × ${t} = ${v*t} 公里 ✓`,`💡 同一條公式轉三個方向,記一個就有三個。`,`EN: Time equals distance divided by speed — one formula, three faces.`])},
   ],
 };
 function genMath(level,n){return Array.from({length:n},()=>pick(MATH_GEN[level])())}
@@ -511,15 +542,30 @@ function Sprint({k,qs,eng,pet,onDone,exit}){
   const [picked,setPicked]=useState(null);
   const [score,setScore]=useState(0);
   const [done,setDone]=useState(false);
+  const [val,setVal]=useState('');
+  const [inputOk,setInputOk]=useState(null); // null=未作答 true/false=結果
   const q=qs[idx];
 
+  /* 數值等價比對:接受分數與等值小數(3/4 = 0.75) */
+  const numVal=t=>{
+    t=String(t).trim().replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-65248))
+      .replace(/／/g,'/').replace(/,/g,'.').replace(/\s/g,'');
+    if(/^\d+\/\d+$/.test(t)){const [a,b]=t.split('/').map(Number);return b?a/b:NaN;}
+    return parseFloat(t);
+  };
+  const submit=()=>{
+    if(inputOk!==null||val.trim()==='')return;
+    const ok=Math.abs(numVal(val)-numVal(q.answer))<1e-6;
+    setInputOk(ok);setPicked(-1); /* picked!==null 觸發詳解顯示 */
+    if(ok)setScore(v=>v+1);
+  };
   const choose=i=>{
     if(picked!==null)return;
     setPicked(i);
     if(i===q.ans)setScore(v=>v+1);
   };
   const next=()=>{
-    if(idx+1<qs.length){setIdx(idx+1);setPicked(null)}
+    if(idx+1<qs.length){setIdx(idx+1);setPicked(null);setVal('');setInputOk(null)}
     else{
       const final=score; // score 已含本題
       setDone(true);
@@ -539,6 +585,23 @@ function Sprint({k,qs,eng,pet,onDone,exit}){
         <div className="qtext" dangerouslySetInnerHTML={{__html:
           q.q.replace(/「(.)」/g,'「<span class="kai">$1</span>」')}}/>
         {eng&&q.en&&<div className="qen">{q.en}</div>}
+        {q.mode==='input'?(
+          <div className="fillin">
+            <div className="fillrow">
+              <input className="fillbox" inputMode={q.answer.includes('/')?'text':'decimal'}
+                placeholder={q.answer.includes('/')?'例:3/4(也可輸入小數)':'輸入答案'}
+                value={val} disabled={inputOk!==null}
+                onChange={e=>setVal(e.target.value)}
+                onKeyDown={e=>{if(e.key==='Enter')submit()}}/>
+              <button className="btn solid" disabled={inputOk!==null||!val.trim()} onClick={submit}>確認 Go</button>
+            </div>
+            {inputOk!==null&&(
+              <div className={`fillresult ${inputOk?'ok':'bad'}`}>
+                {inputOk?'✔ 答對了!':<span>✗ 正確答案:<b className="num">{q.answer}</b></span>}
+              </div>
+            )}
+          </div>
+        ):(
         <div className="opts">
           {q.options.map((o,i)=>{
             const isObj=typeof o==='object';
@@ -554,6 +617,7 @@ function Sprint({k,qs,eng,pet,onDone,exit}){
             );
           })}
         </div>
+        )}
         {picked!==null&&(
           <div className="why">
             {Array.isArray(q.why)
