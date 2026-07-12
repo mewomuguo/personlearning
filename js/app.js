@@ -91,12 +91,12 @@ function nearNums(ans,spread){
 
 /* ── 數學題型地圖(科目頁顯示)── */
 const MATH_TOPICS={
-  1:['20 以內加減 Add and subtract within 20','比大小 Compare numbers','數列偵探 Sequence detective','逆向工程 Find the missing number','生活應用題 Word problems','🏆 奧數:排隊陷阱 Line-up trap','🏆 奧數:圖形週期 Shape cycles','錢幣計算 Coin counting','兩步驟推理 Two-step stories','📐 幾何:數方格 Count squares','📐 幾何:正方形周長 Square perimeter'],
-  2:['二位數加減 Two-digit add and subtract','九九乘法 Times tables','倍增數列 Doubling sequences','買東西 Money problems','乘法逆向 Reverse multiplication','🏆 奧數:植樹問題 Fencepost problem','🏆 奧數:數字偵探 Digit detective','平分問題 Equal sharing','單位換算 Unit conversion','📐 幾何:三角形內角 Triangle angles','📐 幾何:三角形面積 Triangle area','📐 幾何:長方形面積 Rectangle area','📐 幾何:長方形周長 Rectangle perimeter'],
-  3:['乘除運算 Multiply and divide','分數入門 Fraction basics','餘數偵探 Remainder detective','時間計算 Time math','周長 Perimeter','🏆 奧數:雞兔同籠 Chickens and rabbits','🏆 奧數:星期週期 Weekday cycles','三位數計算 Three-digit math','單位換算 Unit conversion'],
-  4:['多位數乘法 Multi-digit multiplication','同分母分數 Same-denominator fractions','面積 Area','三角形內角 Triangle angles','小數加法 Decimal addition','遞增數列 Accelerating sequences','🏆 奧數:高斯求和 Gauss summation','🏆 奧數:和差問題 Sum and difference','倍數關係 Times-as-many','小數減法 Decimal subtraction','📐 幾何:複合面積 Compound area','📐 幾何:補角 Supplementary angles'],
-  5:['異分母分數 Unlike fractions','小數運算 Decimals','體積 Volume','因數偵探 Factor detective','最小公倍數 LCM','分數乘法 Fraction times whole','🏆 奧數:鴿籠原理 Pigeonhole principle','🏆 奧數:平均逆推 Reverse averages','最大公因數 GCF','小數除法 Decimal division','📐 幾何:長方體體積 Box volume','📐 幾何:圓周長 Circumference'],
-  6:['比與比值 Ratios','速率 Speed','分數小數互換 Fractions to decimals','百分率 Percentages','圓周長 Circumference','未知數方程 Solve for x','🏆 奧數:工程問題 Work-rate problems','🏆 奧數:費波那契 Fibonacci detective','圓面積 Circle area','速率反推 Solve for time','📐 幾何:圓面積 Circle area','📐 幾何:平行四邊形 Parallelogram'],
+  1:['20 以內加減 Add and subtract within 20','比大小 Compare numbers','數列偵探 Sequence detective','逆向工程 Find the missing number','生活應用題 Word problems','🏆 奧數:排隊陷阱 Line-up trap','🏆 奧數:圖形週期 Shape cycles','錢幣計算 Coin counting','兩步驟推理 Two-step stories','📐 幾何:數方格 Count squares','📐 幾何:正方形周長 Square perimeter','📐 幾何:數邊形 Count sides','📐 幾何:長度比較 Compare lengths'],
+  2:['二位數加減 Two-digit add and subtract','九九乘法 Times tables','倍增數列 Doubling sequences','買東西 Money problems','乘法逆向 Reverse multiplication','🏆 奧數:植樹問題 Fencepost problem','🏆 奧數:數字偵探 Digit detective','平分問題 Equal sharing','單位換算 Unit conversion','📐 幾何:三角形內角 Triangle angles','📐 幾何:三角形面積 Triangle area','📐 幾何:長方形面積 Rectangle area','📐 幾何:長方形周長 Rectangle perimeter','📐 幾何:拼圖組合 Shape combining','📐 幾何:周長逆推 Reverse perimeter'],
+  3:['乘除運算 Multiply and divide','分數入門 Fraction basics','餘數偵探 Remainder detective','時間計算 Time math','周長 Perimeter','🏆 奧數:雞兔同籠 Chickens and rabbits','🏆 奧數:星期週期 Weekday cycles','三位數計算 Three-digit math','單位換算 Unit conversion','📐 幾何:面積逆推 Reverse area','📐 幾何:等腰三角形 Isosceles angles'],
+  4:['多位數乘法 Multi-digit multiplication','同分母分數 Same-denominator fractions','面積 Area','三角形內角 Triangle angles','小數加法 Decimal addition','遞增數列 Accelerating sequences','🏆 奧數:高斯求和 Gauss summation','🏆 奧數:和差問題 Sum and difference','倍數關係 Times-as-many','小數減法 Decimal subtraction','📐 幾何:複合面積 Compound area','📐 幾何:補角 Supplementary angles','📐 幾何:正多邊形 Regular polygons','📐 幾何:相框挖洞 Frame area'],
+  5:['異分母分數 Unlike fractions','小數運算 Decimals','體積 Volume','因數偵探 Factor detective','最小公倍數 LCM','分數乘法 Fraction times whole','🏆 奧數:鴿籠原理 Pigeonhole principle','🏆 奧數:平均逆推 Reverse averages','最大公因數 GCF','小數除法 Decimal division','📐 幾何:長方體體積 Box volume','📐 幾何:圓周長 Circumference','📐 幾何:表面積 Surface area','📐 幾何:高的逆推 Solve for height'],
+  6:['比與比值 Ratios','速率 Speed','分數小數互換 Fractions to decimals','百分率 Percentages','圓周長 Circumference','未知數方程 Solve for x','🏆 奧數:工程問題 Work-rate problems','🏆 奧數:費波那契 Fibonacci detective','圓面積 Circle area','速率反推 Solve for time','📐 幾何:圓面積 Circle area','📐 幾何:平行四邊形 Parallelogram','📐 幾何:圓環面積 Annulus','📐 幾何:門形組合 Door shapes'],
 };
 
 /* ── 出題引擎:每級 6 種生成器,「為什麼」全雙語 ── */
@@ -143,6 +143,12 @@ const MATH_GEN = {
     ()=>{const w=ri(3,7);return fi(`看圖:一個正方形被分成 ${w}×${w} 的小格。總共有幾個小格?`,`This square is split into a ${w}×${w} grid. How many small squares?`,w*w,nearNums(w*w,5),
       [`🔑 方陣總數 = 邊數 × 邊數。`,`① ${w} × ${w} = ${w*w} 格。`,`✔ 正方形的長寬相等,所以是「邊長的平方」。`,`EN: A square grid has side × side small squares.`],
       SVG(`<rect x="30" y="18" width="60" height="60" class="gshape"/>`+Array.from({length:w-1},(_,i)=>`<line x1="${30+60*(i+1)/w}" y1="18" x2="${30+60*(i+1)/w}" y2="78" class="gline"/><line x1="30" y1="${18+60*(i+1)/w}" x2="90" y2="${18+60*(i+1)/w}" class="gline"/>`).join('')))},
+    ()=>{const n=pick([[3,'三角形'],[4,'四邊形'],[5,'五邊形'],[6,'六邊形']]);const pts=Array.from({length:n[0]},(_,i)=>{const a=-Math.PI/2+i*2*Math.PI/n[0];return `${(60+34*Math.cos(a)).toFixed(1)},${(50+34*Math.sin(a)).toFixed(1)}`}).join(' ');return fi(`看圖:這個圖形有幾條邊?`,`How many sides does this shape have?`,n[0],[n[0]+1,Math.max(3,n[0]-1),n[0]+2],
+      [`🔑 多邊形的名字藏著答案:幾邊形就有幾條邊、幾個角。`,`① 沿著圖形描一圈,數轉折之間的直線段。`,`② 共 ${n[0]} 條邊——這是${n[1]}。`,`✔ 邊數 = 角數:數角也是 ${n[0]} 個 ✓`,`EN: An n-gon has n sides and n corners.`],
+      SVG(`<polygon points="${pts}" class="gshape"/>`))},
+    ()=>{const a=ri(6,12),b=ri(2,a-2);return fi(`看圖:上面的棒子長 ${a} 公分,下面的長 ${b} 公分。上面比下面長多少公分?`,`The top bar is ${a} cm, the bottom ${b} cm. How much longer is the top?`,a-b,nearNums(a-b,3),
+      [`🔑 「比…長多少」= 兩長度相減。`,`① ${a} − ${b} = ${a-b} 公分。`,`✔ 驗算:${b} + ${a-b} = ${a} ✓`,`EN: How much longer means subtract the two lengths.`],
+      SVG(`<rect x="10" y="26" width="${a*8}" height="12" class="gshape"/><rect x="10" y="58" width="${b*8}" height="12" class="gside"/>`+gLabel(10+a*4,20,a+' cm')+gLabel(10+b*4,84,b+' cm')))},
   ],
   2:[
     ()=>{const a=ri(11,89),b=ri(11,99-a);const at=Math.floor(a/10)*10,bt=Math.floor(b/10)*10;return fi(`${a} + ${b} = ?`,`${a} plus ${b}?`,a+b,nearNums(a+b,10),
@@ -177,6 +183,12 @@ const MATH_GEN = {
     ()=>{const w=ri(5,10),h=ri(3,7);return fi(`看圖的長方形長 ${w}、寬 ${h}。如果長和寬都加 1,新面積是多少?`,`This rectangle is ${w}×${h}. If both grow by 1, what is the new area?`,(w+1)*(h+1),nearNums((w+1)*(h+1),12),
       [`🔑 先變新尺寸,再算面積(別急著用舊數字)。`,`① 新長 ${w+1}、新寬 ${h+1}。`,`② ${w+1} × ${h+1} = ${(w+1)*(h+1)}。`,`💡 注意:面積增加的不只 1,因為長寬「同時」變大。`,`EN: Update both sides first, then multiply.`],
       GEO.rect(w,h,`${w}→${w+1}`,`${h}→${h+1}`))},
+    ()=>{const s=ri(2,7);return fi(`看圖:兩個邊長 ${s} 公分的正方形拼成一個長方形。長方形的「長」是多少公分?`,`Two squares of side ${s} cm form a rectangle. How long is the rectangle?`,s*2,[s,s*3,s*2+1],
+      [`🔑 拼圖思維:兩個正方形並排,長 = 邊長 × 2,寬不變。`,`① ${s} × 2 = ${s*2} 公分。`,`✔ 寬仍是 ${s} 公分,所以是 ${s*2}×${s} 的長方形 ✓`,`EN: Two squares side by side double the length.`],
+      SVG(`<rect x="14" y="30" width="44" height="44" class="gshape"/><rect x="58" y="30" width="44" height="44" class="gshape"/>`+gLabel(36,24,s+' cm')+gLabel(80,24,s+' cm')))},
+    ()=>{const s=ri(3,9);return fi(`看圖:正方形的周長是 ${s*4} 公分。一條邊是多少公分?`,`This square has perimeter ${s*4} cm. How long is one side?`,s,nearNums(s,3),
+      [`🔑 逆向思考:周長 = 邊 × 4,所以 邊 = 周長 ÷ 4。`,`① ${s*4} ÷ 4 = ${s} 公分。`,`✔ 正向驗算:${s} × 4 = ${s*4} ✓`,`💡 會正著算,也要會倒著推——這叫逆運算。`,`EN: Reverse it: side = perimeter divided by 4.`],
+      SVG(`<rect x="30" y="18" width="60" height="60" class="gshape"/>`+gLabel(60,94,`周長 ${s*4} cm`)+gLabel(60,50,'邊 = ?')))},
   ],
   3:[
     ()=>{const a=ri(3,9),b=ri(12,25);const bt=Math.floor(b/10)*10;return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,a*2),
@@ -211,11 +223,17 @@ const MATH_GEN = {
     ()=>{const s=ri(3,8);const per=s*3;return fi(`看圖的正三角形,每邊 ${s} 公分。周長是多少?`,`This equilateral triangle has sides of ${s} cm. Find the perimeter.`,per,nearNums(per,4),
       [`🔑 正三角形三邊等長,周長 = 邊長 × 3。`,`① ${s} × 3 = ${per} 公分。`,`✔ 三邊都是 ${s}:${s}+${s}+${s} = ${per} ✓`,`EN: Equilateral means 3 equal sides: side × 3.`],
       SVG(`<polygon points="60,20 92,74 28,74" class="gshape"/>`+gLabel(60,16,`${s}`)+gLabel(88,80,`${s}`)+gLabel(32,80,`${s}`)))},
+    ()=>{const w=ri(3,9),h=ri(3,9);return fi(`看圖:長方形的面積是 ${w*h} 平方公分,長是 ${w} 公分。寬是多少公分?`,`Area is ${w*h} sq cm and length is ${w} cm. Find the width.`,h,nearNums(h,3),
+      [`🔑 面積 = 長 × 寬 → 寬 = 面積 ÷ 長(逆運算)。`,`① ${w*h} ÷ ${w} = ${h} 公分。`,`✔ 驗算:${w} × ${h} = ${w*h} ✓`,`EN: Width = area divided by length.`],
+      GEO.rect(w,h,`${w} cm`,`?`).replace('</svg>',gLabel(60,52,`面積 ${w*h}`)+'</svg>'))},
+    ()=>{const a=pick([40,50,60,70,80,100,120]);const b=(180-a)/2;return fi(`看圖的等腰三角形(兩腰相等,記號相同),頂角是 ${a}°。一個底角是幾度?`,`This isosceles triangle has apex ${a}°. Find one base angle.`,b,nearNums(b,12),
+      [`🔑 等腰三角形:兩底角相等;三角和 = 180°。`,`① 兩底角合計:180 − ${a} = ${180-a}°。`,`② 平分給兩個角:${180-a} ÷ 2 = ${b}°。`,`✔ 驗算:${a} + ${b} + ${b} = 180 ✓`,`EN: Base angles are equal: (180 − apex) ÷ 2.`],
+      SVG(`<polygon points="60,18 24,80 96,80" class="gshape"/><line x1="40" y1="46" x2="46" y2="52" class="gang"/><line x1="80" y1="46" x2="74" y2="52" class="gang"/>`+gLabel(60,34,a+'°')+gLabel(34,74,'?')))},
   ],
   4:[
     ()=>{const a=ri(12,40),b=ri(12,40);const bt=Math.floor(b/10)*10;return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,30),
       [`🔑 大數乘法一樣用「拆開算」:把 ${b} 拆成 ${bt} 和 ${b%10}。`,`① ${a} × ${bt} = ${a*bt}。`,`② ${a} × ${b%10} = ${a*(b%10)}。`,`③ 相加:${a*bt} + ${a*(b%10)} = ${a*b}。`,`✔ 估算檢查:約 ${Math.round(a/10)*10}×${bt} = ${Math.round(a/10)*10*bt},數量級接近 ✓`,`EN: Split into tens and ones, multiply each part, add.`])},
-    ()=>{const d=pick([5,7,8,9,11]);const n1=ri(1,d-2),n2=ri(1,d-n1-1);return fi(`${n1}/${d} + ${n2}/${d} = ?`,`${n1}/${d} plus ${n2}/${d}?`,`${n1+n2}/${d}`,[`${n1+n2}/${d*2}`,`${n1+n2+1}/${d}`,`${n1*n2}/${d}`],
+    ()=>{const d=pick([5,7,8,9,11]);const n1=ri(1,d-2),n2=ri(1,d-n1-1);const fans=`${n1+n2}/${d}`;const fds=[...new Set([`${n1+n2}/${d*2}`,`${n1+n2+1}/${d}`,`${n1*n2}/${d}`,`${Math.max(1,n1+n2-1)}/${d}`,`${n1+n2}/${d+1}`])].filter(x=>x!==fans).slice(0,3);return fi(`${n1}/${d} + ${n2}/${d} = ?`,`${n1}/${d} plus ${n2}/${d}?`,fans,fds,
       [`🔑 分母 = 切法。切法相同,只加「拿的份數」。`,`① 份數相加:${n1} + ${n2} = ${n1+n2}。`,`② 切法不變:分母仍是 ${d} → ${n1+n2}/${d}。`,`⚠ 最常見的錯:把分母也加起來(${d}+${d}=${d*2})——那等於改變了切法!`,`EN: Same slice size — add only the counts, never the denominators.`])},
     ()=>{const w=ri(3,12),h=ri(3,12);return fi(`長 ${w}、寬 ${h} 公分的長方形,面積是多少平方公分?`,`Area of a ${w} by ${h} rectangle?`,w*h,nearNums(w*h,10),
       [`🔑 面積 = 數 1×1 小方塊:每排 ${w} 塊、共 ${h} 排。`,`① ${w} × ${h} = ${w*h} 平方公分。`,`✔ 換方向數:${h} × ${w} = ${w*h},一樣 ✓(乘法交換律!)`,`EN: Count unit squares: ${w} per row times ${h} rows.`])},
@@ -245,6 +263,12 @@ const MATH_GEN = {
     ()=>{const r=ri(2,6);const d=r*2;return fi(`看圖的圓,半徑是 ${r} 公分。直徑是多少公分?`,`This circle has radius ${r} cm. What is the diameter?`,d,nearNums(d,3),
       [`🔑 直徑 = 半徑 × 2(直徑穿過圓心,是半徑的兩倍)。`,`① ${r} × 2 = ${d} 公分。`,`✔ 反過來:半徑 = 直徑 ÷ 2 = ${r} ✓`,`EN: Diameter = radius × 2.`],
       GEO.circle(r,`r=${r}`))},
+    ()=>{const t=pick([[5,'五'],[6,'六'],[8,'八']]);const s=ri(3,9);const pts=Array.from({length:t[0]},(_,i)=>{const a=-Math.PI/2+i*2*Math.PI/t[0];return `${(60+32*Math.cos(a)).toFixed(1)},${(50+32*Math.sin(a)).toFixed(1)}`}).join(' ');return fi(`看圖:正${t[1]}邊形每邊 ${s} 公分。周長是多少公分?`,`A regular ${t[0]}-gon with side ${s} cm. Find the perimeter.`,t[0]*s,nearNums(t[0]*s,6),
+      [`🔑 「正」多邊形=每邊等長:周長 = 邊長 × 邊數。`,`① ${s} × ${t[0]} = ${t[0]*s} 公分。`,`✔ 和正方形同一條規則,只是邊數不同——規則會遷移!`,`EN: Regular polygon perimeter = side × number of sides.`],
+      SVG(`<polygon points="${pts}" class="gshape"/>`+gLabel(60,14,s+' cm')))},
+    ()=>{const W=ri(8,12),H=ri(6,10),w=ri(3,W-3),h=ri(2,H-3);return fi(`看圖的相框:外框 ${W}×${H},中間挖掉 ${w}×${h} 的洞。框的面積(灰色部分)是多少?`,`A frame: outer ${W}×${H} minus an inner ${w}×${h} hole. Find the frame area.`,W*H-w*h,nearNums(W*H-w*h,10),
+      [`🔑 挖洞問題:大面積 − 小面積 = 剩下的。`,`① 外框:${W} × ${H} = ${W*H}。`,`② 洞:${w} × ${h} = ${w*h}。`,`③ 相減:${W*H} − ${w*h} = ${W*H-w*h}。`,`💡 「補」與「挖」是複合圖形的兩把刀:加法拼、減法挖。`,`EN: Frame area = outer area minus the hole.`],
+      SVG(`<rect x="14" y="20" width="96" height="64" class="gshape"/><rect x="38" y="38" width="46" height="30" style="fill:var(--paper);stroke:var(--cobalt);stroke-width:2"/>`+gLabel(62,16,`${W}×${H}`)+gLabel(62,55,`${w}×${h}`)))},
   ],
   5:[
     ()=>{const pairs=[[2,4],[3,6],[2,6],[4,8],[3,9],[2,8]];const [d1,d2]=pick(pairs);const n2=ri(1,d2-1);const L=d2;const s=`${L/d1+n2}/${L}`;return fi(`1/${d1} + ${n2}/${d2} = ?`,`1/${d1} plus ${n2}/${d2}?`,s,[`${1+n2}/${d1+d2}`,`${n2}/${L}`,`${L/d1+n2+1}/${L}`],
@@ -279,6 +303,12 @@ const MATH_GEN = {
     ()=>{const l=ri(2,5),w=ri(2,5),h=ri(2,5);const faces=2*(l*w+l*h+w*h);return fi(`看圖的長方體,長 ${l}、寬 ${w}、高 ${h}。表面積(六個面加起來)是多少?`,`This box is ${l}×${w}×${h}. Find the total surface area of all 6 faces.`,faces,nearNums(faces,15),
       [`🔑 表面積=六個面,但只要算三種面各一個,再×2。`,`① 三種面:${l}×${w}=${l*w}、${l}×${h}=${l*h}、${w}×${h}=${w*h}。`,`② 相加再×2:(${l*w}+${l*h}+${w*h})×2 = ${faces}。`,`💡 每種面都有「前後/左右/上下」兩個一樣的,所以×2。`,`EN: Surface area = 2×(lw + lh + wh).`],
       SVG(`<polygon points="24,44 64,44 64,80 24,80" class="gshape"/><polygon points="24,44 40,28 80,28 64,44" class="gtop"/><polygon points="64,44 80,28 80,64 64,80" class="gside"/>`+gLabel(40,92,`${l}`)+gLabel(74,74,`${w}`)+gLabel(14,64,`${h}`),'0 0 100 100'))},
+    ()=>{const l=ri(2,6),w=ri(2,6),h=ri(2,6);const sa=2*(l*w+l*h+w*h);return fi(`看圖的長方體:長 ${l}、寬 ${w}、高 ${h} 公分。六個面的表面積總共是多少平方公分?`,`Box ${l}×${w}×${h}: find the total surface area of all six faces.`,sa,nearNums(sa,15),
+      [`🔑 表面積:三種面各有一對 → 2×(長×寬 + 長×高 + 寬×高)。`,`① 上下:${l}×${w}=${l*w};前後:${l}×${h}=${l*h};左右:${w}×${h}=${w*h}。`,`② 相加:${l*w}+${l*h}+${w*h}=${l*w+l*h+w*h}。`,`③ 成對 ×2:${sa} 平方公分。`,`⚠ 別和體積(${l*w*h})搞混:表面積是「包起來要多少紙」。`,`EN: Surface area = 2(lw + lh + wh) — the wrapping paper, not the space inside.`],
+      SVG(`<polygon points="24,44 64,44 64,80 24,80" class="gshape"/><polygon points="24,44 40,28 80,28 64,44" class="gtop"/><polygon points="64,44 80,28 80,64 64,80" class="gside"/>`+gLabel(44,92,l)+gLabel(76,74,w)+gLabel(14,64,h),'0 0 100 100'))},
+    ()=>{const b=ri(4,12),h=ri(2,8)*2;const A=b*h/2;return fi(`看圖的三角形:面積 ${A} 平方公分,底 ${b} 公分。高是多少公分?`,`Triangle area ${A} sq cm with base ${b} cm. Find the height.`,h,nearNums(h,4),
+      [`🔑 面積 = 底 × 高 ÷ 2 → 高 = 面積 × 2 ÷ 底(逆運算兩步)。`,`① ${A} × 2 = ${A*2}。`,`② ${A*2} ÷ ${b} = ${h} 公分。`,`✔ 驗算:${b} × ${h} ÷ 2 = ${A} ✓`,`EN: Height = area × 2 ÷ base — undo the halving first.`],
+      GEO.rtri(`${b} cm`,`?`).replace('</svg>',gLabel(62,40,`面積 ${A}`)+'</svg>'))},
   ],
   6:[
     ()=>{const k=ri(2,6),a=ri(2,9),b=ri(2,9);return fi(`${a}:${b} = ${a*k}:?`,`${a}:${b} equals ${a*k}:what?`,b*k,nearNums(b*k,6),
@@ -313,6 +343,12 @@ const MATH_GEN = {
     ()=>{const base=ri(4,10),h=ri(3,8);const tri=base*h/2;return fi(`看圖:一個底 ${base}、高 ${h} 的三角形,和一個長 ${base}、寬 ${h} 的長方形。三角形面積是長方形的幾分之幾?(用分數)`,`A triangle (base ${base}, height ${h}) sits beside a rectangle (${base}×${h}). The triangle's area is what fraction of the rectangle?`,'1/2',['1/3','1/4','2/3'],
       [`🔑 同底同高時,三角形面積永遠是長方形的一半。`,`① 長方形:${base}×${h} = ${base*h}。`,`② 三角形:${base}×${h}÷2 = ${tri},剛好一半。`,`✔ 這就是三角形面積公式「÷2」的來源。`,`EN: Same base and height: triangle is always half the rectangle.`],
       SVG(`<rect x="12" y="30" width="44" height="46" class="gshape"/><polygon points="64,76 108,76 64,30" class="gshape"/>`+gLabel(34,90,`${base}`)+gLabel(86,90,`${base}`)))},
+    ()=>{const r=ri(2,5),R=r+ri(2,4);const A=Math.round(314*(R*R-r*r))/100;return fi(`看圖的圓環(甜甜圈):外圓半徑 ${R}、內圓半徑 ${r} 公分。圓環面積是多少?(圓周率 3.14)`,`An annulus with outer radius ${R} and inner radius ${r}. Find its area. (π=3.14)`,A,[Math.round(314*(R-r)*(R-r))/100,Math.round(314*R*R)/100,Math.round(314*(R*R+r*r))/100],
+      [`🔑 圓環 = 大圓 − 小圓(挖洞法用在圓上)。`,`① 大圓:3.14 × ${R}² = ${Math.round(314*R*R)/100}。`,`② 小圓:3.14 × ${r}² = ${Math.round(314*r*r)/100}。`,`③ 相減:${A} 平方公分。`,`⚠ 陷阱:不能先算 (${R}−${r})² ——「差的平方」不等於「平方的差」!`,`EN: Annulus = big circle minus small circle; never square the difference.`],
+      SVG(`<circle cx="60" cy="50" r="38" class="gshape"/><circle cx="60" cy="50" r="${Math.round(38*r/R)}" style="fill:var(--paper);stroke:var(--cobalt);stroke-width:2"/>`+gLabel(60,10,`R=${R}`)+gLabel(60,54,`r=${r}`)))},
+    ()=>{const r=ri(2,5),h=ri(4,9);const w=2*r;const A=Math.round((w*h+314*r*r/2)*100)/100;return fi(`看圖的「門形」:下面是 ${w}×${h} 的長方形,上面加一個半徑 ${r} 的半圓。總面積是多少?(圓周率 3.14)`,`A door shape: a ${w}×${h} rectangle topped by a semicircle of radius ${r}. Total area? (π=3.14)`,A,[Math.round((w*h+314*r*r)*100)/100,Math.round((w*h)*100)/100,Math.round((w*h+157*r)*100)/100],
+      [`🔑 組合圖形:長方形 + 半圓,分開算再相加。`,`① 長方形:${w} × ${h} = ${w*h}。`,`② 半圓:3.14 × ${r}² ÷ 2 = ${Math.round(314*r*r/2)/100}。`,`③ 相加:${A} 平方公分。`,`✔ 檢查:半圓直徑 ${2*r} 剛好等於長方形的寬 ${w},拼得起來 ✓`,`EN: Split into rectangle plus half circle, then add.`],
+      SVG(`<rect x="32" y="42" width="56" height="44" class="gshape"/><path d="M32,42 A28,28 0 0,1 88,42" class="gshape"/>`+gLabel(60,96,`${w}`)+gLabel(98,66,`${h}`)+gLabel(60,30,`r=${r}`)))},
   ],
 };
 function genMath(level,n){return Array.from({length:n},()=>pick(MATH_GEN[level])())}
