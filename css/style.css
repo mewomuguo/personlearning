@@ -471,3 +471,16 @@
   .fillresult{margin-top:10px;padding:10px 14px;border-radius:10px;font-weight:900;font-size:15px}
   .fillresult.ok{background:var(--moss-bg);color:var(--moss)}
   .fillresult.bad{background:var(--cinnabar-bg);color:var(--cinnabar)}
+  /* ── 幾何圖形 ── */
+  .geobox{display:flex;justify-content:center;margin:4px 0 14px;
+    background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:12px}
+  .geosvg{width:100%;max-width:260px;height:auto}
+  .gshape{fill:rgba(39,87,201,.14);stroke:var(--cobalt);stroke-width:2;stroke-linejoin:round}
+  .gtop{fill:rgba(39,87,201,.22);stroke:var(--cobalt);stroke-width:2}
+  .gside{fill:rgba(39,87,201,.08);stroke:var(--cobalt);stroke-width:2}
+  .gline{stroke:var(--cobalt);stroke-width:2}
+  .gdash{stroke:var(--cobalt);stroke-width:1.5;stroke-dasharray:4 3}
+  .gang{fill:none;stroke:var(--cinnabar);stroke-width:2}
+  .gright{fill:none;stroke:var(--cinnabar);stroke-width:1.6}
+  .gdot{fill:var(--cobalt)}
+  .glab{fill:var(--ink);font-size:9px;font-weight:800;font-family:inherit;text-anchor:middle}
