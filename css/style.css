@@ -484,3 +484,22 @@
   .gright{fill:none;stroke:var(--cinnabar);stroke-width:1.6}
   .gdot{fill:var(--cobalt)}
   .glab{fill:var(--ink);font-size:9px;font-weight:800;font-family:inherit;text-anchor:middle}
+
+/* ═══ 資料保險箱 Data Vault ═══ */
+.vault{margin-top:28px;border:1.5px solid var(--line,#d8d2c4);border-radius:14px;
+  padding:16px 18px;background:var(--card,#fffdf7)}
+.vault-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.vault-icon{font-size:1.6rem;line-height:1}
+.vault-head h3{margin:0 0 4px;font-size:1.02rem}
+.vault-head p{margin:0;font-size:.84rem;opacity:.78;line-height:1.55}
+.vault-row{display:flex;flex-wrap:wrap;gap:8px}
+.vault-paste{margin-top:10px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.vault-ta{width:100%;box-sizing:border-box;font-family:ui-monospace,monospace;font-size:.78rem;
+  border:1.5px solid var(--line,#d8d2c4);border-radius:10px;padding:10px;background:#fff;resize:vertical}
+.vault-msg{margin:10px 0 0;font-size:.86rem;font-weight:700}
+.vault-meta{margin:8px 0 0;font-size:.78rem;opacity:.6}
+.backup-hint{margin:18px auto 0;max-width:640px;text-align:center;cursor:pointer;
+  font-size:.85rem;font-weight:700;padding:10px 14px;border-radius:12px;
+  border:1.5px dashed var(--cinnabar,#b3402a);color:var(--cinnabar,#b3402a);
+  background:var(--cinnabar-bg,#fbeee9)}
+.backup-hint:hover{filter:brightness(.97)}

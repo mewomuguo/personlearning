@@ -417,7 +417,7 @@ const DEFAULT={
   pets:[], activePet:null, petData:{}, best:{match:null,storm:0,defense:0},
   farm:{coins:0,seeds:0,plots:[],harvested:0},
   subjects:{hanzi:{level:1},math:{level:1},science:{level:3}},
-  engHints:true,
+  engHints:true, lastBackup:'',
 };
 function load(){try{return {...DEFAULT,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...DEFAULT}}}
 function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
@@ -487,6 +487,10 @@ function App(){
   /* 今日之字:用日期挑選,每天固定一個 */
   const dayChar=ALL_CHARS[new Date().getDate()%ALL_CHARS.length];
 
+  /* 備份提醒:有一定進度,且從未備份或距上次備份超過 14 天 */
+  const needBackup=(state.totalXp||0)>=100&&
+    (!state.lastBackup||Date.now()-new Date(state.lastBackup).getTime()>14*864e5);
+
   return (
     <div className="wrap">
       <header>
@@ -533,7 +537,14 @@ function App(){
         <PlayPage state={state} actions={actions} goHome={()=>setView({page:'home'})}/>}
 
       {view.page==='progress'&&
-        <ProgressPage state={state} goHome={()=>setView({page:'home'})}/>}
+        <ProgressPage state={state} goHome={()=>setView({page:'home'})}
+          importSave={s=>setState({...DEFAULT,...s})}
+          markBackup={()=>up(s=>{s.lastBackup=new Date().toISOString()})}/>}
+
+      {needBackup&&view.page!=='progress'&&
+        <div className="backup-hint" onClick={()=>setView({page:'progress'})}>
+          💾 {state.lastBackup?'距離上次備份超過兩週':'你的進度還沒備份過'}──點我打開「資料保險箱」保存進度 / Tap to back up your progress
+        </div>}
 
       <footer className="foot">{BUILD_INFO}</footer>
     </div>
@@ -1470,7 +1481,116 @@ function FarmGame({farm,hanziLv,mathLv,update,exit}){
 }
 
 /* ── 進度頁:印章牆 ── */
-function ProgressPage({state,goHome}){
+/* ── 資料保險箱:匯出/匯入(MASTER_HANDOFF §7.2 資產保險)── */
+function buildBackup(state){
+  return JSON.stringify({app:'logic-lab',format:1,
+    version:(typeof CONTENT_VERSION!=='undefined'?CONTENT_VERSION:''),
+    exportedAt:new Date().toISOString(),save:state},null,2);
+}
+function parseBackup(text){
+  const obj=JSON.parse(text);
+  const s=(obj&&obj.app==='logic-lab'&&obj.save)?obj.save:obj;
+  const hasXp=s&&(typeof s.totalXp==='number'||typeof s.xp==='number');
+  if(!s||typeof s!=='object'||!hasXp||!s.subjects)throw new Error('invalid backup');
+  return {save:{...DEFAULT,...s},exportedAt:(obj&&obj.exportedAt)||''};
+}
+function BackupVault({state,importSave,markBackup}){
+  const fileRef=useRef(null);
+  const [msg,setMsg]=useState('');
+  const [pasteOpen,setPasteOpen]=useState(false);
+  const [pasteText,setPasteText]=useState('');
+
+  const doExport=()=>{
+    const blob=new Blob([buildBackup(state)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`logic-lab-backup-${today()}.json`;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
+    markBackup();
+    setMsg('✅ 備份檔已下載!請存到雲端硬碟或傳給自己一份。 / Backup downloaded — keep a copy somewhere safe.');
+  };
+  const doCopy=()=>{
+    const text=buildBackup(state);
+    const done=()=>{markBackup();
+      setMsg('✅ 已複製備份文字!貼到記事本或訊息裡保存。 / Copied — paste it into a note to keep it.');};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
+    }else fallbackCopy(text,done);
+  };
+  const fallbackCopy=(text,done)=>{
+    const ta=document.createElement('textarea');ta.value=text;
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.focus();ta.select();
+    try{document.execCommand('copy');done();}
+    catch(e){setMsg('❌ 複製失敗,請改用「匯出備份檔」。 / Copy failed — please use Export instead.');}
+    ta.remove();
+  };
+  const applyText=text=>{
+    try{
+      const {save:s,exportedAt}=parseBackup(text);
+      const ok=window.confirm(
+        `即將用備份覆蓋目前進度:\n`
+        +`目前累積 XP:${state.totalXp||0} → 備份累積 XP:${s.totalXp||0}\n`
+        +`目前印章:${(state.seals||[]).length} → 備份印章:${(s.seals||[]).length}\n`
+        +(exportedAt?`備份時間:${String(exportedAt).slice(0,10)}\n`:'')
+        +`\n確定要還原嗎?目前的進度會被取代。`);
+      if(!ok){setMsg('已取消還原,目前進度保持不變。 / Restore cancelled.');return;}
+      importSave(s);setPasteOpen(false);setPasteText('');
+      setMsg('✅ 還原完成!進度已載回。 / Restored — your progress is back.');
+    }catch(e){
+      setMsg('❌ 這不是有效的備份內容,請確認檔案或文字是否完整。 / Not a valid backup — please check the file or text.');
+    }
+  };
+  const onFile=e=>{
+    const f=e.target.files&&e.target.files[0];
+    if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>applyText(String(r.result));
+    r.readAsText(f);
+    e.target.value='';
+  };
+  const days=state.lastBackup
+    ?Math.floor((Date.now()-new Date(state.lastBackup).getTime())/864e5):null;
+
+  return (
+    <div className="vault">
+      <div className="vault-head">
+        <span className="vault-icon">💾</span>
+        <div>
+          <h3>資料保險箱 · Data Vault</h3>
+          <p>進度存在「這台裝置的這個瀏覽器」裡;換裝置或清除快取就會歸零。
+            定期匯出備份=幫神獸和印章買保險。
+            / Progress lives in this browser only — export a backup so nothing is ever lost.</p>
+        </div>
+      </div>
+      <div className="vault-row">
+        <button className="btn solid" onClick={doExport}>⬇ 匯出備份檔 Export</button>
+        <button className="btn" onClick={doCopy}>📋 複製備份文字 Copy</button>
+        <button className="btn" onClick={()=>fileRef.current&&fileRef.current.click()}>⬆ 匯入檔案還原 Import</button>
+        <button className="btn" onClick={()=>{setPasteOpen(o=>!o);setMsg('')}}>📝 貼上文字還原 Paste</button>
+        <input ref={fileRef} type="file" accept=".json,.txt,application/json,text/plain"
+          style={{display:'none'}} onChange={onFile}/>
+      </div>
+      {pasteOpen&&
+        <div className="vault-paste">
+          <textarea className="vault-ta" rows={5} value={pasteText}
+            placeholder={'把之前複製的備份文字整段貼在這裡… / Paste your backup text here…'}
+            onChange={e=>setPasteText(e.target.value)}/>
+          <button className="btn solid" disabled={!pasteText.trim()}
+            onClick={()=>applyText(pasteText)}>還原這份備份 Restore</button>
+        </div>}
+      {msg&&<p className="vault-msg">{msg}</p>}
+      <p className="vault-meta">
+        {state.lastBackup
+          ?`上次備份:${state.lastBackup.slice(0,10)}(${days} 天前) / Last backup ${days} day(s) ago`
+          :'還沒有備份過。 / No backup yet.'}
+      </p>
+    </div>
+  );
+}
+
+function ProgressPage({state,goHome,importSave,markBackup}){
   return (
     <div style={{'--ac':'var(--cinnabar)'}}>
       <button className="back" onClick={goHome}>← 回基地</button>
@@ -1490,6 +1610,7 @@ function ProgressPage({state,goHome}){
             <div key={i} className="seal-mini kai" title={`${SUBJECTS[x.subject].name} · ${x.date}`}>{x.ch}</div>
           ))}
         </div>}
+      <BackupVault state={state} importSave={importSave} markBackup={markBackup}/>
     </div>
   );
 }
