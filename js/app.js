@@ -90,13 +90,13 @@ function nearNums(ans,spread){
 }
 
 /* ── 數學題型地圖(科目頁顯示)── */
-const MATH_TOPICS={
-  1:['20 以內加減 Add and subtract within 20','比大小 Compare numbers','數列偵探 Sequence detective','逆向工程 Find the missing number','生活應用題 Word problems','🏆 奧數:排隊陷阱 Line-up trap','🏆 奧數:圖形週期 Shape cycles','錢幣計算 Coin counting','兩步驟推理 Two-step stories','📐 幾何:數方格 Count squares','📐 幾何:正方形周長 Square perimeter','📐 幾何:數邊形 Count sides','📐 幾何:長度比較 Compare lengths'],
-  2:['二位數加減 Two-digit add and subtract','九九乘法 Times tables','倍增數列 Doubling sequences','買東西 Money problems','乘法逆向 Reverse multiplication','🏆 奧數:植樹問題 Fencepost problem','🏆 奧數:數字偵探 Digit detective','平分問題 Equal sharing','單位換算 Unit conversion','📐 幾何:三角形內角 Triangle angles','📐 幾何:三角形面積 Triangle area','📐 幾何:長方形面積 Rectangle area','📐 幾何:長方形周長 Rectangle perimeter','📐 幾何:拼圖組合 Shape combining','📐 幾何:周長逆推 Reverse perimeter'],
-  3:['乘除運算 Multiply and divide','分數入門 Fraction basics','餘數偵探 Remainder detective','時間計算 Time math','周長 Perimeter','🏆 奧數:雞兔同籠 Chickens and rabbits','🏆 奧數:星期週期 Weekday cycles','三位數計算 Three-digit math','單位換算 Unit conversion','📐 幾何:面積逆推 Reverse area','📐 幾何:等腰三角形 Isosceles angles'],
-  4:['多位數乘法 Multi-digit multiplication','同分母分數 Same-denominator fractions','面積 Area','三角形內角 Triangle angles','小數加法 Decimal addition','遞增數列 Accelerating sequences','🏆 奧數:高斯求和 Gauss summation','🏆 奧數:和差問題 Sum and difference','倍數關係 Times-as-many','小數減法 Decimal subtraction','📐 幾何:複合面積 Compound area','📐 幾何:補角 Supplementary angles','📐 幾何:正多邊形 Regular polygons','📐 幾何:相框挖洞 Frame area'],
-  5:['異分母分數 Unlike fractions','小數運算 Decimals','體積 Volume','因數偵探 Factor detective','最小公倍數 LCM','分數乘法 Fraction times whole','🏆 奧數:鴿籠原理 Pigeonhole principle','🏆 奧數:平均逆推 Reverse averages','最大公因數 GCF','小數除法 Decimal division','📐 幾何:長方體體積 Box volume','📐 幾何:圓周長 Circumference','📐 幾何:表面積 Surface area','📐 幾何:高的逆推 Solve for height'],
-  6:['比與比值 Ratios','速率 Speed','分數小數互換 Fractions to decimals','百分率 Percentages','圓周長 Circumference','未知數方程 Solve for x','🏆 奧數:工程問題 Work-rate problems','🏆 奧數:費波那契 Fibonacci detective','圓面積 Circle area','速率反推 Solve for time','📐 幾何:圓面積 Circle area','📐 幾何:平行四邊形 Parallelogram','📐 幾何:圓環面積 Annulus','📐 幾何:門形組合 Door shapes'],
+const MATH_TOPICS={ /* v21 起與 MATH_GEN 逐索引對齊:MATH_TOPICS[lv][i] = MATH_GEN[lv][i] 的題型名(復仇戰依索引重生成) */
+  1:['20 以內加法 Add within 20','20 以內減法 Subtract within 20','比大小 Compare numbers','數列偵探 Sequence detective','逆向工程 Find the missing number','生活應用題 Word problems','🏆 奧數:排隊陷阱 Line-up trap','🏆 奧數:圖形週期 Shape cycles','錢幣計算 Coin counting','兩步驟推理 Two-step stories','📐 幾何:數方格 Count squares','📐 幾何:正方形周長 Square perimeter','📐 幾何:數邊形 Count sides','📐 幾何:方格陣列 Square grids','📐 幾何:多邊形偵探 Polygon detective','📐 幾何:長度比較 Compare lengths'],
+  2:['二位數加法 Two-digit addition','二位數減法 Two-digit subtraction','九九乘法 Times tables','倍增數列 Doubling sequences','買東西 Money problems','乘法逆向 Reverse multiplication','🏆 奧數:植樹問題 Fencepost problem','🏆 奧數:數字偵探 Digit detective','平分問題 Equal sharing','單位換算 Unit conversion','📐 幾何:長方形面積 Rectangle area','📐 幾何:長方形周長 Rectangle perimeter','📐 幾何:平角拆解 Angles on a line','📐 幾何:面積成長 Growing area','📐 幾何:拼圖組合 Shape combining','📐 幾何:周長逆推 Reverse perimeter'],
+  3:['乘法運算 Multiplication','除法運算 Division','分數入門 Fraction basics','餘數偵探 Remainder detective','時間計算 Time math','周長 Perimeter','🏆 奧數:雞兔同籠 Chickens and rabbits','🏆 奧數:星期週期 Weekday cycles','三位數計算 Three-digit math','單位換算 Unit conversion','📐 幾何:三角形內角 Triangle angles','📐 幾何:三角形面積 Triangle area','📐 幾何:梯形面積 Trapezoid area','📐 幾何:正三角形周長 Equilateral perimeter','📐 幾何:面積逆推 Reverse area','📐 幾何:等腰三角形 Isosceles angles'],
+  4:['多位數乘法 Multi-digit multiplication','同分母分數 Same-denominator fractions','面積 Area','三角形內角 Triangle angles','小數加法 Decimal addition','遞增數列 Accelerating sequences','🏆 奧數:高斯求和 Gauss summation','🏆 奧數:和差問題 Sum and difference','倍數關係 Times-as-many','小數減法 Decimal subtraction','📐 幾何:複合面積 Compound area','📐 幾何:補角 Supplementary angles','📐 幾何:對稱鏡射 Mirror symmetry','📐 幾何:半徑與直徑 Radius and diameter','📐 幾何:正多邊形 Regular polygons','📐 幾何:相框挖洞 Frame area'],
+  5:['異分母分數 Unlike fractions','小數運算 Decimals','體積 Volume','因數偵探 Factor detective','最小公倍數 LCM','分數乘法 Fraction times whole','🏆 奧數:鴿籠原理 Pigeonhole principle','🏆 奧數:平均逆推 Reverse averages','最大公因數 GCF','小數除法 Decimal division','📐 幾何:長方體體積 Box volume','📐 幾何:圓周長 Circumference','📐 幾何:扇形分數 Sector fractions','📐 幾何:表面積 Surface area','📐 幾何:表面積 II Surface area II','📐 幾何:高的逆推 Solve for height'],
+  6:['比與比值 Ratios','速率 Speed','分數小數互換 Fractions to decimals','百分率 Percentages','圓周長 Circumference','未知數方程 Solve for x','🏆 奧數:工程問題 Work-rate problems','🏆 奧數:費波那契 Fibonacci detective','圓面積 Circle area','速率反推 Solve for time','📐 幾何:看圖圓面積 Circle area drills','📐 幾何:平行四邊形 Parallelogram','📐 幾何:座標尋寶 Coordinate hunt','📐 幾何:面積比較 Area ratios','📐 幾何:圓環面積 Annulus','📐 幾何:門形組合 Door shapes'],
 };
 
 /* ── 出題引擎:每級 6 種生成器,「為什麼」全雙語 ── */
@@ -351,7 +351,16 @@ const MATH_GEN = {
       SVG(`<rect x="32" y="42" width="56" height="44" class="gshape"/><path d="M32,42 A28,28 0 0,1 88,42" class="gshape"/>`+gLabel(60,96,`${w}`)+gLabel(98,66,`${h}`)+gLabel(60,30,`r=${r}`)))},
   ],
 };
-function genMath(level,n){return Array.from({length:n},()=>pick(MATH_GEN[level])())}
+function genMath(level,n){
+  const gens=MATH_GEN[level]||[];
+  return Array.from({length:n},()=>{
+    const i=Math.floor(Math.random()*gens.length);
+    const q=gens[i]();
+    q.fp=`m:${level}:${i}`;
+    q.topic=(MATH_TOPICS[level]||[])[i]||'';
+    return q;
+  });
+}
 
 /* ── 漢字出題:四種題型,題目與選項皆漢英對照 ── */
 function genHanzi(level,n){
@@ -373,27 +382,27 @@ function genHanzi(level,n){
         ...insiders.map(x=>({t:x.c,sub:x.en,now:true})),
         {t:out.c,sub:out.en,now:true},
       ]);
-      qs.push({q:`「${fam.f}」家族裡混進了一個臥底,把它抓出來!`,
+      qs.push({fp:`hf:${fam.f}`,q:`「${fam.f}」家族裡混進了一個臥底,把它抓出來!`,
         en:`An undercover agent sneaked into the "${fam.fe}" family. Catch it!`,
         options:opts,ansV:out.c,big:true,
         why:`${out.c}(${out.en})來自「${out.f}」家族。本族規則:${fam.rule} / ${out.c} belongs to the "${out.fe}" family. This family rule: ${fam.re}`});
     }else if(type===1){
       /* 讀音 */
       const zyPool=shuffle([...new Set(pool.map(o=>o.zy))].filter(z=>z!==h.zy)).slice(0,3);
-      qs.push({q:`「${h.c}」怎麼唸?`,en:`How do you pronounce 「${h.c}」?`,
+      qs.push({fp:`h:${h.c}`,q:`「${h.c}」怎麼唸?`,en:`How do you pronounce 「${h.c}」?`,
         options:shuffle([h.zy,...zyPool]),ansV:h.zy,
         why:`${h.c}(${h.zy})= ${h.en}。詞語 Word:${h.w} = ${h.we}`});
     }else if(type===2){
       /* 意思 → 字(英文線索在作答後揭曉,避免直接洩題)*/
       const others=shuffle(pool.filter(x=>x.c!==h.c&&x.en!==h.en)).slice(0,3);
       const opts=shuffle([h,...others]).map(x=>({t:x.c,sub:x.en,late:true}));
-      qs.push({q:`哪個字的意思是「${h.en}」?`,en:`Which character means "${h.en}"?`,
+      qs.push({fp:`h:${h.c}`,q:`哪個字的意思是「${h.en}」?`,en:`Which character means "${h.en}"?`,
         options:opts,ansV:h.c,big:true,
         why:`${h.c} = ${h.en}。詞語 Word:${h.w} = ${h.we}`});
     }else{
       /* 字 → 意思(選項為英文)*/
       const others=shuffle([...new Set(pool.map(x=>x.en))].filter(e=>e!==h.en)).slice(0,3);
-      qs.push({q:`「${h.c}」是什麼意思?`,en:`What does 「${h.c}」 mean?`,
+      qs.push({fp:`h:${h.c}`,q:`「${h.c}」是什麼意思?`,en:`What does 「${h.c}」 mean?`,
         options:shuffle([h.en,...others]),ansV:h.en,
         why:`${h.c}(${h.zy})= ${h.en}。詞語 Word:${h.w} = ${h.we}`});
     }
@@ -404,7 +413,7 @@ function genHanzi(level,n){
 /* ── 自然出題:抽取該等級所有概念的題庫 ── */
 function genSci(level,n){
   const units=SCI[level]||[];
-  const bank=units.flatMap(u=>u.qs.map(q=>({...q})));
+  const bank=units.flatMap((u,ui)=>u.qs.map((q,qi)=>({...q,fp:`s:${level}:${ui}:${qi}`})));
   return shuffle(bank).slice(0,Math.min(n,bank.length));
 }
 
@@ -418,10 +427,53 @@ const DEFAULT={
   farm:{coins:0,seeds:0,plots:[],harvested:0},
   subjects:{hanzi:{level:1},math:{level:1},science:{level:3}},
   engHints:true, lastBackup:'',
+  ledger:{v:1,items:{},days:{},recent:{}},
 };
 function load(){try{return {...DEFAULT,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...DEFAULT}}}
 function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
 const today=()=>new Date().toISOString().slice(0,10);
+
+/* ── mastery ledger(MASTER_HANDOFF §7.1):每題一筆,三路聚合 ──
+   items[指紋]={s:科目,ok:答對次數,no:答錯次數,lw:最後答錯日,lc:最後答對日}
+   days[日期]={hanzi:[答題,答對],math:[…],science:[…]}   → 成長年輪
+   recent[科目]=最近 10 題 0/1                             → 自適應難度
+   聚合而非流水帳:大小有上界(指紋數×50B + 每日一筆),十年也撐得住 */
+function recordLedger(s,subject,results){
+  if(!s.ledger||typeof s.ledger!=='object')s.ledger={v:1,items:{},days:{},recent:{}};
+  const L=s.ledger;
+  L.items=L.items||{};L.days=L.days||{};L.recent=L.recent||{};
+  const t=today();
+  const d=L.days[t]||(L.days[t]={});
+  const cell=d[subject]||(d[subject]=[0,0]);
+  const r=L.recent[subject]||(L.recent[subject]=[]);
+  for(const x of (results||[])){
+    if(!x||!x.fp)continue;
+    const it=L.items[x.fp]||(L.items[x.fp]={s:subject,ok:0,no:0,lw:'',lc:''});
+    if(x.ok){it.ok+=1;it.lc=t}else{it.no+=1;it.lw=t}
+    cell[0]+=1;cell[1]+=x.ok?1:0;
+    r.push(x.ok?1:0);if(r.length>10)r.shift();
+  }
+}
+/* 帳本查詢:總覽統計(印章牆用;星圖/復仇戰/自適應之後都吃同一條脊椎) */
+function ledgerStats(state){
+  const L=state.ledger||{};
+  let q=0,ok=0,rivals=0;const lit=new Set();
+  for(const fp in (L.items||{})){
+    const it=L.items[fp];
+    q+=it.ok+it.no;ok+=it.ok;
+    if(fp.startsWith('h:')&&it.ok>0)lit.add(fp.slice(2));
+    if(it.lw&&(!it.lc||it.lw>it.lc))rivals+=1;
+  }
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const ds=new Date(Date.now()-i*864e5).toISOString().slice(0,10);
+    const rec=(L.days||{})[ds]||{};
+    let a=0,c=0;
+    for(const k in rec){a+=rec[k][0]||0;c+=rec[k][1]||0}
+    days.push({d:ds,a,c});
+  }
+  return {q,ok,lit:lit.size,rivals,days};
+}
 
 const SUBJECTS={
   hanzi:{name:'漢字解碼',glyph:'字',color:'var(--cinnabar)',bg:'var(--cinnabar-bg)',
@@ -448,8 +500,9 @@ function App(){
   const up=fn=>setState(s=>{const n=structuredClone(s);fn(n);return n});
 
   /* 完成一次衝刺:XP、連續天數、滿分蓋章 */
-  const finishSprint=(subject,score,total)=>{
+  const finishSprint=(subject,score,total,results)=>{
     up(s=>{
+      recordLedger(s,subject,results);
       s.xp+=score*10;
       s.totalXp=(s.totalXp||0)+score*10;
       const t=today();
@@ -530,7 +583,7 @@ function App(){
 
       {view.page==='sprint'&&
         <Sprint k={view.key} qs={view.qs} eng={state.engHints} pet={activePet}
-          onDone={(score)=>finishSprint(view.key,score,view.qs.length)}
+          onDone={(score,results)=>finishSprint(view.key,score,view.qs.length,results)}
           exit={()=>setView({page:'subject',key:view.key})}/>}
 
       {view.page==='play'&&
@@ -698,6 +751,7 @@ function Sprint({k,qs,eng,pet,onDone,exit}){
   const [done,setDone]=useState(false);
   const [val,setVal]=useState('');
   const [inputOk,setInputOk]=useState(null); // null=未作答 true/false=結果
+  const resultsRef=useRef([]); // mastery ledger:每題 {fp,ok}
   const q=qs[idx];
 
   /* 數值等價比對:接受分數與等值小數(3/4 = 0.75) */
@@ -710,11 +764,13 @@ function Sprint({k,qs,eng,pet,onDone,exit}){
   const submit=()=>{
     if(inputOk!==null||val.trim()==='')return;
     const ok=Math.abs(numVal(val)-numVal(q.answer))<1e-6;
+    resultsRef.current.push({fp:q.fp,ok:ok?1:0});
     setInputOk(ok);setPicked(-1); /* picked!==null 觸發詳解顯示 */
     if(ok)setScore(v=>v+1);
   };
   const choose=i=>{
     if(picked!==null)return;
+    resultsRef.current.push({fp:q.fp,ok:i===q.ans?1:0});
     setPicked(i);
     if(i===q.ans)setScore(v=>v+1);
   };
@@ -723,7 +779,7 @@ function Sprint({k,qs,eng,pet,onDone,exit}){
     else{
       const final=score; // score 已含本題
       setDone(true);
-      onDone(final);
+      onDone(final,resultsRef.current);
     }
   };
 
@@ -1590,6 +1646,41 @@ function BackupVault({state,importSave,markBackup}){
   );
 }
 
+/* ── 成長年輪:mastery ledger 的可見面板(星圖/復仇戰的前哨站)── */
+function LedgerPanel({state}){
+  const st=ledgerStats(state);
+  const max=Math.max(1,...st.days.map(d=>d.a));
+  const acc=st.q?Math.round(st.ok/st.q*100):0;
+  return (
+    <div className="ledger">
+      <h3>成長年輪 · Growth Rings</h3>
+      {st.q===0
+        ?<p className="empty">帳本還是空的──完成第一回合衝刺,年輪就開始生長。 / Finish a sprint and the rings start growing.</p>
+        :<div>
+          <div className="stat-row">
+            <div className="stat"><b className="num">{st.q}</b><span>累計答題 · Answered</span></div>
+            <div className="stat"><b className="num">{acc}%</b><span>正確率 · Accuracy</span></div>
+            <div className="stat"><b className="num">{st.lit}/{ALL_CHARS.length}</b><span>點亮漢字 · Lit chars</span></div>
+            <div className="stat"><b className="num">{st.rivals}</b><span>宿敵 · Rivals</span></div>
+          </div>
+          <div className="ldg-bars" aria-label="最近七天答題量">
+            {st.days.map(d=>(
+              <div key={d.d} className="ldg-col" title={`${d.d}:答 ${d.a} 題,對 ${d.c} 題`}>
+                <div className="ldg-bar">
+                  <i style={{height:`${Math.round(d.a/max*100)}%`}}>
+                    <b style={{height:d.a?`${Math.round(d.c/d.a*100)}%`:'0%'}}></b>
+                  </i>
+                </div>
+                <span>{d.d.slice(5).replace('-','/')}</span>
+              </div>
+            ))}
+          </div>
+          <p className="note">每答一題,帳本記一筆。點亮的字會成為「千字文星圖」的星星;答錯的題三天後將以「宿敵」身分回歸復仇戰──都吃這條脊椎。 / Every answer is recorded: lit characters will become stars, missed ones will return as rivals.</p>
+        </div>}
+    </div>
+  );
+}
+
 function ProgressPage({state,goHome,importSave,markBackup}){
   return (
     <div style={{'--ac':'var(--cinnabar)'}}>
@@ -1610,6 +1701,7 @@ function ProgressPage({state,goHome,importSave,markBackup}){
             <div key={i} className="seal-mini kai" title={`${SUBJECTS[x.subject].name} · ${x.date}`}>{x.ch}</div>
           ))}
         </div>}
+      <LedgerPanel state={state}/>
       <BackupVault state={state} importSave={importSave} markBackup={markBackup}/>
     </div>
   );
