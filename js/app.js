@@ -26,15 +26,6 @@ const shuffle=a=>{const x=[...a];for(let i=x.length-1;i>0;i--){const j=ri(0,i);[
    內容鐵則(v22):數學/自然每題詳解合計 >200 漢字,且必含英文說明。
    漢字題型不套用本合成器(其詳解維持原樣)。 */
 const HAN=s=>(String(s).match(/[\u4e00-\u9fff]/g)||[]).length;
-/* 分級學習提醒:每道數學題固定提供獨立的中英文段落。 */
-const MATH_CODA={
- 1:'👣 學習提醒:數學不是比誰算得快,而是比誰想得清楚。遇到不會的題,先把題目大聲讀一遍,把數字和它代表的東西對上,再慢慢動筆。算錯不可怕,可怕的是不知道自己哪裡錯——所以每題都留下思考的痕跡。 EN: Math rewards clear thinking over fast counting. Read the problem aloud, match each number to what it stands for, and leave a trace of your reasoning so mistakes can teach you.',
- 2:'👣 學習提醒:每一種算法背後都藏著一個「為什麼」。與其硬記步驟,不如問自己這一步在做什麼、為什麼可以這樣做。當你能對別人解釋清楚一題,才算真的懂了它。慢慢想,想通了就一輩子不會忘。 EN: Behind every method hides a reason. Instead of memorizing steps, ask what each step does and why it is allowed. You truly understand a problem only when you can explain it to someone else.',
- 3:'👣 學習提醒:數學像蓋房子,每一層都靠下面那層撐著。乘法穩了除法才穩,除法穩了分數才穩。如果某一步覺得卡,別跳過,回頭把下面那塊磚補牢。打好地基的人,爬得比誰都高。 EN: Math is like building a house where each floor rests on the one below. If a step feels shaky, go back and firm up the foundation instead of skipping ahead. Strong bases climb the highest.',
- 4:'👣 學習提醒:好的解題者會先問「這題在考什麼?」再動手。把複雜的問題拆成幾個熟悉的小問題,一個一個解決,難題就變成了簡單題的組合。這種拆解的眼光,比任何公式都值錢。 EN: Strong problem solvers first ask what a question is really testing, then split it into familiar smaller pieces solved one at a time. This decomposing gaze is worth more than any formula.',
- 5:'👣 學習提醒:遇到分數、小數、幾何,別急著背公式。先在紙上畫個圖、舉個小例子,讓抽象的符號變回看得見的東西。當你看得見一個規律為什麼成立,它就成了你的直覺,而不是負擔。 EN: With fractions, decimals and geometry, draw a picture or try a tiny example before reaching for a formula. When you can see why a rule holds, it becomes intuition instead of a burden.',
- 6:'👣 學習提醒:到了這個階段,數學開始用字母代表未知、用比例連結萬物。別怕抽象——每個符號都對應一個具體的想法。解完一題,回頭問「這個答案合理嗎?」用估算檢查,是高手保護自己的習慣。 EN: At this stage math uses letters for unknowns and ratios to link everything. Do not fear abstraction; each symbol maps to a concrete idea. After solving, ask whether the answer is reasonable and check by estimation.',
-};
 function enrichWhy(why,extra,coda){
   const base=Array.isArray(why)?why:[String(why)];
   const isEN=l=>String(l).trim().startsWith('EN:');
@@ -487,15 +478,6 @@ const MATH_GEN = {
       SVG(`<rect x="32" y="42" width="56" height="44" class="gshape"/><path d="M32,42 A28,28 0 0,1 88,42" class="gshape"/>`+gLabel(60,96,`${w}`)+gLabel(98,66,`${h}`)+gLabel(60,30,`r=${r}`)))},
   ],
 };
-// 在出題入口補齊提醒,讓練習、復仇戰與直接取題的遊戲使用相同內容。
-for(const [level,gens] of Object.entries(MATH_GEN)){
-  const [zh,en]=MATH_CODA[level].split(' EN: ');
-  MATH_GEN[level]=gens.map(generate=>()=>{
-    const q=generate();
-    q.why=[...q.why,zh,`EN: Learning reminder. ${en}`];
-    return q;
-  });
-}
 function genMath(level,n){
   const gens=MATH_GEN[level]||[];
   return Array.from({length:n},()=>{
