@@ -222,6 +222,49 @@
   .topicgrid{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
   .topicchip{background:var(--card);border:2px solid var(--line);border-left:5px solid var(--ac);
     border-radius:12px;padding:10px 16px;font-size:14px;font-weight:700}
+  .topicchip small{display:block;margin-top:3px;font-size:11px;color:var(--ink-soft);font-weight:900}
+  .topicchip.mastered{border-left-color:var(--moss);background:var(--moss-bg)}
+  .topicchip.rival{border-left-color:var(--cinnabar);background:var(--cinnabar-bg)}
+  .topicchip.seen{border-left-color:var(--sun);background:#fff8df}
+  .topicband{margin-top:18px}
+  .topicband h3{font-size:15px;font-weight:900;margin:0 0 8px;color:var(--ink)}
+  .mathdash{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+  .mathcoach{display:flex;justify-content:space-between;align-items:center;gap:14px;
+    background:var(--card);border:2px solid var(--line);border-left:6px solid var(--cobalt);
+    border-radius:var(--r);padding:16px 18px;margin:12px 0;flex-wrap:wrap}
+  .mathcoach.revenge{border-left-color:var(--cinnabar)}
+  .mathcoach b{font-size:16px;font-weight:900}
+  .mathcoach p{font-size:13px;color:var(--ink-soft);margin:5px 0 0}
+  .recentdots{display:flex;gap:5px;margin-top:10px}
+  .recentdots i{width:18px;height:8px;border-radius:999px;background:var(--line)}
+  .recentdots i.ok{background:var(--moss)}
+  .recentdots i.bad{background:var(--cinnabar)}
+  .recentdots i.empty{background:rgba(34,48,44,.12)}
+  .rivalgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin:12px 0 16px}
+  .rivalchip{background:var(--cinnabar-bg);border:2px solid rgba(200,67,47,.18);
+    border-radius:12px;padding:10px 12px;font-size:13px;display:grid;gap:2px}
+  .rivalchip b{color:var(--cinnabar);font-size:13px}
+  .rivalchip span{font-weight:900}
+  .rivalchip small{color:var(--ink-soft);font-weight:700}
+  .mathledger{border-left:6px solid var(--cobalt)}
+  .masterylist{display:grid;gap:8px;margin-top:12px}
+  .masteryrow{display:grid;grid-template-columns:42px 1fr minmax(70px,120px) 72px;gap:10px;
+    align-items:center;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;
+    padding:9px 12px;font-size:13px}
+  .masteryrow span{font-weight:900;color:var(--cobalt)}
+  .masteryrow b{font-size:13px;line-height:1.35}
+  .masteryrow i{height:8px;background:rgba(34,48,44,.1);border-radius:99px;overflow:hidden;font-style:normal}
+  .masteryrow i em{display:block;height:100%;background:var(--cobalt);border-radius:99px}
+  .masteryrow small{text-align:right;color:var(--ink-soft);font-weight:900}
+  .masteryrow.rival{background:var(--cinnabar-bg);border-color:rgba(200,67,47,.22)}
+  .masteryrow.rival span{color:var(--cinnabar)}
+  .masteryrow.rival i em{background:var(--cinnabar)}
+  @media(max-width:640px){
+    .mathcoach .btn{width:100%}
+    .masteryrow{grid-template-columns:34px 1fr 60px}
+    .masteryrow i{grid-column:2 / 4;width:100%}
+    .masteryrow small{text-align:left}
+  }
   .why-line{margin:5px 0;font-size:14.5px;line-height:1.6}
   .why-rule{font-weight:900;font-size:15px}
   .why-en{color:var(--ink-soft);font-style:italic;font-size:13.5px;border-top:1px dashed var(--line);padding-top:7px;margin-top:8px}

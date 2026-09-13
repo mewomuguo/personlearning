@@ -26,7 +26,7 @@ const shuffle=a=>{const x=[...a];for(let i=x.length-1;i>0;i--){const j=ri(0,i);[
    內容鐵則(v22):數學/自然每題詳解合計 >200 漢字,且必含英文說明。
    漢字題型不套用本合成器(其詳解維持原樣)。 */
 const HAN=s=>(String(s).match(/[\u4e00-\u9fff]/g)||[]).length;
-/* 分級「數學家提醒」尾段:當合成詳解不足 200 漢字時補上,兼具學習提醒與湊字雙重作用 */
+/* 分級學習提醒:每道數學題固定提供獨立的中英文段落。 */
 const MATH_CODA={
  1:'👣 學習提醒:數學不是比誰算得快,而是比誰想得清楚。遇到不會的題,先把題目大聲讀一遍,把數字和它代表的東西對上,再慢慢動筆。算錯不可怕,可怕的是不知道自己哪裡錯——所以每題都留下思考的痕跡。 EN: Math rewards clear thinking over fast counting. Read the problem aloud, match each number to what it stands for, and leave a trace of your reasoning so mistakes can teach you.',
  2:'👣 學習提醒:每一種算法背後都藏著一個「為什麼」。與其硬記步驟,不如問自己這一步在做什麼、為什麼可以這樣做。當你能對別人解釋清楚一題,才算真的懂了它。慢慢想,想通了就一輩子不會忘。 EN: Behind every method hides a reason. Instead of memorizing steps, ask what each step does and why it is allowed. You truly understand a problem only when you can explain it to someone else.',
@@ -243,250 +243,259 @@ const MATH_GEN = {
       ?[`① 把 ${b} 拆成 ${k} 和 ${b-k}。`,`② ${a} + ${k} = 10(先補滿 10)。`,`③ 10 + ${b-k} = ${a+b}。`]
       :[`① 從 ${a} 開始往上數 ${b} 格,到 ${a+b}。`];
       return fi(`${a} + ${b} = ?`,`What is ${a} plus ${b}?`,a+b,nearNums(a+b,3),
-      [`🔑 湊十法:10 是最好用的中繼站,先補滿它。`,...steps,`✔ 驗算:${a+b} − ${b} = ${a},回得去,正確!`,`EN: Split ${b} to fill up to ten, then add whats left.`])},
+      [`🔑 ${b>=k?"湊十法:先補滿 10,再加剩下的。":"往上數:這題加完還不到 10,從第一個數往前走。"} `,...steps,`✔ 驗算:${a+b} − ${b} = ${a},回得去,正確!`,`EN: Method. Addition combines two amounts. Making a ten groups some of the second amount with the first; counting forward also works.`,`EN: Worked example. ${b>=k ? `Split ${b} into ${k} and ${b-k}. First ${a} + ${k} = 10, then 10 + ${b-k} = ${a+b}.` : `Count ${b} steps forward from ${a}: ${a} + ${b} = ${a+b}. No need to reach ten.`} Check: ${a+b} − ${b} = ${a}.`,`EN: Check and avoid mistakes. Splitting a number must keep its total unchanged. Subtract the second addend from your answer to recover the first.`])},
     ()=>{const a=ri(8,20),b=ri(1,a-1);return fi(`${a} − ${b} = ?`,`What is ${a} minus ${b}?`,a-b,nearNums(a-b,3),
-      [`🔑 減法在量「距離」:從 ${b} 到 ${a} 有多遠。`,`① 從 ${b} 往上數到 ${a},共走 ${a-b} 步。`,`✔ 驗算:${b} + ${a-b} = ${a},拼得回去 ✓`,`EN: Count up from ${b} to ${a}; the gap is the answer.`])},
+      [`🔑 減法在量「距離」:從 ${b} 到 ${a} 有多遠。`,`① 從 ${b} 往上數到 ${a},共走 ${a-b} 步。`,`✔ 驗算:${b} + ${a-b} = ${a},拼得回去 ✓`,`EN: Method. Subtraction finds how much remains or how far apart two numbers are. Counting upward measures the same gap as taking away.`,`EN: Worked example. Count from ${b} to ${a}: the gap is ${a} − ${b} = ${a-b}. Check: ${b} + ${a-b} = ${a}.`,`EN: Check and avoid mistakes. Count the jumps, not the starting point. Adding the gap to the smaller number must reach the larger number.`])},
     ()=>{let a=ri(1,20),b=ri(1,20);if(a===b)b+=1;const big=Math.max(a,b);return fi(`${a} 和 ${b},哪個比較大?`,`Which is bigger, ${a} or ${b}?`,big,[Math.min(a,b),big+ri(1,5),Math.max(0,Math.min(a,b)-ri(1,3))],
-      [`🔑 數線規則:越右邊的數越大。`,`① 想像數線,找到 ${Math.min(a,b)} 和 ${big} 的位置。`,`② ${big} 在右邊 → 比較大。`,`EN: On the number line, further right means bigger.`])},
+      [`🔑 數線規則:越右邊的數越大。`,`① 想像數線,找到 ${Math.min(a,b)} 和 ${big} 的位置。`,`② ${big} 在右邊 → 比較大。`,`EN: Method. Compare only the two numbers named in the question. A number farther right on the number line represents a greater amount.`,`EN: Worked example. ${big} is to the right of ${Math.min(a,b)} on the number line, so ${big} > ${Math.min(a,b)}. Of the two given numbers, ${big} is larger.`,`EN: Check and avoid mistakes. An extra answer choice may be larger than both given numbers, but it is not one of the two you were asked to compare.`])},
     ()=>{const s=ri(1,6),d=ri(1,3);const seq=[s,s+d,s+2*d,s+3*d,s+4*d];return fi(`數列偵探:${seq[0]}, ${seq[1]}, ${seq[2]}, ?, ${seq[4]}。? 是多少?`,`Sequence detective: ${seq[0]}, ${seq[1]}, ${seq[2]}, ?, ${seq[4]}. What is missing?`,seq[3],nearNums(seq[3],3),
-      [`🔑 數列三步驟:找差 → 驗證 → 預測。`,`① 相鄰的差:${seq[1]}−${seq[0]}=${d}、${seq[2]}−${seq[1]}=${d},固定 +${d}。`,`② 缺格 = ${seq[2]} + ${d} = ${seq[3]}。`,`✔ 驗算:${seq[3]} + ${d} = ${seq[4]},接得上最後一項 ✓`,`EN: The common difference is ${d}; use it to fill the gap.`])},
+      [`🔑 數列三步驟:找差 → 驗證 → 預測。`,`① 相鄰的差:${seq[1]}−${seq[0]}=${d}、${seq[2]}−${seq[1]}=${d},固定 +${d}。`,`② 缺格 = ${seq[2]} + ${d} = ${seq[3]}。`,`✔ 驗算:${seq[3]} + ${d} = ${seq[4]},接得上最後一項 ✓`,`EN: Method. Compare consecutive terms to find a repeated increase. Use the same increase to predict the missing term.`,`EN: Worked example. The gaps are ${seq[1]} − ${seq[0]} = ${d} and ${seq[2]} − ${seq[1]} = ${d}. Add ${d}: ${seq[2]} + ${d} = ${seq[3]}. Check: ${seq[3]} + ${d} = ${seq[4]}.`,`EN: Check and avoid mistakes. Check both sides of the missing position. Your answer must fit the term before it and the term after it.`])},
     ()=>{const a=ri(1,10),b=ri(1,10);return fi(`${a} + ? = ${a+b},? 是多少?`,`${a} plus what equals ${a+b}?`,b,nearNums(b,3),
-      [`🔑 加法的反面是減法:未知的部分 = 全部 − 已知。`,`① ${a+b} − ${a} = ${b}。`,`✔ 驗算:${a} + ${b} = ${a+b} ✓`,`EN: The missing part equals the whole minus the known part.`])},
+      [`🔑 加法的反面是減法:未知的部分 = 全部 − 已知。`,`① ${a+b} − ${a} = ${b}。`,`✔ 驗算:${a} + ${b} = ${a+b} ✓`,`EN: Method. The sum is the whole, and the known addend is one part. Subtracting that part reveals the missing part.`,`EN: Worked example. Subtract the known part from the whole: ${a+b} − ${a} = ${b}. Check: ${a} + ${b} = ${a+b}.`,`EN: Check and avoid mistakes. Replace the question mark with your result. The completed addition must equal the given total.`])},
     ()=>{const a=ri(5,15),b=ri(1,a-1);const t=pick([
       {q:`小貓有 ${a} 顆彈珠,送出 ${b} 顆,還剩幾顆?`,en:`A cat has ${a} marbles and gives away ${b}. How many are left?`,ans:a-b,
-       why:[`🔑 剩下 = 原有 − 送出(找關鍵字:「送出」=減)。`,`① ${a} − ${b} = ${a-b}。`,`✔ 驗算:剩的 ${a-b} + 送的 ${b} = ${a} ✓`,`EN: Left = start minus given away.`]},
+       why:[`🔑 剩下 = 原有 − 送出(找關鍵字:「送出」=減)。`,`① ${a} − ${b} = ${a-b}。`,`✔ 驗算:剩的 ${a-b} + 送的 ${b} = ${a} ✓`,`EN: Method. Giving something away reduces the starting amount, so use subtraction. The amount left and the amount given away together make the original amount.`,`EN: Worked example. Giving away means subtract: ${a} − ${b} = ${a-b} marbles left. Check: ${a-b} + ${b} = ${a}.`,`EN: Check and avoid mistakes. Do not add the two amounts. Check by adding what remains to what was given away.`]},
       {q:`盒子裡有 ${a} 顆糖,又放進 ${b} 顆,總共幾顆?`,en:`A box has ${a} candies; ${b} more go in. Total?`,ans:a+b,
-       why:[`🔑 總共 = 原有 + 新加(關鍵字:「又放進」=加)。`,`① ${a} + ${b} = ${a+b}。`,`✔ 驗算:${a+b} − ${b} = ${a} ✓`,`EN: Total = start plus added.`]},
+       why:[`🔑 總共 = 原有 + 新加(關鍵字:「又放進」=加)。`,`① ${a} + ${b} = ${a+b}。`,`✔ 驗算:${a+b} − ${b} = ${a} ✓`,`EN: Method. Putting more items in increases the amount, so use addition. The two groups become one combined total.`,`EN: Worked example. Adding candies means addition: ${a} + ${b} = ${a+b} candies. Check: ${a+b} − ${b} = ${a}.`,`EN: Check and avoid mistakes. The total must be larger than either positive group. Removing the new group should restore the original amount.`]},
     ]);return fi(t.q,t.en,t.ans,nearNums(t.ans,3),t.why)},
     ()=>{const a=ri(2,8),b=ri(2,8);return fi(`🏆 小奇排隊,前面有 ${a} 個人、後面有 ${b} 個人。這一排總共幾個人?`,`Chi stands in line with ${a} people ahead and ${b} behind. How many people in total?`,a+b+1,[a+b,a+b+2,Math.max(1,a+b-1)],
-      [`🔑 奧數陷阱:總數 = 前面 + 後面 + 自己!`,`① 前後合計:${a} + ${b} = ${a+b}(小奇還沒被算進去)。`,`② 加上小奇:${a+b} + 1 = ${a+b+1}。`,`💡 心法:題目裡「隱形的人事物」最愛躲進答案。`,`EN: The hidden +1 is you — count yourself in.`])},
+      [`🔑 奧數陷阱:總數 = 前面 + 後面 + 自己!`,`① 前後合計:${a} + ${b} = ${a+b}(小奇還沒被算進去)。`,`② 加上小奇:${a+b} + 1 = ${a+b+1}。`,`💡 心法:題目裡「隱形的人事物」最愛躲進答案。`,`EN: Method. The people ahead and behind form two groups, but neither group includes the person in the middle.`,`EN: Worked example. Count the people ahead and behind: ${a} + ${b} = ${a+b}. Include Chi: ${a+b} + 1 = ${a+b+1} people.`,`EN: Check and avoid mistakes. After adding those groups, include the middle person exactly once. Drawing one mark per person helps prevent a missing or double count.`])},
     ()=>{const cyc=pick([['○','△'],['○','○','△'],['△','□','○']]);const n=ri(5,12);const L=cyc.length;const posi=((n-1)%L)+1;const ans=cyc[(n-1)%L];const others=shuffle(['○','△','□','☆'].filter(x=>x!==ans)).slice(0,3);
       return fi(`🏆 圖形排隊:${Array.from({length:6},(_,i)=>cyc[i%L]).join(' ')} …一直重複。第 ${n} 個是什麼?`,`The pattern repeats forever. What is shape number ${n}?`,ans,others,
-      [`🔑 週期問題:找出重複的「一組」,用餘數定位。`,`① 一組是「${cyc.join('')}」,長度 ${L}。`,`② 第 ${n} 個對應組內第 ${posi} 個 → ${ans}。`,`💡 找到週期後,第 1000 個也不用一個一個數。`,`EN: Find the repeating block, then locate by remainder.`])},
+      [`🔑 週期問題:找出重複的「一組」,用餘數定位。`,`① 一組是「${cyc.join('')}」,長度 ${L}。`,`② 第 ${n} 個對應組內第 ${posi} 個 → ${ans}。`,`💡 找到週期後,第 1000 個也不用一個一個數。`,`EN: Method. Find the smallest block that repeats in the displayed pattern. Each complete block returns you to the same relative position.`,`EN: Worked example. The block ${cyc.join(" ")} has ${L} shapes. Position ${n} maps to (${n} − 1) mod ${L} + 1 = ${posi} in the block, which is ${ans}. Subtracting 1 handles positions at the end of a block.`,`EN: Check and avoid mistakes. Positions start at one. A position divisible by the block length refers to the last shape in that block, not the first.`])},
     ()=>{const f=ri(1,3),o=ri(1,4);return fi(`小奇有 ${f} 個 5 元硬幣和 ${o} 個 1 元硬幣,總共多少元?`,`Chi has ${f} five-dollar coins and ${o} one-dollar coins. Total?`,f*5+o,nearNums(f*5+o,3),
-      [`🔑 錢幣計算:先算同種硬幣的小計,再相加。`,`① 5 元硬幣:${f} × 5 = ${f*5} 元。`,`② 1 元硬幣:${o} × 1 = ${o} 元。`,`③ 合計:${f*5} + ${o} = ${f*5+o} 元。`,`✔ 驗算:${f*5+o} − ${o} = ${f*5},是 5 的倍數 ✓`,`EN: Subtotal each coin type, then add.`])},
+      [`🔑 錢幣計算:先算同種硬幣的小計,再相加。`,`① 5 元硬幣:${f} × 5 = ${f*5} 元。`,`② 1 元硬幣:${o} × 1 = ${o} 元。`,`③ 合計:${f*5} + ${o} = ${f*5+o} 元。`,`✔ 驗算:${f*5+o} − ${o} = ${f*5},是 5 的倍數 ✓`,`EN: Method. Coins have both a count and a value. Find the value of each coin group before combining the groups.`,`EN: Worked example. Five-dollar coins: ${f} × 5 = ${f*5}. One-dollar coins: ${o} × 1 = ${o}. Add: ${f*5} + ${o} = ${f*5+o} dollars.`,`EN: Check and avoid mistakes. Do not add coin counts as though every coin were worth one dollar. Keep the answer in dollars.`])},
     ()=>{const a=ri(6,12),b=ri(2,6),c=ri(1,5);return fi(`公車上有 ${a} 人,到站後上來 ${b} 人、下去 ${c} 人。現在車上幾人?`,`A bus has ${a} riders; ${b} board and ${c} leave. How many now?`,a+b-c,nearNums(a+b-c,3),
-      [`🔑 兩步驟問題:一步一步來,別急著一次算完。`,`① 上車後:${a} + ${b} = ${a+b} 人。`,`② 下車後:${a+b} − ${c} = ${a+b-c} 人。`,`✔ 驗算:${a+b-c} + ${c} − ${b} = ${a},倒推回起點 ✓`,`EN: Two steps: add the boarders, then subtract the leavers.`])},
+      [`🔑 兩步驟問題:一步一步來,別急著一次算完。`,`① 上車後:${a} + ${b} = ${a+b} 人。`,`② 下車後:${a+b} − ${c} = ${a+b-c} 人。`,`✔ 驗算:${a+b-c} + ${c} − ${b} = ${a},倒推回起點 ✓`,`EN: Method. Track the number of passengers after each event. Boarding increases the count; leaving decreases it.`,`EN: Worked example. After boarding: ${a} + ${b} = ${a+b}. After leaving: ${a+b} − ${c} = ${a+b-c} riders. Check: ${a+b-c} + ${c} − ${b} = ${a}.`,`EN: Check and avoid mistakes. Reverse the events to check: put the departing passengers back, then remove those who boarded.`])},
     ()=>{const w=ri(3,8),h=ri(2,6);return fi(`看圖:一個長方形長 ${w}、寬 ${h} 格。數數看總共有幾個小方格?`,`Count the unit squares in this ${w}×${h} rectangle.`,w*h,nearNums(w*h,4),
-      [`🔑 面積的起點:數方格 = 每排數量 × 排數。`,`① 每排 ${w} 格。`,`② 共 ${h} 排:${w} × ${h} = ${w*h} 格。`,`✔ 換方向數:${h} × ${w} = ${w*h} ✓`,`EN: Squares = per row times number of rows.`],
+      [`🔑 面積的起點:數方格 = 每排數量 × 排數。`,`① 每排 ${w} 格。`,`② 共 ${h} 排:${w} × ${h} = ${w*h} 格。`,`✔ 換方向數:${h} × ${w} = ${w*h} ✓`,`EN: Method. Equal rows let multiplication replace repeated counting. Multiply the number in one row by the number of rows.`,`EN: Worked example. There are ${w} unit squares in each of ${h} rows: ${w} × ${h} = ${w*h} squares. Counting the other way gives ${h} × ${w} = ${w*h}.`,`EN: Check and avoid mistakes. Count unit squares inside the boundary, not edges around it. Turning the grid does not change the total.`],
       GEO.rect(w,h,`${w} 格`,`${h} 格`))},
     ()=>{const s=ri(2,7);return fi(`看圖:這個正方形每邊 ${s} 公分。四邊加起來(周長)是多少公分?`,`Each side of this square is ${s} cm. What is the perimeter?`,s*4,nearNums(s*4,4),
-      [`🔑 正方形四邊一樣長,周長 = 邊長 × 4。`,`① ${s} × 4 = ${s*4} 公分。`,`✔ 逐邊加:${s}+${s}+${s}+${s} = ${s*4} ✓`,`EN: A square has 4 equal sides: side × 4.`],
+      [`🔑 正方形四邊一樣長,周長 = 邊長 × 4。`,`① ${s} × 4 = ${s*4} 公分。`,`✔ 逐邊加:${s}+${s}+${s}+${s} = ${s*4} ✓`,`EN: Method. A perimeter measures one full trip around the boundary. A square has four sides of the same length.`,`EN: Worked example. Four equal sides give ${s} × 4 = ${s*4} cm. Check by adding: ${s} + ${s} + ${s} + ${s} = ${s*4}.`,`EN: Check and avoid mistakes. Add all four side lengths to check. Multiplying just two sides gives area, which answers a different question.`],
       GEO.square(`${s} cm`))},
     ()=>{const n=ri(3,6);const shapes=[['三角形',3],['正方形',4],['五邊形',5],['六邊形',6]];const s=shapes[n-3];const pts=[];for(let i=0;i<n;i++){const a=-Math.PI/2+i*2*Math.PI/n;pts.push(`${(60+30*Math.cos(a)).toFixed(0)},${(50+30*Math.sin(a)).toFixed(0)}`);}return fi(`看圖:這個形狀有幾個邊?`,`How many sides does this shape have?`,n,nearNums(n,2),
-      [`🔑 數邊:繞一圈,每一條直線算一邊。`,`① 這是${s[0]},有 ${n} 條邊。`,`✔ 邊數 = 角數:${n} 個邊配 ${n} 個角。`,`EN: Count each straight line as one side.`],
+      [`🔑 數邊:繞一圈,每一條直線算一邊。`,`① 這是${s[0]},有 ${n} 條邊。`,`✔ 邊數 = 角數:${n} 個邊配 ${n} 個角。`,`EN: Method. A side is a straight segment between two neighboring corners. Follow the boundary in order rather than counting scattered lines.`,`EN: Worked example. Trace each straight edge once around the shape: there are ${n} sides. It also has ${n} corners, which checks the count.`,`EN: Check and avoid mistakes. Stop when you return to the starting corner. Each edge and corner should be counted once.`],
       SVG(`<polygon points="${pts.join(' ')}" class="gshape"/>`))},
     ()=>{const w=ri(3,7);return fi(`看圖:一個正方形被分成 ${w}×${w} 的小格。總共有幾個小格?`,`This square is split into a ${w}×${w} grid. How many small squares?`,w*w,nearNums(w*w,5),
-      [`🔑 方陣總數 = 邊數 × 邊數。`,`① ${w} × ${w} = ${w*w} 格。`,`✔ 正方形的長寬相等,所以是「邊長的平方」。`,`EN: A square grid has side × side small squares.`],
+      [`🔑 方陣總數 = 邊數 × 邊數。`,`① ${w} × ${w} = ${w*w} 格。`,`✔ 正方形的長寬相等,所以是「邊長的平方」。`,`EN: Method. The row count and column count are equal in a square grid. Their product counts every small cell exactly once.`,`EN: Worked example. Count ${w} squares in each of ${w} rows: ${w} × ${w} = ${w*w} small squares. Count only the smallest squares, not larger combinations.`,`EN: Check and avoid mistakes. The question asks for small cells only. Do not include squares formed by combining several cells.`],
       SVG(`<rect x="30" y="18" width="60" height="60" class="gshape"/>`+Array.from({length:w-1},(_,i)=>`<line x1="${30+60*(i+1)/w}" y1="18" x2="${30+60*(i+1)/w}" y2="78" class="gline"/><line x1="30" y1="${18+60*(i+1)/w}" x2="90" y2="${18+60*(i+1)/w}" class="gline"/>`).join('')))},
     ()=>{const n=pick([[3,'三角形'],[4,'四邊形'],[5,'五邊形'],[6,'六邊形']]);const pts=Array.from({length:n[0]},(_,i)=>{const a=-Math.PI/2+i*2*Math.PI/n[0];return `${(60+34*Math.cos(a)).toFixed(1)},${(50+34*Math.sin(a)).toFixed(1)}`}).join(' ');return fi(`看圖:這個圖形有幾條邊?`,`How many sides does this shape have?`,n[0],[n[0]+1,Math.max(3,n[0]-1),n[0]+2],
-      [`🔑 多邊形的名字藏著答案:幾邊形就有幾條邊、幾個角。`,`① 沿著圖形描一圈,數轉折之間的直線段。`,`② 共 ${n[0]} 條邊——這是${n[1]}。`,`✔ 邊數 = 角數:數角也是 ${n[0]} 個 ✓`,`EN: An n-gon has n sides and n corners.`],
+      [`🔑 多邊形的名字藏著答案:幾邊形就有幾條邊、幾個角。`,`① 沿著圖形描一圈,數轉折之間的直線段。`,`② 共 ${n[0]} 條邊——這是${n[1]}。`,`✔ 邊數 = 角數:數角也是 ${n[0]} 個 ✓`,`EN: Method. Identify the polygon by its boundary segments, not its orientation or apparent size. Each corner joins two neighboring sides.`,`EN: Worked example. Trace the boundary once: there are ${n[0]} straight sides and ${n[0]} corners. Therefore this is a ${n[0]}-gon.`,`EN: Check and avoid mistakes. Trace one complete circuit and stop at the start. Counting the corners gives an independent check of the side count.`],
       SVG(`<polygon points="${pts}" class="gshape"/>`))},
     ()=>{const a=ri(6,12),b=ri(2,a-2);return fi(`看圖:上面的棒子長 ${a} 公分,下面的長 ${b} 公分。上面比下面長多少公分?`,`The top bar is ${a} cm, the bottom ${b} cm. How much longer is the top?`,a-b,nearNums(a-b,3),
-      [`🔑 「比…長多少」= 兩長度相減。`,`① ${a} − ${b} = ${a-b} 公分。`,`✔ 驗算:${b} + ${a-b} = ${a} ✓`,`EN: How much longer means subtract the two lengths.`],
+      [`🔑 「比…長多少」= 兩長度相減。`,`① ${a} − ${b} = ${a-b} 公分。`,`✔ 驗算:${b} + ${a-b} = ${a} ✓`,`EN: Method. How much longer asks for a difference, not a total. Align the starting ends and compare the extra length.`,`EN: Worked example. Subtract the shorter length: ${a} − ${b} = ${a-b} cm. Check: ${b} + ${a-b} = ${a}.`,`EN: Check and avoid mistakes. Add the difference to the shorter bar. It should then have the same length as the longer bar.`],
       SVG(`<rect x="10" y="26" width="${a*8}" height="12" class="gshape"/><rect x="10" y="58" width="${b*8}" height="12" class="gside"/>`+gLabel(10+a*4,20,a+' cm')+gLabel(10+b*4,84,b+' cm')))},
   ],
   2:[
-    ()=>{const a=ri(11,89),b=ri(11,99-a);const at=Math.floor(a/10)*10,bt=Math.floor(b/10)*10;return fi(`${a} + ${b} = ?`,`${a} plus ${b}?`,a+b,nearNums(a+b,10),
-      [`🔑 分位相加:十位跟十位、個位跟個位。`,`① 十位:${at} + ${bt} = ${at+bt}。`,`② 個位:${a%10} + ${b%10} = ${a%10+b%10}。`,`③ 合併:${at+bt} + ${a%10+b%10} = ${a+b}。`,`✔ 驗算:${a+b} − ${b} = ${a} ✓`,`EN: Add tens with tens, ones with ones, then combine.`])},
+    ()=>{const a=ri(11,88),b=ri(11,99-a);const at=Math.floor(a/10)*10,bt=Math.floor(b/10)*10;return fi(`${a} + ${b} = ?`,`${a} plus ${b}?`,a+b,nearNums(a+b,10),
+      [`🔑 分位相加:十位跟十位、個位跟個位。`,`① 十位:${at} + ${bt} = ${at+bt}。`,`② 個位:${a%10} + ${b%10} = ${a%10+b%10}。`,`③ 合併:${at+bt} + ${a%10+b%10} = ${a+b}。`,`✔ 驗算:${a+b} − ${b} = ${a} ✓`,`EN: Method. Place value lets you split each addend into tens and ones without changing its value. Add matching parts and combine their totals.`,`EN: Worked example. Add tens: ${at} + ${bt} = ${at+bt}. Add ones: ${a%10} + ${b%10} = ${a%10+b%10}. Combine: ${at+bt} + ${a%10+b%10} = ${a+b}. Check: ${a+b} − ${b} = ${a}.`,`EN: Check and avoid mistakes. If the ones total reaches ten, that extra ten is already included when you combine. Do not add it a second time.`])},
     ()=>{const a=ri(30,99),b=ri(11,a-10);const bt=Math.floor(b/10)*10;return fi(`${a} − ${b} = ?`,`${a} minus ${b}?`,a-b,nearNums(a-b,10),
-      [`🔑 拆著減:先減整十,再減個位。`,`① ${a} − ${bt} = ${a-bt}。`,`② ${a-bt} − ${b%10} = ${a-b}。`,`✔ 驗算:${a-b} + ${b} = ${a} ✓`,`EN: Subtract the tens first, then the ones.`])},
+      [`🔑 拆著減:先減整十,再減個位。`,`① ${a} − ${bt} = ${a-bt}。`,`② ${a-bt} − ${b%10} = ${a-b}。`,`✔ 驗算:${a-b} + ${b} = ${a} ✓`,`EN: Method. Break the amount being subtracted into tens and ones. Removing those parts in order removes the whole amount.`,`EN: Worked example. Split ${b} into ${bt} and ${b%10}. Subtract tens: ${a} − ${bt} = ${a-bt}. Then ones: ${a-bt} − ${b%10} = ${a-b}. Check: ${a-b} + ${b} = ${a}.`,`EN: Check and avoid mistakes. Subtract both parts, including a zero ones part when present. Add the original subtrahend back to check.`])},
     ()=>{const a=ri(2,9),b=ri(2,9);return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,a),
-      [`🔑 乘法 = 加法的快捷鍵:${a}×${b} 就是 ${b} 個 ${a}。`,`① 九九乘法表:${a}×${b} = ${a*b}。`,`② 忘了的話用鄰居推:${a}×${b-1} = ${a*(b-1)},再加一個 ${a} → ${a*b}。`,`EN: One times-table fact, or build it from the neighbor fact.`])},
+      [`🔑 乘法 = 加法的快捷鍵:${a}×${b} 就是 ${b} 個 ${a}。`,`① 九九乘法表:${a}×${b} = ${a*b}。`,`② 忘了的話用鄰居推:${a}×${b-1} = ${a*(b-1)},再加一個 ${a} → ${a*b}。`,`EN: Method. Multiplication counts equal groups. A neighboring multiplication fact is useful because one extra group changes the total by exactly one group size.`,`EN: Worked example. ${b} groups of ${a} give ${a} × ${b} = ${a*b}. Build from a nearby fact: ${a} × ${b-1} = ${a*(b-1)}, then add ${a} to get ${a*b}.`,`EN: Check and avoid mistakes. Keep the group size fixed when moving to a neighboring fact. Divide the product by one factor to check the other.`])},
     ()=>{const s=ri(2,5);return fi(`數列偵探:${s}, ${s*2}, ${s*4}, ?。下一個是多少?`,`Sequence detective: ${s}, ${s*2}, ${s*4}, ?. What comes next?`,s*8,[s*6,s*5,s*8+s],
-      [`🔑 差不固定時,改查「倍率」。`,`① ${s*2}÷${s}=2、${s*4}÷${s*2}=2 → 每次 ×2。`,`② 下一個:${s*4} × 2 = ${s*8}。`,`✔ 倍增數列長超快——這就是「指數成長」的雛形!`,`EN: When differences fail, check ratios: it doubles.`])},
+      [`🔑 差不固定時,改查「倍率」。`,`① ${s*2}÷${s}=2、${s*4}÷${s*2}=2 → 每次 ×2。`,`② 下一個:${s*4} × 2 = ${s*8}。`,`✔ 倍增數列長超快——這就是「指數成長」的雛形!`,`EN: Method. An equal multiplier can explain a sequence even when equal differences cannot. Compare consecutive terms by division.`,`EN: Worked example. The ratios are ${s*2} ÷ ${s} = 2 and ${s*4} ÷ ${s*2} = 2. Double again: ${s*4} × 2 = ${s*8}.`,`EN: Check and avoid mistakes. Doubling means multiplying by two, not adding two. Verify the same multiplier at every displayed step.`])},
     ()=>{const p=ri(5,20),n=ri(2,5);return fi(`一枝筆 ${p} 元,買 ${n} 枝要多少元?`,`One pen costs ${p} dollars. How much for ${n} pens?`,p*n,nearNums(p*n,p),
-      [`🔑 總價 = 單價 × 數量。`,`① ${p} × ${n} = ${p*n} 元。`,`② 也可以連加驗證:${Array.from({length:n},()=>p).join('+')} = ${p*n}。`,`EN: Total = price per item times how many.`])},
+      [`🔑 總價 = 單價 × 數量。`,`① ${p} × ${n} = ${p*n} 元。`,`② 也可以連加驗證:${Array.from({length:n},()=>p).join('+')} = ${p*n}。`,`EN: Method. Each pen has the same price, so buying several pens forms equal groups of that price.`,`EN: Worked example. Multiply price by quantity: ${p} × ${n} = ${p*n} dollars. Check by repeated addition: ${Array.from({length:n},()=>p).join(" + ")} = ${p*n}.`,`EN: Check and avoid mistakes. The result is a cost, not a count of pens. Divide the total cost by the quantity to recover the unit price.`])},
     ()=>{const b=ri(2,9),q=ri(2,9);return fi(`? × ${b} = ${b*q},? 是多少?`,`What times ${b} equals ${b*q}?`,q,nearNums(q,3),
-      [`🔑 除法是乘法的逆向偵探。`,`① ? = ${b*q} ÷ ${b} = ${q}。`,`✔ 驗算:${q} × ${b} = ${b*q} ✓`,`EN: Division undoes multiplication.`])},
+      [`🔑 除法是乘法的逆向偵探。`,`① ? = ${b*q} ÷ ${b} = ${q}。`,`✔ 驗算:${q} × ${b} = ${b*q} ✓`,`EN: Method. The unknown is a factor. Division reverses multiplication and tells how many equal groups make the product.`,`EN: Worked example. Undo multiplication with division: ${b*q} ÷ ${b} = ${q}. Check: ${q} × ${b} = ${b*q}.`,`EN: Check and avoid mistakes. Substitute the result into the original multiplication. Adding the given numbers will not undo multiplication.`])},
     ()=>{const d=pick([2,3,5]),k=ri(4,9);const L=d*k;return fi(`🏆 一條 ${L} 公尺的直路,每 ${d} 公尺種一棵樹(頭尾都種),共種幾棵?`,`A ${L} m road gets a tree every ${d} m, both ends included. How many trees?`,k+1,[k,k+2,Math.max(1,k-1)],
-      [`🔑 柵欄陷阱:頭尾都種時,樹永遠比「段」多 1。`,`① 段數:${L} ÷ ${d} = ${k} 段。`,`② 樹:${k} + 1 = ${k+1} 棵。`,`✔ 畫小圖驗證:3 段的路 |—|—|—| 有 4 棵 ✓ 規則成立。`,`EN: Segments plus one — the famous fencepost trap.`])},
+      [`🔑 柵欄陷阱:頭尾都種時,樹永遠比「段」多 1。`,`① 段數:${L} ÷ ${d} = ${k} 段。`,`② 樹:${k} + 1 = ${k+1} 棵。`,`✔ 畫小圖驗證:3 段的路 |—|—|—| 有 4 棵 ✓ 規則成立。`,`EN: Method. Dividing road length by spacing counts intervals between trees. Trees mark interval endpoints, so the first endpoint needs its own tree.`,`EN: Worked example. The road has ${L} ÷ ${d} = ${k} intervals. Including both endpoints requires one more tree: ${k} + 1 = ${k+1}.`,`EN: Check and avoid mistakes. This rule assumes a straight road with both ends planted. Do not confuse the number of gaps with the number of trees.`])},
     ()=>{const u=ri(0,7),t=ri(u+1,9);const num=t*10+u;return fi(`🏆 數字偵探:我是兩位數,兩個數字加起來是 ${t+u},十位比個位大 ${t-u}。我是誰?`,`A two-digit number: digits sum to ${t+u}, tens digit exceeds ones by ${t-u}. Which number am I?`,num,nearNums(num,10),
-      [`🔑 和差問題:大的 = (和+差)÷2。`,`① 十位 = (${t+u} + ${t-u}) ÷ 2 = ${t}。`,`② 個位 = ${t+u} − ${t} = ${u} → 答案 ${num}。`,`✔ 檢查:${t}+${u}=${t+u} ✓、${t}−${u}=${t-u} ✓`,`EN: Sum and difference together pin down both digits.`])},
+      [`🔑 和差問題:大的 = (和+差)÷2。`,`① 十位 = (${t+u} + ${t-u}) ÷ 2 = ${t}。`,`② 個位 = ${t+u} − ${t} = ${u} → 答案 ${num}。`,`✔ 檢查:${t}+${u}=${t+u} ✓、${t}−${u}=${t-u} ✓`,`EN: Method. Adding the digit sum and digit difference gives twice the larger digit. Halve that amount, then find the other digit from the sum.`,`EN: Worked example. The tens digit is (sum + difference) ÷ 2 = (${t+u} + ${t-u}) ÷ 2 = ${t}. The ones digit is ${t+u} − ${t} = ${u}. The number is 10 × ${t} + ${u} = ${num}. Check: ${t} − ${u} = ${t-u}.`,`EN: Check and avoid mistakes. A tens digit contributes ten times its value to the number. Verify both the digit sum and the digit difference.`])},
     ()=>{const b=ri(2,9),k=ri(2,9);return fi(`${b*k} 顆糖平分給 ${b} 個人,每人分到幾顆?`,`${b*k} candies shared equally among ${b} people. Each gets?`,k,nearNums(k,3),
-      [`🔑 平分=除法:總數 ÷ 人數 = 每人份。`,`① ${b*k} ÷ ${b} = ${k}。`,`✔ 驗算:${k} × ${b} = ${b*k},剛好分完 ✓`,`EN: Sharing equally is division: total over people.`])},
+      [`🔑 平分=除法:總數 ÷ 人數 = 每人份。`,`① ${b*k} ÷ ${b} = ${k}。`,`✔ 驗算:${k} × ${b} = ${b*k},剛好分完 ✓`,`EN: Method. Equal sharing divides the whole into groups of identical size. The answer is the size of one group.`,`EN: Worked example. Divide the total equally: ${b*k} ÷ ${b} = ${k} candies per person. Check: ${k} × ${b} = ${b*k}.`,`EN: Check and avoid mistakes. Multiply one share by the number of people. It must use all the candies with none left over.`])},
     ()=>{const a=ri(2,9);return fi(`${a} 公尺是幾公分?`,`How many centimeters is ${a} meters?`,a*100,[a*10,a*1000,a*100+10],
-      [`🔑 單位換算:1 公尺 = 100 公分(公=×100 的暗號)。`,`① ${a} × 100 = ${a*100} 公分。`,`✔ 反向:${a*100} 公分 ÷ 100 = ${a} 公尺 ✓`,`EN: One meter is 100 centimeters; multiply by 100.`])},
+      [`🔑 單位換算:1 公尺 = 100 公分。`,`① ${a} × 100 = ${a*100} 公分。`,`✔ 反向:${a*100} 公分 ÷ 100 = ${a} 公尺 ✓`,`EN: Method. A meter contains one hundred centimeters. Converting to smaller units increases the numerical count without changing the length.`,`EN: Worked example. Each meter is 100 centimeters, so ${a} × 100 = ${a*100} cm. Reverse check: ${a*100} ÷ 100 = ${a} m.`,`EN: Check and avoid mistakes. Use the conversion for these specific units. Dividing the centimeter answer by one hundred must recover the meter value.`])},
     ()=>{const w=ri(4,12),h=ri(3,9);return fi(`看圖的長方形:長 ${w} 公分、寬 ${h} 公分,面積是多少平方公分?`,`This rectangle is ${w} by ${h} cm. Find its area.`,w*h,nearNums(w*h,12),
-      [`🔑 長方形面積 = 長 × 寬。`,`① ${w} × ${h} = ${w*h} 平方公分。`,`✔ 面積在數「裡面塞得下幾個 1×1 方格」。`,`EN: Rectangle area = length times width.`],
+      [`🔑 長方形面積 = 長 × 寬。`,`① ${w} × ${h} = ${w*h} 平方公分。`,`✔ 面積在數「裡面塞得下幾個 1×1 方格」。`,`EN: Method. Area measures the inside of a rectangle. Equal rows of unit squares explain why length is multiplied by width.`,`EN: Worked example. Area counts unit squares: ${w} × ${h} = ${w*h} square centimeters. Use square units because two lengths are multiplied.`,`EN: Check and avoid mistakes. Use square centimeters, not centimeters. Adding side lengths measures part of the boundary rather than the inside.`],
       GEO.rect(w,h,`${w} cm`,`${h} cm`))},
     ()=>{const w=ri(4,12),h=ri(3,9);return fi(`看圖的長方形:長 ${w}、寬 ${h} 公分。走一圈的周長是多少公分?`,`Perimeter of this ${w} by ${h} rectangle?`,2*(w+h),nearNums(2*(w+h),8),
-      [`🔑 周長 = 繞一圈 = (長 + 寬) × 2。`,`① ${w} + ${h} = ${w+h}(半圈)。`,`② × 2 = ${2*(w+h)} 公分。`,`✔ 別和面積搞混:周長是「邊線總長」。`,`EN: Perimeter = (length + width) × 2.`],
+      [`🔑 周長 = 繞一圈 = (長 + 寬) × 2。`,`① ${w} + ${h} = ${w+h}(半圈)。`,`② × 2 = ${2*(w+h)} 公分。`,`✔ 別和面積搞混:周長是「邊線總長」。`,`EN: Method. Opposite rectangle sides have equal lengths. Adding one length and one width measures half the boundary.`,`EN: Worked example. Add length and width: ${w} + ${h} = ${w+h}. Double for all four sides: ${w+h} × 2 = ${2*(w+h)} cm.`,`EN: Check and avoid mistakes. Double that sum to include all four sides. Do not multiply length by width, which gives area.`],
       GEO.rect(w,h,`${w} cm`,`${h} cm`))},
     ()=>{const deg=pick([30,45,60,120,135,150]);const kind=deg<90?'銳角(小於90°)':'鈍角(大於90°)';return fi(`看圖的角是 ${deg}°。180 減掉它等於多少?`,`This angle is ${deg}°. What is 180 minus it?`,180-deg,nearNums(180-deg,15),
-      [`🔑 ${deg}° 是${kind}。一直線是 180°。`,`① 180 − ${deg} = ${180-deg}°。`,`✔ 這 ${180-deg}° 和原本的角能拼成一直線。`,`EN: A straight line is 180°; subtract the angle.`],
+      [`🔑 ${deg}° 是${kind}。一直線是 180°。`,`① 180 − ${deg} = ${180-deg}°。`,`✔ 這 ${180-deg}° 和原本的角能拼成一直線。`,`EN: Method. A straight angle is a half turn. The missing angle is the part left after taking away the given angle.`,`EN: Worked example. A straight angle is 180°. Subtract: 180 − ${deg} = ${180-deg}°. Check: ${deg} + ${180-deg} = 180°.`,`EN: Check and avoid mistakes. Add your result to the given angle. Together they must make the straight angle, with no gap or overlap.`],
       GEO.anglecmp(deg))},
     ()=>{const w=ri(5,10),h=ri(3,7);return fi(`看圖的長方形長 ${w}、寬 ${h}。如果長和寬都加 1,新面積是多少?`,`This rectangle is ${w}×${h}. If both grow by 1, what is the new area?`,(w+1)*(h+1),nearNums((w+1)*(h+1),12),
-      [`🔑 先變新尺寸,再算面積(別急著用舊數字)。`,`① 新長 ${w+1}、新寬 ${h+1}。`,`② ${w+1} × ${h+1} = ${(w+1)*(h+1)}。`,`💡 注意:面積增加的不只 1,因為長寬「同時」變大。`,`EN: Update both sides first, then multiply.`],
+      [`🔑 先變新尺寸,再算面積(別急著用舊數字)。`,`① 新長 ${w+1}、新寬 ${h+1}。`,`② ${w+1} × ${h+1} = ${(w+1)*(h+1)}。`,`💡 注意:面積增加的不只 1,因為長寬「同時」變大。`,`EN: Method. Changing both dimensions changes the number of rows and the number of squares per row. Calculate the new dimensions before multiplying.`,`EN: Worked example. The new length is ${w} + 1 = ${w+1} and the new width is ${h} + 1 = ${h+1}. Multiply the new dimensions: ${w+1} × ${h+1} = ${(w+1)*(h+1)} square units.`,`EN: Check and avoid mistakes. Adding one to the old area misses the added strips and corner square. Use both new dimensions in the product.`],
       GEO.rect(w,h,`${w}→${w+1}`,`${h}→${h+1}`))},
     ()=>{const s=ri(2,7);return fi(`看圖:兩個邊長 ${s} 公分的正方形拼成一個長方形。長方形的「長」是多少公分?`,`Two squares of side ${s} cm form a rectangle. How long is the rectangle?`,s*2,[s,s*3,s*2+1],
-      [`🔑 拼圖思維:兩個正方形並排,長 = 邊長 × 2,寬不變。`,`① ${s} × 2 = ${s*2} 公分。`,`✔ 寬仍是 ${s} 公分,所以是 ${s*2}×${s} 的長方形 ✓`,`EN: Two squares side by side double the length.`],
+      [`🔑 拼圖思維:兩個正方形並排,長 = 邊長 × 2,寬不變。`,`① ${s} × 2 = ${s*2} 公分。`,`✔ 寬仍是 ${s} 公分,所以是 ${s*2}×${s} 的長方形 ✓`,`EN: Method. Joining two squares along a whole side makes a rectangle. The long direction contains two square sides in a row.`,`EN: Worked example. Two side lengths join end to end: ${s} + ${s} = ${s*2} cm. The width remains ${s} cm, giving a ${s*2} by ${s} rectangle.`,`EN: Check and avoid mistakes. The shared internal edge is not added to the length. The width stays equal to one square side.`],
       SVG(`<rect x="14" y="30" width="44" height="44" class="gshape"/><rect x="58" y="30" width="44" height="44" class="gshape"/>`+gLabel(36,24,s+' cm')+gLabel(80,24,s+' cm')))},
     ()=>{const s=ri(3,9);return fi(`看圖:正方形的周長是 ${s*4} 公分。一條邊是多少公分?`,`This square has perimeter ${s*4} cm. How long is one side?`,s,nearNums(s,3),
-      [`🔑 逆向思考:周長 = 邊 × 4,所以 邊 = 周長 ÷ 4。`,`① ${s*4} ÷ 4 = ${s} 公分。`,`✔ 正向驗算:${s} × 4 = ${s*4} ✓`,`💡 會正著算,也要會倒著推——這叫逆運算。`,`EN: Reverse it: side = perimeter divided by 4.`],
+      [`🔑 逆向思考:周長 = 邊 × 4,所以 邊 = 周長 ÷ 4。`,`① ${s*4} ÷ 4 = ${s} 公分。`,`✔ 正向驗算:${s} × 4 = ${s*4} ✓`,`💡 會正著算,也要會倒著推——這叫逆運算。`,`EN: Method. A square divides its perimeter equally among four sides. Division recovers one side from the full boundary.`,`EN: Worked example. Divide the perimeter among four equal sides: ${s*4} ÷ 4 = ${s} cm. Check: ${s} × 4 = ${s*4}.`,`EN: Check and avoid mistakes. Multiply the recovered side by four. It must match the given perimeter, using the same length unit.`],
       SVG(`<rect x="30" y="18" width="60" height="60" class="gshape"/>`+gLabel(60,94,`周長 ${s*4} cm`)+gLabel(60,50,'邊 = ?')))},
   ],
   3:[
     ()=>{const a=ri(3,9),b=ri(12,25);const bt=Math.floor(b/10)*10;return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,a*2),
-      [`🔑 拆開算(分配律):把 ${b} 拆成 ${bt} 和 ${b%10}。`,`① ${a} × ${bt} = ${a*bt}。`,`② ${a} × ${b%10} = ${a*(b%10)}。`,`③ 相加:${a*bt} + ${a*(b%10)} = ${a*b}。`,`EN: Split ${b} into tens and ones, multiply each, add.`])},
+      [`🔑 拆開算(分配律):把 ${b} 拆成 ${bt} 和 ${b%10}。`,`① ${a} × ${bt} = ${a*bt}。`,`② ${a} × ${b%10} = ${a*(b%10)}。`,`③ 相加:${a*bt} + ${a*(b%10)} = ${a*b}。`,`EN: Method. Multiplication distributes over addition: splitting one factor into tens and ones creates two smaller products.`,`EN: Worked example. Split ${b} into ${bt} and ${b%10}. Products: ${a} × ${bt} = ${a*bt} and ${a} × ${b%10} = ${a*(b%10)}. Add: ${a*bt} + ${a*(b%10)} = ${a*b}.`,`EN: Check and avoid mistakes. Both parts must be multiplied by the other factor. Adding those products restores the original multiplication.`])},
     ()=>{const b=ri(3,9),q=ri(3,12);return fi(`${b*q} ÷ ${b} = ?`,`${b*q} divided by ${b}?`,q,nearNums(q,3),
-      [`🔑 除法反問乘法:「${b} 乘多少等於 ${b*q}?」`,`① 想乘法表:${b} × ${q} = ${b*q}。`,`② 所以答案是 ${q}。`,`✔ 驗算:${q} × ${b} = ${b*q} ✓`,`EN: Division asks the multiplication question backwards.`])},
+      [`🔑 除法反問乘法:「${b} 乘多少等於 ${b*q}?」`,`① 想乘法表:${b} × ${q} = ${b*q}。`,`② 所以答案是 ${q}。`,`✔ 驗算:${q} × ${b} = ${b*q} ✓`,`EN: Method. Division asks which factor would recreate the dividend. A known multiplication fact can answer that question directly.`,`EN: Worked example. Use the multiplication fact ${b} × ${q} = ${b*q}. Therefore ${b*q} ÷ ${b} = ${q}. Multiplying back verifies the answer.`,`EN: Check and avoid mistakes. Multiply the quotient by the divisor. An exact division must recover the dividend without a remainder.`])},
     ()=>{const d=pick([2,3,4,6,8]),n=ri(1,d-1);const whole=d*ri(2,6);const ans=whole/d*n;return fi(`${whole} 的 ${n}/${d} 是多少?`,`What is ${n}/${d} of ${whole}?`,ans,nearNums(ans,4),
-      [`🔑 分數 = 先切再拿。`,`① 切:${whole} ÷ ${d} = ${whole/d}(每一份的大小)。`,`② 拿:${whole/d} × ${n} = ${ans}(拿 ${n} 份)。`,`✔ 驗算:拿滿 ${d} 份 = ${whole/d}×${d} = ${whole},回到全部 ✓`,`EN: Cut into ${d} parts, then take ${n} of them.`])},
+      [`🔑 分數 = 先切再拿。`,`① 切:${whole} ÷ ${d} = ${whole/d}(每一份的大小)。`,`② 拿:${whole/d} × ${n} = ${ans}(拿 ${n} 份)。`,`✔ 驗算:拿滿 ${d} 份 = ${whole/d}×${d} = ${whole},回到全部 ✓`,`EN: Method. The denominator sets the number of equal shares. The numerator tells how many of those shares to take.`,`EN: Worked example. Divide ${whole} into ${d} equal parts: ${whole} ÷ ${d} = ${whole/d}. Take ${n} parts: ${whole/d} × ${n} = ${ans}.`,`EN: Check and avoid mistakes. Divide by the denominator before multiplying by the numerator. Taking all shares would restore the whole.`])},
     ()=>{const b=ri(3,9),q=ri(3,9),r=ri(1,b-1);const a=b*q+r;return fi(`${a} ÷ ${b} = 商多少、餘多少?`,`${a} divided by ${b}: quotient and remainder?`,`商 ${q} 餘 ${r}`,[`商 ${q+1} 餘 ${r}`,`商 ${q} 餘 ${r===1?2:r-1}`,`商 ${q-1} 餘 ${r}`],
-      [`🔑 商 = 裝滿幾組;餘 = 裝不下的零頭(必須小於 ${b})。`,`① ${b} × ${q} = ${b*q}(最接近又不超過 ${a})。`,`② ${a} − ${b*q} = ${r}。`,`✔ 驗算:${b}×${q}+${r} = ${a} ✓`,`EN: Multiply back up; the leftover is the remainder.`])},
+      [`🔑 商 = 裝滿幾組;餘 = 裝不下的零頭(必須小於 ${b})。`,`① ${b} × ${q} = ${b*q}(最接近又不超過 ${a})。`,`② ${a} − ${b*q} = ${r}。`,`✔ 驗算:${b}×${q}+${r} = ${a} ✓`,`EN: Method. The quotient counts complete groups. The remainder is the leftover that cannot fill another whole group.`,`EN: Worked example. ${b} × ${q} = ${b*q} fits in ${a}. The leftover is ${a} − ${b*q} = ${r}, less than ${b}. Quotient ${q}, remainder ${r}. Check: ${b} × ${q} + ${r} = ${a}.`,`EN: Check and avoid mistakes. The remainder must be nonnegative and smaller than the divisor. Divisor times quotient plus remainder must recover the dividend.`])},
     ()=>{const st=ri(1,8),len=ri(1,3);return fi(`電影 ${st} 點開始,演 ${len} 小時,幾點結束?`,`A movie starts at ${st} and runs ${len} hours. When does it end?`,st+len,nearNums(st+len,2),
-      [`🔑 結束 = 開始 + 經過。`,`① ${st} + ${len} = ${st+len} 點。`,`✔ 倒推驗算:${st+len} − ${len} = ${st},回到開場 ✓`,`EN: End time = start time plus duration.`])},
+      [`🔑 結束 = 開始 + 經過。`,`① ${st} + ${len} = ${st+len} 點。`,`✔ 倒推驗算:${st+len} − ${len} = ${st},回到開場 ✓`,`EN: Method. Elapsed time moves the clock forward from the starting time. Here the duration is given in whole hours.`,`EN: Worked example. End time = start + duration: ${st} + ${len} = ${st+len}. The movie ends at ${st+len} oclock. Check: ${st+len} − ${len} = ${st}.`,`EN: Check and avoid mistakes. Subtract the duration from the ending time to check the start. Use the same time unit throughout.`])},
     ()=>{const l=ri(4,15),w=ri(3,l);return fi(`長 ${l} 公分、寬 ${w} 公分的長方形,周長是多少公分?`,`Perimeter of a ${l} by ${w} rectangle?`,2*(l+w),[l*w,l+w,2*l+w],
-      [`🔑 周長 = 繞一圈:兩條長 + 兩條寬。`,`① 半圈:${l} + ${w} = ${l+w}。`,`② 一圈:${l+w} × 2 = ${2*(l+w)}。`,`✔ 逐邊加驗算:${l}+${w}+${l}+${w} = ${2*(l+w)} ✓`,`EN: Perimeter is the full lap around: (L+W) times two.`])},
+      [`🔑 周長 = 繞一圈:兩條長 + 兩條寬。`,`① 半圈:${l} + ${w} = ${l+w}。`,`② 一圈:${l+w} × 2 = ${2*(l+w)}。`,`✔ 逐邊加驗算:${l}+${w}+${l}+${w} = ${2*(l+w)} ✓`,`EN: Method. A rectangle boundary contains two lengths and two widths. Pairing one of each makes half the perimeter.`,`EN: Worked example. Half the boundary is ${l} + ${w} = ${l+w}. Double it: ${l+w} × 2 = ${2*(l+w)} cm. Check all sides: ${l} + ${w} + ${l} + ${w} = ${2*(l+w)}.`,`EN: Check and avoid mistakes. Add the four individual sides as a check. The answer measures length, not square units.`])},
     ()=>{const c=ri(2,6),r=ri(2,6);const h=c+r,l=2*c+4*r;return fi(`🏆 雞兔同籠:籠裡共 ${h} 個頭、${l} 隻腳。兔子有幾隻?`,`Chickens and rabbits share a cage: ${h} heads, ${l} legs. How many rabbits?`,r,nearNums(r,2),
-      [`🔑 假設法:先假設全部是雞,看腳多出多少。`,`① 全雞的話:${h} × 2 = ${2*h} 隻腳。`,`② 實際多出:${l} − ${2*h} = ${l-2*h} 隻腳。`,`③ 每把一隻雞換成兔,腳多 2 → 兔 = ${l-2*h} ÷ 2 = ${r} 隻。`,`✔ 驗算:兔 ${r}×4 + 雞 ${c}×2 = ${l} 隻腳 ✓`,`EN: Assume all chickens, count extra legs, divide by two.`])},
+      [`🔑 假設法:先假設全部是雞,看腳多出多少。`,`① 全雞的話:${h} × 2 = ${2*h} 隻腳。`,`② 實際多出:${l} − ${2*h} = ${l-2*h} 隻腳。`,`③ 每把一隻雞換成兔,腳多 2 → 兔 = ${l-2*h} ÷ 2 = ${r} 隻。`,`✔ 驗算:兔 ${r}×4 + 雞 ${c}×2 = ${l} 隻腳 ✓`,`EN: Method. Start with the simpler assumption that every animal has two legs. Each replacement by a four-legged animal adds exactly two legs.`,`EN: Worked example. If all ${h} animals were chickens, there would be ${h} × 2 = ${2*h} legs. Extra legs: ${l} − ${2*h} = ${l-2*h}. Each rabbit adds 2 extra legs, so ${l-2*h} ÷ 2 = ${r} rabbits. Check: ${r} × 4 + ${c} × 2 = ${l}.`,`EN: Check and avoid mistakes. Use the head count to find the remaining chickens, then verify the total legs. Both given totals must agree.`])},
     ()=>{const days=['日','一','二','三','四','五','六'];const s=ri(0,6),n=ri(8,30);const e=(s+n)%7;return fi(`🏆 今天星期${days[s]},再過 ${n} 天是星期幾?`,`Today is ${'Sun Mon Tue Wed Thu Fri Sat'.split(' ')[s]}. What day is it ${n} days later?`,`星期${days[e]}`,shuffle(days.filter((_,i)=>i!==e)).slice(0,3).map(x=>`星期${x}`),
-      [`🔑 星期是「循環 7」的世界,只有餘數重要。`,`① ${n} ÷ 7 = ${Math.floor(n/7)} 週…餘 ${n%7} 天(整週可以直接丟掉)。`,`② 星期${days[s]} 往後 ${n%7} 天 → 星期${days[e]}。`,`💡 一萬天後是星期幾,也是同一招。`,`EN: Whole weeks vanish; only the remainder moves the day.`])},
+      [`🔑 星期是「循環 7」的世界,只有餘數重要。`,`① ${n} ÷ 7 = ${Math.floor(n/7)} 週…餘 ${n%7} 天(整週可以直接丟掉)。`,`② 星期${days[s]} 往後 ${n%7} 天 → 星期${days[e]}。`,`💡 一萬天後是星期幾,也是同一招。`,`EN: Method. Weekdays repeat after seven days. Whole weeks leave the weekday unchanged, so only the leftover days shift it.`,`EN: Worked example. ${n} days = ${Math.floor(n/7)} whole weeks and ${n%7} days. Move ${n%7} days forward from ${"Sunday Monday Tuesday Wednesday Thursday Friday Saturday".split(" ")[s]} to ${"Sunday Monday Tuesday Wednesday Thursday Friday Saturday".split(" ")[e]}. Whole weeks return to the same weekday.`,`EN: Check and avoid mistakes. Today is the starting position, not the first elapsed day. Advance by the remainder without counting today again.`])},
     ()=>{const a=ri(120,480),b=ri(120,499);return fi(`${a} + ${b} = ?`,`${a} plus ${b}?`,a+b,nearNums(a+b,40),
-      [`🔑 三位數加法:百位、十位、個位各自對齊相加。`,`① 百位:${Math.floor(a/100)*100} + ${Math.floor(b/100)*100} = ${Math.floor(a/100)*100+Math.floor(b/100)*100}。`,`② 剩下的:${a%100} + ${b%100} = ${a%100+b%100}。`,`③ 合併:${a+b}。`,`✔ 估算:約 ${Math.round(a/100)*100}+${Math.round(b/100)*100}=${Math.round(a/100)*100+Math.round(b/100)*100},接近 ✓`,`EN: Add hundreds, tens and ones in their own columns.`])},
+      [`🔑 三位數加法:百位、十位、個位各自對齊相加。`,`① 百位:${Math.floor(a/100)*100} + ${Math.floor(b/100)*100} = ${Math.floor(a/100)*100+Math.floor(b/100)*100}。`,`② 剩下的:${a%100} + ${b%100} = ${a%100+b%100}。`,`③ 合併:${a+b}。`,`✔ 估算:約 ${Math.round(a/100)*100}+${Math.round(b/100)*100}=${Math.round(a/100)*100+Math.round(b/100)*100},接近 ✓`,`EN: Method. Separate hundreds from the remaining tens and ones. Adding these parts independently preserves each number’s value.`,`EN: Worked example. Add hundreds: ${Math.floor(a/100)*100} + ${Math.floor(b/100)*100} = ${Math.floor(a/100)*100+Math.floor(b/100)*100}. Add the remaining parts: ${a%100} + ${b%100} = ${a%100+b%100}. Combine to get ${a+b}. Check: ${a+b} − ${b} = ${a}.`,`EN: Check and avoid mistakes. Combine the entire remainder, including any new hundred it forms. Subtract an original addend to check.`])},
     ()=>{const t=pick([{q:'公斤是幾公克',u:1000,ue:'kilograms in grams'},{q:'小時是幾分鐘',u:60,ue:'hours in minutes'}]);const a=ri(2,9);return fi(`${a} ${t.q}?`,`${a} ${t.ue}?`,a*t.u,[a*t.u/10,a*t.u*10,a*t.u+t.u/10],
-      [`🔑 單位換算:先記住「1 大單位=多少小單位」這把鑰匙(這題是 ${t.u})。`,`① ${a} × ${t.u} = ${a*t.u}。`,`✔ 反向除回去:${a*t.u} ÷ ${t.u} = ${a} ✓`,`EN: Multiply by the conversion key: ${t.u}.`])},
+      [`🔑 單位換算:先記住「1 大單位=多少小單位」這把鑰匙(這題是 ${t.u})。`,`① ${a} × ${t.u} = ${a*t.u}。`,`✔ 反向除回去:${a*t.u} ÷ ${t.u} = ${a} ✓`,`EN: Method. Choose the conversion factor for the units named in this question. Each large unit contributes the same number of small units.`,`EN: Worked example. For ${t.ue}, multiply by ${t.u}: ${a} × ${t.u} = ${a*t.u}. Check by reversing: ${a*t.u} ÷ ${t.u} = ${a}.`,`EN: Check and avoid mistakes. Time and mass use different conversion factors. Divide the answer by the selected factor to recover the original amount.`])},
     ()=>{const a=ri(30,80),b=ri(30,150-a);return fi(`看圖的三角形,已知兩個角是 ${a}° 和 ${b}°。第三個角(?)是幾度?`,`Two angles of this triangle are ${a}° and ${b}°. Find the third (?).`,180-a-b,nearNums(180-a-b,15),
-      [`🔑 三角形內角和永遠 = 180°。`,`① 已知兩角相加:${a} + ${b} = ${a+b}。`,`② 第三角:180 − ${a+b} = ${180-a-b}。`,`✔ 三角相加:${a}+${b}+${180-a-b} = 180 ✓`,`EN: The three angles of any triangle sum to 180°.`],
+      [`🔑 三角形內角和永遠 = 180°。`,`① 已知兩角相加:${a} + ${b} = ${a+b}。`,`② 第三角:180 − ${a+b} = ${180-a-b}。`,`✔ 三角相加:${a}+${b}+${180-a-b} = 180 ✓`,`EN: Method. The interior angles of a triangle sum to a straight angle. Subtract the total of both known angles to find the third.`,`EN: Worked example. Known angles: ${a} + ${b} = ${a+b}°. Subtract from 180°: 180 − ${a+b} = ${180-a-b}°. Check: ${a} + ${b} + ${180-a-b} = 180°.`,`EN: Check and avoid mistakes. Subtract both known angles, not only one. All three positive angles should add to the required total.`],
       GEO.triangle(a,b,true))},
     ()=>{const base=ri(4,12),h=ri(3,10);const area=base*h/2;return fi(`看圖的直角三角形,底 ${base} 公分、高 ${h} 公分。面積是多少平方公分?`,`This right triangle has base ${base} and height ${h} cm. Find the area.`,area,nearNums(area,6),
-      [`🔑 三角形面積 = 底 × 高 ÷ 2(它是長方形的一半!)。`,`① ${base} × ${h} = ${base*h}(整個長方形)。`,`② ÷ 2 = ${area} 平方公分。`,`✔ 想像兩個一樣的三角形拼成長方形,面積剛好一半。`,`EN: Triangle area = base × height ÷ 2.`],
+      [`🔑 三角形面積 = 底 × 高 ÷ 2(它是長方形的一半!)。`,`① ${base} × ${h} = ${base*h}(整個長方形)。`,`② ÷ 2 = ${area} 平方公分。`,`✔ 想像兩個一樣的三角形拼成長方形,面積剛好一半。`,`EN: Method. Two matching right triangles can form a rectangle with the same base and height. One triangle therefore has half its area.`,`EN: Worked example. A rectangle with the same base and height has area ${base} × ${h} = ${base*h}. The triangle is half: ${base*h} ÷ 2 = ${area} square centimeters.`,`EN: Check and avoid mistakes. Use perpendicular base and height, then divide by two exactly once. Report square units.`],
       GEO.rtri(`${base} cm`,`${h} cm`))},
     ()=>{const top=ri(3,6),bot=ri(7,11),h=ri(3,6);const area=(top+bot)*h/2;return fi(`看圖的梯形:上底 ${top}、下底 ${bot}、高 ${h} 公分。面積是多少?`,`This trapezoid has parallel sides ${top} and ${bot}, height ${h}. Find the area.`,area,nearNums(area,8),
-      [`🔑 梯形面積 =(上底 + 下底)× 高 ÷ 2。`,`① 上底+下底:${top} + ${bot} = ${top+bot}。`,`② ×高÷2:${top+bot} × ${h} ÷ 2 = ${area}。`,`💡 想像上下兩底的「平均長度」乘以高,就是面積。`,`EN: Trapezoid area = (top + bottom) × height ÷ 2.`],
+      [`🔑 梯形面積 =(上底 + 下底)× 高 ÷ 2。`,`① 上底+下底:${top} + ${bot} = ${top+bot}。`,`② ×高÷2:${top+bot} × ${h} ÷ 2 = ${area}。`,`💡 想像上下兩底的「平均長度」乘以高,就是面積。`,`EN: Method. Two matching trapezoids can form a parallelogram whose base is the sum of the parallel sides. One trapezoid has half that area.`,`EN: Worked example. Add the parallel sides: ${top} + ${bot} = ${top+bot}. Multiply by height and halve: ${top+bot} × ${h} ÷ 2 = ${area} square centimeters.`,`EN: Check and avoid mistakes. Add the parallel sides before multiplying by the perpendicular height. Remember the final division by two.`],
       GEO.trapezoid(`${top}`,`${bot}`,`${h}`))},
     ()=>{const s=ri(3,8);const per=s*3;return fi(`看圖的正三角形,每邊 ${s} 公分。周長是多少?`,`This equilateral triangle has sides of ${s} cm. Find the perimeter.`,per,nearNums(per,4),
-      [`🔑 正三角形三邊等長,周長 = 邊長 × 3。`,`① ${s} × 3 = ${per} 公分。`,`✔ 三邊都是 ${s}:${s}+${s}+${s} = ${per} ✓`,`EN: Equilateral means 3 equal sides: side × 3.`],
+      [`🔑 正三角形三邊等長,周長 = 邊長 × 3。`,`① ${s} × 3 = ${per} 公分。`,`✔ 三邊都是 ${s}:${s}+${s}+${s} = ${per} ✓`,`EN: Method. Equilateral means all three sides have equal length. The perimeter adds one copy of the side length for each side.`,`EN: Worked example. Three equal sides give ${s} × 3 = ${per} cm. Check: ${s} + ${s} + ${s} = ${per}.`,`EN: Check and avoid mistakes. Add three copies directly to check. A side length is not an angle measure.`],
       SVG(`<polygon points="60,20 92,74 28,74" class="gshape"/>`+gLabel(60,16,`${s}`)+gLabel(88,80,`${s}`)+gLabel(32,80,`${s}`)))},
     ()=>{const w=ri(3,9),h=ri(3,9);return fi(`看圖:長方形的面積是 ${w*h} 平方公分,長是 ${w} 公分。寬是多少公分?`,`Area is ${w*h} sq cm and length is ${w} cm. Find the width.`,h,nearNums(h,3),
-      [`🔑 面積 = 長 × 寬 → 寬 = 面積 ÷ 長(逆運算)。`,`① ${w*h} ÷ ${w} = ${h} 公分。`,`✔ 驗算:${w} × ${h} = ${w*h} ✓`,`EN: Width = area divided by length.`],
+      [`🔑 面積 = 長 × 寬 → 寬 = 面積 ÷ 長(逆運算)。`,`① ${w*h} ÷ ${w} = ${h} 公分。`,`✔ 驗算:${w} × ${h} = ${w*h} ✓`,`EN: Method. Area is the product of length and width. Dividing by the known length reverses that multiplication.`,`EN: Worked example. Undo area = length × width: ${w*h} ÷ ${w} = ${h} cm. Check: ${w} × ${h} = ${w*h} square centimeters.`,`EN: Check and avoid mistakes. Multiply the recovered width by the length to check the given area. The width uses length units.`],
       GEO.rect(w,h,`${w} cm`,`?`).replace('</svg>',gLabel(60,52,`面積 ${w*h}`)+'</svg>'))},
     ()=>{const a=pick([40,50,60,70,80,100,120]);const b=(180-a)/2;return fi(`看圖的等腰三角形(兩腰相等,記號相同),頂角是 ${a}°。一個底角是幾度?`,`This isosceles triangle has apex ${a}°. Find one base angle.`,b,nearNums(b,12),
-      [`🔑 等腰三角形:兩底角相等;三角和 = 180°。`,`① 兩底角合計:180 − ${a} = ${180-a}°。`,`② 平分給兩個角:${180-a} ÷ 2 = ${b}°。`,`✔ 驗算:${a} + ${b} + ${b} = 180 ✓`,`EN: Base angles are equal: (180 − apex) ÷ 2.`],
+      [`🔑 等腰三角形:兩底角相等;三角和 = 180°。`,`① 兩底角合計:180 − ${a} = ${180-a}°。`,`② 平分給兩個角:${180-a} ÷ 2 = ${b}°。`,`✔ 驗算:${a} + ${b} + ${b} = 180 ✓`,`EN: Method. Equal sides imply equal base angles. Remove the apex angle from the triangle total, then share what remains equally.`,`EN: Worked example. The two equal base angles total 180 − ${a} = ${180-a}°. Divide equally: ${180-a} ÷ 2 = ${b}°. Check: ${a} + ${b} + ${b} = 180°.`,`EN: Check and avoid mistakes. The remaining angle total belongs to two base angles. Halve it, then check all three angles together.`],
       SVG(`<polygon points="60,18 24,80 96,80" class="gshape"/><line x1="40" y1="46" x2="46" y2="52" class="gang"/><line x1="80" y1="46" x2="74" y2="52" class="gang"/>`+gLabel(60,34,a+'°')+gLabel(34,74,'?')))},
   ],
   4:[
     ()=>{const a=ri(12,40),b=ri(12,40);const bt=Math.floor(b/10)*10;return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,a*b,nearNums(a*b,30),
-      [`🔑 大數乘法一樣用「拆開算」:把 ${b} 拆成 ${bt} 和 ${b%10}。`,`① ${a} × ${bt} = ${a*bt}。`,`② ${a} × ${b%10} = ${a*(b%10)}。`,`③ 相加:${a*bt} + ${a*(b%10)} = ${a*b}。`,`✔ 估算檢查:約 ${Math.round(a/10)*10}×${bt} = ${Math.round(a/10)*10*bt},數量級接近 ✓`,`EN: Split into tens and ones, multiply each part, add.`])},
+      [`🔑 大數乘法一樣用「拆開算」:把 ${b} 拆成 ${bt} 和 ${b%10}。`,`① ${a} × ${bt} = ${a*bt}。`,`② ${a} × ${b%10} = ${a*(b%10)}。`,`③ 相加:${a*bt} + ${a*(b%10)} = ${a*b}。`,`✔ 估算檢查:約 ${Math.round(a/10)*10}×${bt} = ${Math.round(a/10)*10*bt},數量級接近 ✓`,`EN: Method. Split one factor using place value and apply multiplication to both parts. This is the distributive property.`,`EN: Worked example. Split ${b} into ${bt} and ${b%10}. Multiply: ${a} × ${bt} = ${a*bt} and ${a} × ${b%10} = ${a*(b%10)}. Add the products: ${a*bt} + ${a*(b%10)} = ${a*b}.`,`EN: Check and avoid mistakes. Do not forget the place value of the tens part. Add the partial products rather than multiplying them together.`])},
     ()=>{const d=pick([5,7,8,9,11]);const n1=ri(1,d-2),n2=ri(1,d-n1-1);const fans=`${n1+n2}/${d}`;const fds=[...new Set([`${n1+n2}/${d*2}`,`${n1+n2+1}/${d}`,`${n1*n2}/${d}`,`${Math.max(1,n1+n2-1)}/${d}`,`${n1+n2}/${d+1}`])].filter(x=>x!==fans).slice(0,3);return fi(`${n1}/${d} + ${n2}/${d} = ?`,`${n1}/${d} plus ${n2}/${d}?`,fans,fds,
-      [`🔑 分母 = 切法。切法相同,只加「拿的份數」。`,`① 份數相加:${n1} + ${n2} = ${n1+n2}。`,`② 切法不變:分母仍是 ${d} → ${n1+n2}/${d}。`,`⚠ 最常見的錯:把分母也加起來(${d}+${d}=${d*2})——那等於改變了切法!`,`EN: Same slice size — add only the counts, never the denominators.`])},
+      [`🔑 分母 = 切法。切法相同,只加「拿的份數」。`,`① 份數相加:${n1} + ${n2} = ${n1+n2}。`,`② 切法不變:分母仍是 ${d} → ${n1+n2}/${d}。`,`⚠ 最常見的錯:把分母也加起來(${d}+${d}=${d*2})——那等於改變了切法!`,`EN: Method. Fractions with the same denominator already describe equal-sized pieces. Addition changes how many pieces you have, not their size.`,`EN: Worked example. Both fractions use pieces of size 1/${d}. Add the numerators: ${n1} + ${n2} = ${n1+n2}. Keep the denominator ${d}: ${n1}/${d} + ${n2}/${d} = ${fans}.`,`EN: Check and avoid mistakes. Keep the denominator unchanged. An equivalent simplified fraction represents the same result.`])},
     ()=>{const w=ri(3,12),h=ri(3,12);return fi(`長 ${w}、寬 ${h} 公分的長方形,面積是多少平方公分?`,`Area of a ${w} by ${h} rectangle?`,w*h,nearNums(w*h,10),
-      [`🔑 面積 = 數 1×1 小方塊:每排 ${w} 塊、共 ${h} 排。`,`① ${w} × ${h} = ${w*h} 平方公分。`,`✔ 換方向數:${h} × ${w} = ${w*h},一樣 ✓(乘法交換律!)`,`EN: Count unit squares: ${w} per row times ${h} rows.`])},
+      [`🔑 面積 = 數 1×1 小方塊:每排 ${w} 塊、共 ${h} 排。`,`① ${w} × ${h} = ${w*h} 平方公分。`,`✔ 換方向數:${h} × ${w} = ${w*h},一樣 ✓(乘法交換律!)`,`EN: Method. A rectangle is tiled by equal rows of unit squares. Multiplication counts every row without listing each square.`,`EN: Worked example. Each of ${h} rows contains ${w} unit squares: ${w} × ${h} = ${w*h} square centimeters. Reversing the rows and columns gives ${h} × ${w} = ${w*h}.`,`EN: Check and avoid mistakes. Use square units. Swapping length and width should leave the area unchanged.`])},
     ()=>{const a=ri(30,80),b=ri(30,140-a);return fi(`三角形兩個角是 ${a}° 和 ${b}°,第三個角是幾度?`,`A triangle has angles ${a}° and ${b}°. The third angle?`,180-a-b,nearNums(180-a-b,15),
-      [`🔑 鐵律:任何三角形的內角和都是 180°——撕下三個角拼起來剛好一條直線!`,`① 已知兩角:${a} + ${b} = ${a+b}。`,`② 第三角:180 − ${a+b} = ${180-a-b}。`,`✔ 驗算:${a} + ${b} + ${180-a-b} = 180 ✓`,`EN: The three angles of any triangle always total 180 degrees.`])},
+      [`🔑 鐵律:任何三角形的內角和都是 180°——撕下三個角拼起來剛好一條直線!`,`① 已知兩角:${a} + ${b} = ${a+b}。`,`② 第三角:180 − ${a+b} = ${180-a-b}。`,`✔ 驗算:${a} + ${b} + ${180-a-b} = 180 ✓`,`EN: Method. The unknown angle completes the triangle’s fixed interior-angle total. First combine the two known contributions.`,`EN: Worked example. The known angles total ${a} + ${b} = ${a+b}°. The third is 180 − ${a+b} = ${180-a-b}°. Check: ${a} + ${b} + ${180-a-b} = 180°.`,`EN: Check and avoid mistakes. Check by adding all three angles. Estimating from a sketch is less reliable than using the labeled values.`])},
     ()=>{const a=ri(10,99)/10,b=ri(10,99)/10;const s=Math.round((a+b)*10)/10;return fi(`${a} + ${b} = ?`,`${a} plus ${b}?`,s,[Math.round((s+0.3)*10)/10,Math.round((s-0.2)*10)/10,Math.round((s+1)*10)/10],
-      [`🔑 小數點 = 「個位在哪裡」的座標,先對齊再加。`,`① 小數點對齊,像直式加法一樣算。`,`② ${a} + ${b} = ${s}。`,`✔ 估算檢查:約 ${Math.round(a)} + ${Math.round(b)} = ${Math.round(a)+Math.round(b)},和 ${s} 接近 ✓`,`EN: Line up the decimal points, then add as usual.`])},
+      [`🔑 小數點 = 「個位在哪裡」的座標,先對齊再加。`,`① 小數點對齊,像直式加法一樣算。`,`② ${a} + ${b} = ${s}。`,`✔ 估算檢查:約 ${Math.round(a)} + ${Math.round(b)} = ${Math.round(a)+Math.round(b)},和 ${s} 接近 ✓`,`EN: Method. Align place values so tenths are added to tenths and whole units to whole units. Scaling both addends by ten permits integer arithmetic.`,`EN: Worked example. Align the decimal points. Add tenths: ${Math.round(a*10)} + ${Math.round(b*10)} = ${Math.round(s*10)} tenths. Divide by 10: ${a} + ${b} = ${s}.`,`EN: Check and avoid mistakes. Scale the sum back by ten exactly once. Do not align numbers by their final digit instead of their decimal point.`])},
     ()=>{const s=ri(1,8),d=ri(2,4);const t=[s,s+d,s+2*d+2,s+3*d+6];const next=s+4*d+12;return fi(`數列偵探:${t[0]}, ${t[1]}, ${t[2]}, ${t[3]}, ?。下一個?`,`Sequence detective: ${t[0]}, ${t[1]}, ${t[2]}, ${t[3]}, ?. Next?`,next,nearNums(next,4),
-      [`🔑 一階差不固定?往下挖一層,看「差的差」。`,`① 差:+${d}, +${d+2}, +${d+4} → 差本身每次多 2。`,`② 下一個差 = +${d+6}。`,`③ ${t[3]} + ${d+6} = ${next}。`,`💡 這叫「二階規律」——你剛用了微積分的思考雛形。`,`EN: When gaps change, study the gaps of the gaps.`])},
+      [`🔑 一階差不固定?往下挖一層,看「差的差」。`,`① 差:+${d}, +${d+2}, +${d+4} → 差本身每次多 2。`,`② 下一個差 = +${d+6}。`,`③ ${t[3]} + ${d+6} = ${next}。`,`💡 這叫「二階規律」——你剛用了微積分的思考雛形。`,`EN: Method. When consecutive gaps differ, inspect how the gaps themselves change. Continue that second-level pattern to find the next gap.`,`EN: Worked example. Successive gaps are ${d}, ${d+2}, ${d+4}; each gap increases by 2. The next gap is ${d+6}, so ${t[3]} + ${d+6} = ${next}.`,`EN: Check and avoid mistakes. Add the next gap to the final term. Do not mistake the gap itself for the requested next term.`])},
     ()=>{const n=pick([10,20,30,40,50,100]);return fi(`🏆 1+2+3+…+${n} = ?(想想高斯 9 歲時怎麼算)`,`What is 1+2+...+${n}? (Gauss cracked this at age nine)`,n*(n+1)/2,nearNums(n*(n+1)/2,n),
-      [`🔑 頭尾配對:1+${n}、2+${n-1}、3+${n-2}…每一對都是 ${n+1}!`,`① 總共可以配 ${n} ÷ 2 = ${n/2} 對。`,`② ${n+1} × ${n/2} = ${n*(n+1)/2}。`,`💡 高斯九歲想出這招——正是你的年紀。這是「萬用工具」:任何等差數列都適用。`,`EN: Pair first with last; every pair sums to ${n+1}.`])},
+      [`🔑 頭尾配對:1+${n}、2+${n-1}、3+${n-2}…每一對都是 ${n+1}!`,`① 總共可以配 ${n} ÷ 2 = ${n/2} 對。`,`② ${n+1} × ${n/2} = ${n*(n+1)/2}。`,`💡 高斯九歲想出這招——正是你的年紀。這是「萬用工具」:任何等差數列都適用。`,`EN: Method. Pairing the first and last terms gives equal pair totals. The chosen endpoint is even, so every term fits into one pair.`,`EN: Worked example. Pair first and last: 1 + ${n} = ${n+1}. There are ${n} ÷ 2 = ${n/2} pairs, giving ${n+1} × ${n/2} = ${n*(n+1)/2}.`,`EN: Check and avoid mistakes. Count pairs, not terms, before multiplying. Each original term must appear once in the pairing.`])},
     ()=>{const small=ri(5,20),big=small+ri(3,15);const s=big+small,d=big-small;return fi(`🏆 兩個數的和是 ${s}、差是 ${d}。比較大的數是多少?`,`Two numbers: sum ${s}, difference ${d}. The larger one is?`,big,nearNums(big,4),
-      [`🔑 和差公式:大 = (和+差)÷2。想像把「差」補給小的,兩人就一樣大。`,`① (${s} + ${d}) ÷ 2 = ${big}。`,`② 小的 = ${s} − ${big} = ${small}。`,`✔ 驗算:${big}+${small}=${s} ✓、${big}−${small}=${d} ✓`,`EN: Larger = (sum + difference) divided by two.`])},
+      [`🔑 和差公式:大 = (和+差)÷2。想像把「差」補給小的,兩人就一樣大。`,`① (${s} + ${d}) ÷ 2 = ${big}。`,`② 小的 = ${s} − ${big} = ${small}。`,`✔ 驗算:${big}+${small}=${s} ✓、${big}−${small}=${d} ✓`,`EN: Method. Adding the sum and difference cancels the smaller number and leaves twice the larger number. Halving isolates the larger number.`,`EN: Worked example. Add sum and difference, then halve: (${s} + ${d}) ÷ 2 = ${big}. The smaller number is ${s} − ${big} = ${small}. Check: ${big} + ${small} = ${s} and ${big} − ${small} = ${d}.`,`EN: Check and avoid mistakes. Recover the smaller number from the sum. Check both relationships, since matching just one is insufficient.`])},
     ()=>{const b=ri(3,9),k=ri(3,9);return fi(`${b*k} 是 ${b} 的幾倍?`,`${b*k} is how many times ${b}?`,k,nearNums(k,3),
-      [`🔑 「幾倍」就是除法:大 ÷ 小 = 倍數。`,`① ${b*k} ÷ ${b} = ${k}。`,`✔ 驗算:${b} × ${k} = ${b*k} ✓`,`EN: Times-as-many means divide the big by the small.`])},
+      [`🔑 「幾倍」就是除法:大 ÷ 小 = 倍數。`,`① ${b*k} ÷ ${b} = ${k}。`,`✔ 驗算:${b} × ${k} = ${b*k} ✓`,`EN: Method. How many times compares an amount with a reference group size. Division counts how many reference groups fit.`,`EN: Worked example. Divide by the reference amount: ${b*k} ÷ ${b} = ${k} times. Check: ${b} × ${k} = ${b*k}.`,`EN: Check and avoid mistakes. This result is a multiplier, not the difference between the amounts. Multiply by the reference to check.`])},
     ()=>{const a=ri(50,99)/10,b=ri(10,Math.round(a*10)-5)/10;const d=Math.round((a-b)*10)/10;return fi(`${a} − ${b} = ?`,`${a} minus ${b}?`,d,[Math.round((d+0.3)*10)/10,Math.round((d-0.2)*10)/10,Math.round((d+1)*10)/10],
-      [`🔑 小數減法:小數點對齊,像整數一樣借位。`,`① 對齊小數點,${a} − ${b}。`,`② 得 ${d}。`,`✔ 驗算:${d} + ${b} = ${a} ✓`,`EN: Line up the decimal points, then subtract as usual.`])},
+      [`🔑 小數減法:小數點對齊,像整數一樣借位。`,`① 對齊小數點,${a} − ${b}。`,`② 得 ${d}。`,`✔ 驗算:${d} + ${b} = ${a} ✓`,`EN: Method. Subtract matching decimal places. Thinking in tenths turns this into whole-number subtraction with the same relative values.`,`EN: Worked example. Align decimals and subtract tenths: ${Math.round(a*10)} − ${Math.round(b*10)} = ${Math.round(d*10)} tenths. Therefore ${a} − ${b} = ${d}. Check: ${d} + ${b} = ${a}.`,`EN: Check and avoid mistakes. Return from tenths to the original units. Add the subtracted amount back to verify the result.`])},
     ()=>{const a=ri(4,9),b=ri(3,7),c=ri(3,6),d=ri(3,6);const area=a*b+c*d;return fi(`看圖的 L 形,可拆成兩個長方形:${a}×${b} 和 ${c}×${d}。總面積是多少?`,`This L-shape splits into a ${a}×${b} and a ${c}×${d} rectangle. Total area?`,area,nearNums(area,12),
-      [`🔑 複合圖形:切成幾個長方形,分別算再相加。`,`① 第一塊:${a} × ${b} = ${a*b}。`,`② 第二塊:${c} × ${d} = ${c*d}。`,`③ 合計:${a*b} + ${c*d} = ${area}。`,`💡 拆解法:再複雜的圖形都能拆成會算的小塊。`,`EN: Split a compound shape into rectangles, then add.`],
+      [`🔑 複合圖形:切成幾個長方形,分別算再相加。`,`① 第一塊:${a} × ${b} = ${a*b}。`,`② 第二塊:${c} × ${d} = ${c*d}。`,`③ 合計:${a*b} + ${c*d} = ${area}。`,`💡 拆解法:再複雜的圖形都能拆成會算的小塊。`,`EN: Method. Area adds across non-overlapping parts. Splitting an irregular boundary into rectangles makes familiar formulas available.`,`EN: Worked example. Split into non-overlapping rectangles. Their areas are ${a} × ${b} = ${a*b} and ${c} × ${d} = ${c*d}. Add: ${a*b} + ${c*d} = ${area} square units.`,`EN: Check and avoid mistakes. Count every part once. Overlapping pieces would need correction before their areas could simply be added.`],
       GEO.Lshape(''))},
     ()=>{const a=ri(40,90);return fi(`看圖,一直線上的一個角是 ${a}°,它旁邊的角(補角)是幾度?`,`On a straight line, one angle is ${a}°. Find its supplement.`,180-a,nearNums(180-a,15),
-      [`🔑 一直線是 180°:直線上兩角互為「補角」,相加 = 180°。`,`① 180 − ${a} = ${180-a}°。`,`✔ 驗算:${a} + ${180-a} = 180 ✓`,`💡 兩個直角(90°+90°)也剛好拉成一直線。`,`EN: Angles on a straight line add to 180°.`],
+      [`🔑 一直線是 180°:直線上兩角互為「補角」,相加 = 180°。`,`① 180 − ${a} = ${180-a}°。`,`✔ 驗算:${a} + ${180-a} = 180 ✓`,`💡 兩個直角(90°+90°)也剛好拉成一直線。`,`EN: Method. Adjacent angles that fill one straight line are supplementary. Removing the known angle leaves its supplement.`,`EN: Worked example. Adjacent angles on a straight line total 180°. The missing angle is 180 − ${a} = ${180-a}°. Check: ${a} + ${180-a} = 180°.`,`EN: Check and avoid mistakes. The supplement and original angle must total a half turn. Do not use a right-angle total instead.`],
       SVG(`<line x1="10" y1="60" x2="110" y2="60" class="gline"/><line x1="60" y1="60" x2="88" y2="26" class="gline"/><path d="M78,60 A18,18 0 0,0 74,44" class="gang"/>`+gLabel(84,50,a+'°')+gLabel(40,54,'?')))},
     ()=>{const half=ri(3,7);return fi(`看圖:虛線是對稱軸。左邊有一個點在距軸 ${half} 格的地方,右邊對稱的點距軸幾格?`,`The dashed line is the axis of symmetry. A point sits ${half} units left of it. How far right is its mirror?`,half,nearNums(half,2),
-      [`🔑 對稱=鏡子:兩邊到對稱軸的距離一定相等。`,`① 左邊 ${half} 格 → 右邊也是 ${half} 格。`,`✔ 對稱軸就像鏡面,左右是彼此的鏡像。`,`EN: Symmetry mirrors distance: same on both sides.`],
+      [`🔑 對稱=鏡子:兩邊到對稱軸的距離一定相等。`,`① 左邊 ${half} 格 → 右邊也是 ${half} 格。`,`✔ 對稱軸就像鏡面,左右是彼此的鏡像。`,`EN: Method. A mirror reflection preserves perpendicular distance to the mirror line while changing the side of the line.`,`EN: Worked example. A reflection keeps the perpendicular distance to the axis. The left point is ${half} units away, so its mirror is ${half} units to the right.`,`EN: Check and avoid mistakes. Measure from the axis, not from the other point. The distance between the two points is twice either distance to the axis.`],
       SVG(`<line x1="60" y1="12" x2="60" y2="88" class="gdash"/><circle cx="${60-half*6}" cy="50" r="3.5" class="gdot"/><circle cx="${60+half*6}" cy="50" r="3" class="gline" fill="none"/>`+gLabel(60-half*6,42,`${half}`)+gLabel(60+half*6,42,'?')))},
     ()=>{const r=ri(2,6);const d=r*2;return fi(`看圖的圓,半徑是 ${r} 公分。直徑是多少公分?`,`This circle has radius ${r} cm. What is the diameter?`,d,nearNums(d,3),
-      [`🔑 直徑 = 半徑 × 2(直徑穿過圓心,是半徑的兩倍)。`,`① ${r} × 2 = ${d} 公分。`,`✔ 反過來:半徑 = 直徑 ÷ 2 = ${r} ✓`,`EN: Diameter = radius × 2.`],
+      [`🔑 直徑 = 半徑 × 2(直徑穿過圓心,是半徑的兩倍)。`,`① ${r} × 2 = ${d} 公分。`,`✔ 反過來:半徑 = 直徑 ÷ 2 = ${r} ✓`,`EN: Method. A diameter passes through the center from one side of a circle to the other. It contains two radii end to end.`,`EN: Worked example. A diameter consists of two radii: ${r} × 2 = ${d} cm. Check: ${d} ÷ 2 = ${r} cm.`,`EN: Check and avoid mistakes. Doubling is appropriate because the given value is a radius. Halving the result should restore it.`],
       GEO.circle(r,`r=${r}`))},
     ()=>{const t=pick([[5,'五'],[6,'六'],[8,'八']]);const s=ri(3,9);const pts=Array.from({length:t[0]},(_,i)=>{const a=-Math.PI/2+i*2*Math.PI/t[0];return `${(60+32*Math.cos(a)).toFixed(1)},${(50+32*Math.sin(a)).toFixed(1)}`}).join(' ');return fi(`看圖:正${t[1]}邊形每邊 ${s} 公分。周長是多少公分?`,`A regular ${t[0]}-gon with side ${s} cm. Find the perimeter.`,t[0]*s,nearNums(t[0]*s,6),
-      [`🔑 「正」多邊形=每邊等長:周長 = 邊長 × 邊數。`,`① ${s} × ${t[0]} = ${t[0]*s} 公分。`,`✔ 和正方形同一條規則,只是邊數不同——規則會遷移!`,`EN: Regular polygon perimeter = side × number of sides.`],
+      [`🔑 「正」多邊形=每邊等長:周長 = 邊長 × 邊數。`,`① ${s} × ${t[0]} = ${t[0]*s} 公分。`,`✔ 和正方形同一條規則,只是邊數不同——規則會遷移!`,`EN: Method. Every side of a regular polygon has the same length. Multiplication replaces adding that length once for every side.`,`EN: Worked example. This regular polygon has ${t[0]} equal sides of ${s} cm. Perimeter = ${s} × ${t[0]} = ${t[0]*s} cm.`,`EN: Check and avoid mistakes. Use the number of sides shown, not the square’s familiar count of four. The result is a perimeter.`],
       SVG(`<polygon points="${pts}" class="gshape"/>`+gLabel(60,14,s+' cm')))},
     ()=>{const W=ri(8,12),H=ri(6,10),w=ri(3,W-3),h=ri(2,H-3);return fi(`看圖的相框:外框 ${W}×${H},中間挖掉 ${w}×${h} 的洞。框的面積(灰色部分)是多少?`,`A frame: outer ${W}×${H} minus an inner ${w}×${h} hole. Find the frame area.`,W*H-w*h,nearNums(W*H-w*h,10),
-      [`🔑 挖洞問題:大面積 − 小面積 = 剩下的。`,`① 外框:${W} × ${H} = ${W*H}。`,`② 洞:${w} × ${h} = ${w*h}。`,`③ 相減:${W*H} − ${w*h} = ${W*H-w*h}。`,`💡 「補」與「挖」是複合圖形的兩把刀:加法拼、減法挖。`,`EN: Frame area = outer area minus the hole.`],
+      [`🔑 挖洞問題:大面積 − 小面積 = 剩下的。`,`① 外框:${W} × ${H} = ${W*H}。`,`② 洞:${w} × ${h} = ${w*h}。`,`③ 相減:${W*H} − ${w*h} = ${W*H-w*h}。`,`💡 「補」與「挖」是複合圖形的兩把刀:加法拼、減法挖。`,`EN: Method. The frame occupies the outer rectangle except for the hole. Find the two areas independently before subtracting.`,`EN: Worked example. Outer area: ${W} × ${H} = ${W*H}. Hole area: ${w} × ${h} = ${w*h}. Subtract: ${W*H} − ${w*h} = ${W*H-w*h} square units.`,`EN: Check and avoid mistakes. Subtract areas, not side lengths. Adding the hole area back should restore the outer rectangle.`],
       SVG(`<rect x="14" y="20" width="96" height="64" class="gshape"/><rect x="38" y="38" width="46" height="30" style="fill:var(--paper);stroke:var(--cobalt);stroke-width:2"/>`+gLabel(62,16,`${W}×${H}`)+gLabel(62,55,`${w}×${h}`)))},
   ],
   5:[
     ()=>{const pairs=[[2,4],[3,6],[2,6],[4,8],[3,9],[2,8]];const [d1,d2]=pick(pairs);const n2=ri(1,d2-1);const L=d2;const s=`${L/d1+n2}/${L}`;return fi(`1/${d1} + ${n2}/${d2} = ?`,`1/${d1} plus ${n2}/${d2}?`,s,[`${1+n2}/${d1+d2}`,`${n2}/${L}`,`${L/d1+n2+1}/${L}`],
-      [`🔑 切法不同不能直接加 → 先「通分」統一切法。`,`① 1/${d1} 每份切成 ${L/d1} 小份:1/${d1} = ${L/d1}/${L}(大小沒變,只是切更細)。`,`② 現在切法相同了:${L/d1}/${L} + ${n2}/${L} = ${s}。`,`⚠ 陷阱:分母直接相加(${d1}+${d2})是最常見的錯!`,`EN: Convert to a common denominator first, then add the counts.`])},
+      [`🔑 切法不同不能直接加 → 先「通分」統一切法。`,`① 1/${d1} 每份切成 ${L/d1} 小份:1/${d1} = ${L/d1}/${L}(大小沒變,只是切更細)。`,`② 現在切法相同了:${L/d1}/${L} + ${n2}/${L} = ${s}。`,`⚠ 陷阱:分母直接相加(${d1}+${d2})是最常見的錯!`,`EN: Method. Unlike denominators describe differently sized pieces. Rewrite the first fraction using the second denominator before combining counts.`,`EN: Worked example. Use denominator ${L}: 1/${d1} = ${L/d1}/${L}. Add equal-sized parts: ${L/d1}/${L} + ${n2}/${L} = ${s}. Do not add the denominators.`,`EN: Check and avoid mistakes. An equivalent fraction multiplies numerator and denominator by the same factor. Never add unlike denominators directly.`])},
     ()=>{const a=ri(2,9),b=ri(11,99)/10;const p=Math.round(a*b*10)/10;return fi(`${a} × ${b} = ?`,`${a} times ${b}?`,p,[Math.round((p+a)*10)/10,Math.round((p-a/2)*10)/10,Math.round(p*10+1)/10],
-      [`🔑 先忽略小數點當整數乘,最後再把點放回去。`,`① 當整數:${a} × ${b*10} = ${a*b*10}。`,`② ${b} 有一位小數 → 答案點回一位:${p}。`,`✔ 估算:${a} × ${Math.round(b)} = ${a*Math.round(b)},和 ${p} 接近 ✓`,`EN: Multiply as whole numbers, then restore the decimal point.`])},
+      [`🔑 先忽略小數點當整數乘,最後再把點放回去。`,`① 當整數:${a} × ${Math.round(b*10)} = ${Math.round(a*b*10)}。`,`② ${b} 有一位小數 → 答案點回一位:${p}。`,`✔ 估算:${a} × ${Math.round(b)} = ${a*Math.round(b)},和 ${p} 接近 ✓`,`EN: Method. Express the decimal factor as a whole number of tenths. Multiply that count, then convert tenths back to the original units.`,`EN: Worked example. Convert ${b} to ${Math.round(b*10)} tenths. Multiply: ${a} × ${Math.round(b*10)} = ${Math.round(a*b*10)} tenths. Divide by 10 to get ${p}.`,`EN: Check and avoid mistakes. Ignoring the decimal point temporarily makes the value ten times larger. Undo that scaling after multiplication.`])},
     ()=>{const l=ri(2,8),w=ri(2,8),h=ri(2,8);return fi(`長 ${l}、寬 ${w}、高 ${h} 公分的長方體,體積是多少立方公分?`,`Volume of a ${l} by ${w} by ${h} box?`,l*w*h,nearNums(l*w*h,20),
-      [`🔑 體積 = 一層的方塊數 × 疊幾層。`,`① 底層:${l} × ${w} = ${l*w} 塊。`,`② 疊 ${h} 層:${l*w} × ${h} = ${l*w*h} 立方公分。`,`✔ 換個方向疊(${w}×${h} 為底)答案一樣 ✓`,`EN: One layer of cubes, times the number of layers.`])},
-    ()=>{const N=pick([12,18,24,30,36]);const fs=[];for(let i=2;i<N;i++)if(N%i===0)fs.push(i);const ans=pick(fs);const non=[];let x=2;while(non.length<3){if(N%x!==0&&x!==ans)non.push(x);x++}return fi(`哪一個是 ${N} 的因數?`,`Which one is a factor of ${N}?`,ans,non,
-      [`🔑 因數 = 能整除、零餘數的數。`,`① 測試:${N} ÷ ${ans} = ${N/ans},整除 ✓`,`② 其他選項除 ${N} 都會留下餘數。`,`💡 小技巧:因數成雙出現——${ans} × ${N/ans} = ${N},找到一個就送一個。`,`EN: A factor divides in exactly; factors always come in pairs.`])},
+      [`🔑 體積 = 一層的方塊數 × 疊幾層。`,`① 底層:${l} × ${w} = ${l*w} 塊。`,`② 疊 ${h} 層:${l*w} × ${h} = ${l*w*h} 立方公分。`,`✔ 換個方向疊(${w}×${h} 為底)答案一樣 ✓`,`EN: Method. Volume counts unit cubes filling a solid. Base area counts cubes in one layer, and height counts the layers.`,`EN: Worked example. Each layer has ${l} × ${w} = ${l*w} cubes. Stack ${h} layers: ${l*w} × ${h} = ${l*w*h} cubic centimeters.`,`EN: Check and avoid mistakes. Three lengths are multiplied, so the unit is cubic. Surface area instead counts the outside faces.`])},
+    ()=>{const N=pick([12,18,24,30,36]);const fs=[];for(let i=2;i<N;i++)if(N%i===0)fs.push(i);const ans=pick(fs);const non=[];let x=2;while(non.length<3){if(N%x!==0&&x!==ans)non.push(x);x++}return mc(`哪一個是 ${N} 的因數?`,`Which one is a factor of ${N}?`,ans,non,
+      [`🔑 因數 = 能整除、零餘數的數。`,`① 測試:${N} ÷ ${ans} = ${N/ans},整除 ✓`,`② 其他選項除 ${N} 都會留下餘數。`,`💡 小技巧:因數成雙出現——${ans} × ${N/ans} = ${N},找到一個就送一個。`,`EN: Method. A factor divides a number into whole groups with nothing left over. Test the listed candidates using division.`,`EN: Worked example. ${N} ÷ ${ans} = ${N/ans} with no remainder, so ${ans} is a factor. Check: ${ans} × ${N/ans} = ${N}. The other listed choices leave remainders.`,`EN: Check and avoid mistakes. Other factors may exist, but this question asks which listed option works. Multiplying the factor by its quotient verifies it.`])},
     ()=>{const t=pick([[4,6,12],[6,8,24],[3,5,15],[4,10,20],[6,9,18]]);return fi(`${t[0]} 和 ${t[1]} 的最小公倍數是?`,`Least common multiple of ${t[0]} and ${t[1]}?`,t[2],[t[0]*t[1],t[2]*2,t[2]+t[0]],
-      [`🔑 最小公倍數 = 兩排倍數第一次「相遇」的地方。`,`① ${t[0]} 的倍數:${t[0]}, ${t[0]*2}, ${t[0]*3}, …`,`② ${t[1]} 的倍數:${t[1]}, ${t[1]*2}, …`,`③ 第一個共同出現的:${t[2]}。`,`⚠ 陷阱:不一定是相乘!${t[0]}×${t[1]}=${t[0]*t[1]},比 ${t[2]} 大。`,`EN: List multiples and find the first meeting point — not always the product.`])},
+      [`🔑 最小公倍數 = 兩排倍數第一次「相遇」的地方。`,`① ${t[0]} 的倍數:${t[0]}, ${t[0]*2}, ${t[0]*3}, …`,`② ${t[1]} 的倍數:${t[1]}, ${t[1]*2}, …`,`③ 第一個共同出現的:${t[2]}。`,`⚠ 陷阱:不一定是相乘!${t[0]}×${t[1]}=${t[0]*t[1]},${t[0]*t[1]===t[2]?"這組剛好等於最小公倍數":"這組比最小公倍數 "+t[2]+" 大"}。`,`EN: Method. Common multiples belong to both multiplication lists. The least common multiple is their earliest positive match.`,`EN: Worked example. Multiples of ${t[0]} up to ${t[2]}: ${Array.from({length:t[2]/t[0]},(_,i)=>(i+1)*t[0]).join(", ")}. Multiples of ${t[1]}: ${Array.from({length:t[2]/t[1]},(_,i)=>(i+1)*t[1]).join(", ")}. Their first common value is ${t[2]}.`,`EN: Check and avoid mistakes. The product is a common multiple but may not be the least. Compare the earlier entries in both lists.`])},
     ()=>{const d=pick([3,4,5,6,8]);const n=ri(1,d-1);const k=d*ri(1,3);return fi(`${n}/${d} × ${k} = ?`,`${n}/${d} times ${k}?`,n*k/d,nearNums(n*k/d,4),
-      [`🔑 分數乘整數 = ${k} 個 ${n}/${d} 疊起來。`,`① 分子先乘:${n} × ${k} = ${n*k}。`,`② ${n*k} ÷ ${d} = ${n*k/d}(剛好整除)。`,`✔ 反推:${n*k/d} × ${d} ÷ ${k} = ${n} ✓`,`EN: Multiply the top by ${k}, then divide by the bottom.`])},
+      [`🔑 分數乘整數 = ${k} 個 ${n}/${d} 疊起來。`,`① 分子先乘:${n} × ${k} = ${n*k}。`,`② ${n*k} ÷ ${d} = ${n*k/d}(剛好整除)。`,`✔ 反推:${n*k/d} × ${d} ÷ ${k} = ${n} ✓`,`EN: Method. Multiplying a fraction by a whole number repeats that fraction. The numerator count grows while the piece size stays fixed.`,`EN: Worked example. Multiply the numerator: ${n} × ${k} = ${n*k}. Divide by the denominator: ${n*k} ÷ ${d} = ${n*k/d}. Check: ${n*k/d} × ${d} = ${n*k}.`,`EN: Check and avoid mistakes. Divide the multiplied numerator by the original denominator. Reducing first can make the same calculation easier.`])},
     ()=>{const c=ri(2,5);return fi(`🏆 抽屜裡混著 ${c} 種顏色的襪子。閉著眼最少拿幾隻,才「保證」湊出一雙同色?`,`A drawer holds socks in ${c} colors. Fewest picks to GUARANTEE a matching pair?`,c+1,[c,c*2+1,c+3],
-      [`🔑 鴿籠原理:「保證」型題目要想「最壞情況」。`,`① 最倒楣的情況:前 ${c} 隻剛好每色各一隻,還湊不成雙。`,`② 第 ${c+1} 隻無論什麼顏色,一定和手上某隻同色!`,`💡 心法:保證 = 最壞情況 + 1。這是正式的組合數學。`,`EN: Pigeonhole: survive the worst case, then one more pick wins.`])},
+      [`🔑 鴿籠原理:「保證」型題目要想「最壞情況」。`,`① 最倒楣的情況:前 ${c} 隻剛好每色各一隻,還湊不成雙。`,`② 第 ${c+1} 隻無論什麼顏色,一定和手上某隻同色!`,`💡 心法:保證 = 最壞情況 + 1。這是正式的組合數學。`,`EN: Method. A guarantee must survive the least favorable arrangement. First imagine drawing one sock of each available color.`,`EN: Worked example. In the worst case the first ${c} socks all have different colors. Sock number ${c+1} must match an existing color. Therefore ${c} + 1 = ${c+1} picks guarantee a pair.`,`EN: Check and avoid mistakes. That many draws can still have no pair. One further draw must repeat a color because no new color is available.`])},
     ()=>{const b=ri(70,85),a=b+ri(-5,5);const third=3*a-2*b;return fi(`🏆 小奇三次測驗平均 ${a} 分,前兩次平均 ${b} 分。第三次考了幾分?`,`Three tests average ${a}; the first two average ${b}. The third score?`,third,nearNums(third,5),
-      [`🔑 平均是總和的偽裝——先把它變回總和。`,`① 三次總分:${a} × 3 = ${3*a}。`,`② 前兩次總分:${b} × 2 = ${2*b}。`,`③ 第三次:${3*a} − ${2*b} = ${third}。`,`✔ 驗算:(${2*b} + ${third}) ÷ 3 = ${a} ✓`,`EN: Turn every average back into a total, then subtract.`])},
+      [`🔑 平均是總和的偽裝——先把它變回總和。`,`① 三次總分:${a} × 3 = ${3*a}。`,`② 前兩次總分:${b} × 2 = ${2*b}。`,`③ 第三次:${3*a} − ${2*b} = ${third}。`,`✔ 驗算:(${2*b} + ${third}) ÷ 3 = ${a} ✓`,`EN: Method. An average hides a total: multiply it by the number of tests to recover the total score.`,`EN: Worked example. Total for three tests: ${a} × 3 = ${3*a}. Total for the first two: ${b} × 2 = ${2*b}. Third score: ${3*a} − ${2*b} = ${third}. Check: (${2*b} + ${third}) ÷ 3 = ${a}.`,`EN: Check and avoid mistakes. Use three tests for the overall average and two for the earlier average. Subtract totals, not averages.`])},
     ()=>{const t=pick([[12,18,6],[8,12,4],[15,20,5],[18,24,6],[16,24,8],[9,12,3]]);return fi(`${t[0]} 和 ${t[1]} 的最大公因數是?`,`Greatest common factor of ${t[0]} and ${t[1]}?`,t[2],[t[2]*2,Math.max(1,t[2]-1),t[2]+2],
-      [`🔑 最大公因數=兩個數「都能被整除」的最大數。`,`① ${t[0]} 的因數裡找、${t[1]} 的因數裡找,共同的取最大。`,`② ${t[0]}÷${t[2]}=${t[0]/t[2]}、${t[1]}÷${t[2]}=${t[1]/t[2]},都整除 ✓`,`💡 它是約分的鑰匙:${t[0]}/${t[1]} 用 ${t[2]} 約分 = ${t[0]/t[2]}/${t[1]/t[2]}。`,`EN: The largest number dividing both — the key to simplifying fractions.`])},
+      [`🔑 最大公因數=兩個數「都能被整除」的最大數。`,`① ${t[0]} 的因數裡找、${t[1]} 的因數裡找,共同的取最大。`,`② ${t[0]}÷${t[2]}=${t[0]/t[2]}、${t[1]}÷${t[2]}=${t[1]/t[2]},都整除 ✓`,`💡 它是約分的鑰匙:${t[0]}/${t[1]} 用 ${t[2]} 約分 = ${t[0]/t[2]}/${t[1]/t[2]}。`,`EN: Method. A common factor divides both numbers exactly. The greatest one is the largest member of their shared factor list.`,`EN: Worked example. Common factors are ${Array.from({length:Math.min(t[0],t[1])},(_,i)=>i+1).filter(v=>t[0]%v===0&&t[1]%v===0).join(", ")}. The greatest is ${t[2]}. Check: ${t[0]} ÷ ${t[2]} = ${t[0]/t[2]} and ${t[1]} ÷ ${t[2]} = ${t[1]/t[2]}, both whole numbers.`,`EN: Check and avoid mistakes. Being a factor of only one number is insufficient. Confirm exact division for both and that no larger shared factor remains.`])},
     ()=>{const c=ri(2,5);const ans=ri(11,49)/10;const a=Math.round(ans*c*10)/10;return fi(`${a} ÷ ${c} = ?`,`${a} divided by ${c}?`,ans,[Math.round((ans+0.5)*10)/10,Math.round((ans-0.3)*10)/10,Math.round(ans*c*10)/10],
-      [`🔑 小數除以整數:照整數除,小數點直直落下來。`,`① ${a*10} ÷ ${c} = ${ans*10}(先當整數)。`,`② 小數點放回:${ans}。`,`✔ 驗算:${ans} × ${c} = ${a} ✓`,`EN: Divide as whole numbers; the decimal point drops straight down.`])},
+      [`🔑 小數除以整數:照整數除,小數點直直落下來。`,`① ${Math.round(a*10)} ÷ ${c} = ${Math.round(ans*10)}(先當整數)。`,`② 小數點放回:${ans}。`,`✔ 驗算:${ans} × ${c} = ${a} ✓`,`EN: Method. Convert the dividend to a whole number of tenths, divide that count, then express the answer in original units.`,`EN: Worked example. Convert ${a} to ${Math.round(a*10)} tenths. Divide: ${Math.round(a*10)} ÷ ${c} = ${Math.round(ans*10)} tenths, or ${ans}. Check: ${ans} × ${c} = ${a}.`,`EN: Check and avoid mistakes. The divisor is a whole number here. Multiplying the decimal quotient by it must recover the dividend.`])},
     ()=>{const l=ri(3,7),w=ri(3,7),h=ri(3,7);return fi(`看圖的長方體,長 ${l}、寬 ${w}、高 ${h}。體積是多少立方公分?`,`This box is ${l}×${w}×${h}. Find the volume.`,l*w*h,nearNums(l*w*h,25),
-      [`🔑 體積 = 長 × 寬 × 高(先算一層,再疊高)。`,`① 底面:${l} × ${w} = ${l*w}。`,`② 疊 ${h} 層:${l*w} × ${h} = ${l*w*h} 立方公分。`,`✔ 立方=三個長度相乘,單位是「立方公分」。`,`EN: Volume = length × width × height.`],
+      [`🔑 體積 = 長 × 寬 × 高(先算一層,再疊高)。`,`① 底面:${l} × ${w} = ${l*w}。`,`② 疊 ${h} 層:${l*w} × ${h} = ${l*w*h} 立方公分。`,`✔ 立方=三個長度相乘,單位是「立方公分」。`,`EN: Method. The box contains equal layers. Multiply the two base dimensions for one layer, then multiply by the number of layers.`,`EN: Worked example. Base area: ${l} × ${w} = ${l*w}. Multiply by height: ${l*w} × ${h} = ${l*w*h} cubic centimeters.`,`EN: Check and avoid mistakes. Use all three dimensions once. Counting the six faces would measure surface area instead of volume.`],
       SVG(`<polygon points="24,44 64,44 64,80 24,80" class="gshape"/><polygon points="24,44 40,28 80,28 64,44" class="gtop"/><polygon points="64,44 80,28 80,64 64,80" class="gside"/>`+gLabel(40,92,`${l}`)+gLabel(74,74,`${w}`)+gLabel(14,64,`${h}`),'0 0 100 100'))},
     ()=>{const d=ri(4,14);const c=Math.round(314*d)/100;return fi(`看圖的圓,直徑 ${d} 公分。圓周長是多少?(圓周率 3.14)`,`This circle has diameter ${d} cm. Find the circumference. (π=3.14)`,c,[Math.round(314*d/2)/100,Math.round(314*(d+2))/100,Math.round(157*d)/100],
-      [`🔑 圓周長 = 圓周率 × 直徑(繞一圈是直徑的 3.14 倍)。`,`① 3.14 × ${d} = ${c} 公分。`,`✔ 粗估:比直徑的 3 倍(${3*d})多一些 ✓`,`EN: Circumference = π × diameter.`],
+      [`🔑 圓周長 = 圓周率 × 直徑(繞一圈是直徑的 3.14 倍)。`,`① 3.14 × ${d} = ${c} 公分。`,`✔ 粗估:比直徑的 3 倍(${3*d})多一些 ✓`,`EN: Method. Pi is the ratio of circumference to diameter. Multiplying the labeled diameter by the specified pi approximation gives the boundary length.`,`EN: Worked example. Multiply pi by the diameter: 3.14 × ${d} = ${c} cm. This is slightly more than 3 × ${d} = ${3*d} cm.`,`EN: Check and avoid mistakes. Do not double a diameter again as if it were a radius. The result uses length units.`],
       GEO.circle(d,`d=${d}`))},
     ()=>{const deg=pick([90,120,180,270]);const frac={90:'1/4',120:'1/3',180:'1/2',270:'3/4'}[deg];return fi(`看圖的扇形是圓的 ${deg}°。它佔整個圓的幾分之幾?(用分數,如 1/4)`,`This sector is ${deg}° of a circle. What fraction of the whole circle is it?`,frac,['1/2','1/3','1/4','3/4'].filter(f=>f!==frac).slice(0,3),
-      [`🔑 整個圓是 360°。扇形佔比 = 扇形角度 ÷ 360。`,`① ${deg} ÷ 360 = ${frac}。`,`✔ 驗算:${frac} × 360 = ${deg}° ✓`,`💡 這是「披薩切幾片」的數學。`,`EN: Fraction of circle = sector angle ÷ 360.`],
+      [`🔑 整個圓是 360°。扇形佔比 = 扇形角度 ÷ 360。`,`① ${deg} ÷ 360 = ${frac}。`,`✔ 驗算:${frac} × 360 = ${deg}° ✓`,`💡 這是「披薩切幾片」的數學。`,`EN: Method. A sector’s share of the circle equals its share of a complete turn. Divide its angle by the full-circle angle.`,`EN: Worked example. The sector covers ${deg} of the full 360 degrees: ${deg}/360 = ${frac}. Check: ${frac} × 360 = ${deg}°.`,`EN: Check and avoid mistakes. Simplifying changes the notation, not the fraction’s value. Multiplying the fraction by a full turn must restore the sector angle.`],
       GEO.sector(deg,34,`${deg}°`))},
     ()=>{const l=ri(2,5),w=ri(2,5),h=ri(2,5);const faces=2*(l*w+l*h+w*h);return fi(`看圖的長方體,長 ${l}、寬 ${w}、高 ${h}。表面積(六個面加起來)是多少?`,`This box is ${l}×${w}×${h}. Find the total surface area of all 6 faces.`,faces,nearNums(faces,15),
-      [`🔑 表面積=六個面,但只要算三種面各一個,再×2。`,`① 三種面:${l}×${w}=${l*w}、${l}×${h}=${l*h}、${w}×${h}=${w*h}。`,`② 相加再×2:(${l*w}+${l*h}+${w*h})×2 = ${faces}。`,`💡 每種面都有「前後/左右/上下」兩個一樣的,所以×2。`,`EN: Surface area = 2×(lw + lh + wh).`],
+      [`🔑 表面積=六個面,但只要算三種面各一個,再×2。`,`① 三種面:${l}×${w}=${l*w}、${l}×${h}=${l*h}、${w}×${h}=${w*h}。`,`② 相加再×2:(${l*w}+${l*h}+${w*h})×2 = ${faces}。`,`💡 每種面都有「前後/左右/上下」兩個一樣的,所以×2。`,`EN: Method. The six faces form three equal opposite pairs. Find one area from each pair, then double their sum.`,`EN: Worked example. The three face areas are ${l} × ${w} = ${l*w}, ${l} × ${h} = ${l*h}, and ${w} × ${h} = ${w*h}. Each has a matching opposite face: 2 × (${l*w} + ${l*h} + ${w*h}) = ${faces} square centimeters.`,`EN: Check and avoid mistakes. Include all three different dimension products. Multiplying all dimensions together gives volume, not surface area.`],
       SVG(`<polygon points="24,44 64,44 64,80 24,80" class="gshape"/><polygon points="24,44 40,28 80,28 64,44" class="gtop"/><polygon points="64,44 80,28 80,64 64,80" class="gside"/>`+gLabel(40,92,`${l}`)+gLabel(74,74,`${w}`)+gLabel(14,64,`${h}`),'0 0 100 100'))},
     ()=>{const l=ri(2,6),w=ri(2,6),h=ri(2,6);const sa=2*(l*w+l*h+w*h);return fi(`看圖的長方體:長 ${l}、寬 ${w}、高 ${h} 公分。六個面的表面積總共是多少平方公分?`,`Box ${l}×${w}×${h}: find the total surface area of all six faces.`,sa,nearNums(sa,15),
-      [`🔑 表面積:三種面各有一對 → 2×(長×寬 + 長×高 + 寬×高)。`,`① 上下:${l}×${w}=${l*w};前後:${l}×${h}=${l*h};左右:${w}×${h}=${w*h}。`,`② 相加:${l*w}+${l*h}+${w*h}=${l*w+l*h+w*h}。`,`③ 成對 ×2:${sa} 平方公分。`,`⚠ 別和體積(${l*w*h})搞混:表面積是「包起來要多少紙」。`,`EN: Surface area = 2(lw + lh + wh) — the wrapping paper, not the space inside.`],
+      [`🔑 表面積:三種面各有一對 → 2×(長×寬 + 長×高 + 寬×高)。`,`① 上下:${l}×${w}=${l*w};前後:${l}×${h}=${l*h};左右:${w}×${h}=${w*h}。`,`② 相加:${l*w}+${l*h}+${w*h}=${l*w+l*h+w*h}。`,`③ 成對 ×2:${sa} 平方公分。`,`⚠ 別和體積(${l*w*h})搞混:表面積是「包起來要多少紙」。`,`EN: Method. Opposite faces match, so compute top, front, and side areas first. Doubling their combined area includes all six faces.`,`EN: Worked example. Top/bottom each have area ${l*w}, front/back ${l*h}, and left/right ${w*h}. Sum one of each: ${l*w} + ${l*h} + ${w*h} = ${l*w+l*h+w*h}. Double: 2 × ${l*w+l*h+w*h} = ${sa} square centimeters.`,`EN: Check and avoid mistakes. Track each face pair once. Surface area measures covering material and must use square units.`],
       SVG(`<polygon points="24,44 64,44 64,80 24,80" class="gshape"/><polygon points="24,44 40,28 80,28 64,44" class="gtop"/><polygon points="64,44 80,28 80,64 64,80" class="gside"/>`+gLabel(44,92,l)+gLabel(76,74,w)+gLabel(14,64,h),'0 0 100 100'))},
     ()=>{const b=ri(4,12),h=ri(2,8)*2;const A=b*h/2;return fi(`看圖的三角形:面積 ${A} 平方公分,底 ${b} 公分。高是多少公分?`,`Triangle area ${A} sq cm with base ${b} cm. Find the height.`,h,nearNums(h,4),
-      [`🔑 面積 = 底 × 高 ÷ 2 → 高 = 面積 × 2 ÷ 底(逆運算兩步)。`,`① ${A} × 2 = ${A*2}。`,`② ${A*2} ÷ ${b} = ${h} 公分。`,`✔ 驗算:${b} × ${h} ÷ 2 = ${A} ✓`,`EN: Height = area × 2 ÷ base — undo the halving first.`],
+      [`🔑 面積 = 底 × 高 ÷ 2 → 高 = 面積 × 2 ÷ 底(逆運算兩步)。`,`① ${A} × 2 = ${A*2}。`,`② ${A*2} ÷ ${b} = ${h} 公分。`,`✔ 驗算:${b} × ${h} ÷ 2 = ${A} ✓`,`EN: Method. The triangle formula multiplies base by height and then halves it. Reverse those actions in the opposite order.`,`EN: Worked example. Undo the triangle area formula. Double the area: ${A} × 2 = ${A*2}. Divide by base: ${A*2} ÷ ${b} = ${h} cm. Check: ${b} × ${h} ÷ 2 = ${A}.`,`EN: Check and avoid mistakes. Double the area before dividing by base. Substitute the height back into the original area formula.`],
       GEO.rtri(`${b} cm`,`?`).replace('</svg>',gLabel(62,40,`面積 ${A}`)+'</svg>'))},
   ],
   6:[
     ()=>{const k=ri(2,6),a=ri(2,9),b=ri(2,9);return fi(`${a}:${b} = ${a*k}:?`,`${a}:${b} equals ${a*k}:what?`,b*k,nearNums(b*k,6),
-      [`🔑 比 = 倍率關係,兩邊必須一起縮放。`,`① 左邊:${a} → ${a*k},放大了 ${k} 倍。`,`② 右邊同樣 ×${k}:${b} × ${k} = ${b*k}。`,`✔ 驗算:${a*k}:${b*k} 同除 ${k} 回到 ${a}:${b} ✓`,`EN: A ratio scales both sides by the same factor.`])},
+      [`🔑 比 = 倍率關係,兩邊必須一起縮放。`,`① 左邊:${a} → ${a*k},放大了 ${k} 倍。`,`② 右邊同樣 ×${k}:${b} × ${k} = ${b*k}。`,`✔ 驗算:${a*k}:${b*k} 同除 ${k} 回到 ${a}:${b} ✓`,`EN: Method. Equivalent ratios preserve the relationship between their terms. The multiplier on the first term must also apply to the second.`,`EN: Worked example. The first term scales by ${a*k} ÷ ${a} = ${k}. Scale the second by the same factor: ${b} × ${k} = ${b*k}. Dividing both ${a*k} and ${b*k} by ${k} restores ${a}:${b}.`,`EN: Check and avoid mistakes. Adding the same amount to both terms does not generally preserve a ratio. Divide both new terms by the scale factor to check.`])},
     ()=>{const v=ri(4,20)*5,t=ri(2,6);return fi(`一台車每小時走 ${v} 公里,${t} 小時走多遠?`,`A car travels ${v} km per hour for ${t} hours. How far?`,v*t,nearNums(v*t,25),
-      [`🔑 速率 = 「每 1 小時」的距離,是一種單位化思考。`,`① 每小時 ${v} 公里 × ${t} 小時 = ${v*t} 公里。`,`✔ 反推:${v*t} ÷ ${t} = ${v} 公里/小時,回到速率 ✓`,`EN: Speed is distance per one hour; multiply by the hours.`])},
+      [`🔑 速率 = 「每 1 小時」的距離,是一種單位化思考。`,`① 每小時 ${v} 公里 × ${t} 小時 = ${v*t} 公里。`,`✔ 反推:${v*t} ÷ ${t} = ${v} 公里/小時,回到速率 ✓`,`EN: Method. Speed gives distance for one hour. Repeating that distance for the given number of hours produces the full journey.`,`EN: Worked example. Distance = speed × time: ${v} × ${t} = ${v*t} km. Check: ${v*t} ÷ ${t} = ${v} km/h.`,`EN: Check and avoid mistakes. The hour units cancel when speed is multiplied by hours. Dividing distance by time should restore the speed.`])},
     ()=>{const d=pick([2,4,5,10]);const n=ri(1,d-1);const dec=n/d;return fi(`${n}/${d} 等於哪個小數?`,`${n}/${d} as a decimal?`,dec,[Math.round((dec+0.1)*100)/100,Math.round(dec/2*100)/100,Math.round((dec+0.25)*100)/100],
-      [`🔑 分數線其實就是「÷」:${n}/${d} = ${n} ÷ ${d}。`,`① ${n} ÷ ${d} = ${dec}。`,`💡 常用轉換值得記住:1/2=0.5、1/4=0.25、1/5=0.2、1/10=0.1——它們是同一個數的兩套衣服。`,`EN: The fraction bar is a division sign in disguise.`])},
+      [`🔑 分數線其實就是「÷」:${n}/${d} = ${n} ÷ ${d}。`,`① ${n} ÷ ${d} = ${dec}。`,`💡 常用轉換值得記住:1/2=0.5、1/4=0.25、1/5=0.2、1/10=0.1——它們是同一個數的兩套衣服。`,`EN: Method. A fraction represents numerator divided by denominator. The decimal is another way of naming the same amount.`,`EN: Worked example. The fraction bar means division: ${n} ÷ ${d} = ${dec}. Check: ${dec} × ${d} = ${n}.`,`EN: Check and avoid mistakes. Multiply the decimal by the denominator to recover the numerator. Do not read the numerator and denominator as decimal digits.`])},
     ()=>{const p=pick([10,20,25,50]);const b=pick([40,60,80,120,200]);return fi(`${b} 的 ${p}% 是多少?`,`What is ${p}% of ${b}?`,p*b/100,nearNums(p*b/100,8),
-      [`🔑 % = 「每 100 份中的份數」:${p}% = ${p}/100。`,`① ${b} × ${p}/100 = ${p*b/100}。`,`💡 心算捷徑:先算 10% = ${b/10},再組合(${p}% = ${p/10} 個 10%)。`,`✔ 檢查:${p*b/100} ÷ ${b} = ${p/100},回到 ${p}% ✓`,`EN: Percent means per hundred; anchor on 10 percent and scale.`])},
+      [`🔑 % = 「每 100 份中的份數」:${p}% = ${p}/100。`,`① ${b} × ${p}/100 = ${p*b/100}。`,`💡 心算捷徑:先算 10% = ${b/10},再組合(${p}% = ${p/10} 個 10%)。`,`✔ 檢查:${p*b/100} ÷ ${b} = ${p/100},回到 ${p}% ✓`,`EN: Method. Percent means parts out of one hundred. Convert the percentage to a fraction of the given base amount before multiplying.`,`EN: Worked example. ${p}% means ${p}/100. Multiply: ${b} × ${p}/100 = ${p*b/100}. Check: ${p*b/100} ÷ ${b} = ${p/100}, or ${p}%.`,`EN: Check and avoid mistakes. The base is the amount after the word of. Check the answer as a fraction of that same base.`])},
     ()=>{const d=ri(2,10);const c=Math.round(314*d)/100;return fi(`直徑 ${d} 公分的圓,圓周長是多少公分?(圓周率用 3.14)`,`Circumference of a circle with diameter ${d} cm? (use 3.14)`,c,[Math.round((3.14*(d+1))*100)/100,Math.round((3.14*d/2)*100)/100,Math.round((3.14*d+3)*100)/100],
-      [`🔑 圓周率的意義:繞一圈是直徑的幾倍?答案永遠約 3.14,任何圓都一樣!`,`① 圓周長 = 3.14 × ${d} = ${c} 公分。`,`✔ 粗估:直徑的 3 倍多一點 → 比 ${3*d} 大一些 ✓`,`💡 這個「任何圓都一樣」的常數,人類研究了四千年。`,`EN: Pi says every circle is about 3.14 diameters around.`])},
+      [`🔑 圓周率的意義:繞一圈是直徑的幾倍?答案永遠約 3.14,任何圓都一樣!`,`① 圓周長 = 3.14 × ${d} = ${c} 公分。`,`✔ 粗估:直徑的 3 倍多一點 → 比 ${3*d} 大一些 ✓`,`💡 這個「任何圓都一樣」的常數,人類研究了四千年。`,`EN: Method. Every circumference is pi times its diameter. Use the approximation specified in the question for a consistent numerical result.`,`EN: Worked example. Circumference = pi × diameter: 3.14 × ${d} = ${c} cm. Estimate: slightly more than 3 × ${d} = ${3*d} cm.`,`EN: Check and avoid mistakes. Radius and diameter are different inputs. Since diameter is given, there is no extra factor of two.`])},
     ()=>{const a=ri(2,9),x=ri(2,9),b=ri(1,15);const c=a*x+b;return fi(`如果 ${a} × x + ${b} = ${c},那 x = ?`,`If ${a}x + ${b} = ${c}, what is x?`,x,nearNums(x,3),
-      [`🔑 解方程 = 逆向拆包裹:最後包上去的,最先拆掉。`,`① x 先被 ×${a}、再被 +${b} → 拆的順序相反。`,`② 兩邊同減 ${b}:${a}x = ${c} − ${b} = ${a*x}。`,`③ 兩邊同除 ${a}:x = ${a*x} ÷ ${a} = ${x}。`,`✔ 代回檢查:${a}×${x}+${b} = ${c} ✓`,`EN: Undo the operations in reverse order: subtract, then divide.`])},
+      [`🔑 解方程 = 逆向拆包裹:最後包上去的,最先拆掉。`,`① x 先被 ×${a}、再被 +${b} → 拆的順序相反。`,`② 兩邊同減 ${b}:${a}x = ${c} − ${b} = ${a*x}。`,`③ 兩邊同除 ${a}:x = ${a*x} ÷ ${a} = ${x}。`,`✔ 代回檢查:${a}×${x}+${b} = ${c} ✓`,`EN: Method. The unknown is multiplied first and then increased. Undo addition before multiplication, doing the same operation to both sides.`,`EN: Worked example. Undo addition first: ${c} − ${b} = ${a*x}, so ${a}x = ${a*x}. Divide by ${a}: x = ${a*x} ÷ ${a} = ${x}. Check: ${a} × ${x} + ${b} = ${c}.`,`EN: Check and avoid mistakes. Substitution checks the original equation directly. Reversing the operations in the wrong order changes the problem.`])},
     ()=>{const t=pick([[6,3,2],[4,4,2],[6,6,3],[10,10,5],[12,6,4],[12,4,3],[15,10,6],[8,8,4],[20,5,4]]);return fi(`🏆 一件工作,A 單獨做要 ${t[0]} 天、B 單獨做要 ${t[1]} 天。兩人合作要幾天?`,`A job takes A ${t[0]} days alone, B ${t[1]} days alone. Together?`,t[2],nearNums(t[2],3),
-      [`🔑 工程問題心法:把整件工作當成「1」,比較每天的速度。`,`① A 每天做 1/${t[0]}、B 每天做 1/${t[1]}。`,`② 合作每天:1/${t[0]} + 1/${t[1]} = 1/${t[2]}。`,`③ 做完「1」需要 ${t[2]} 天。`,`✔ 驗算:${t[2]}/${t[0]} + ${t[2]}/${t[1]} = 1(整件工作)✓`,`EN: Call the job one whole, add the daily rates, invert.`])},
+      [`🔑 工程問題心法:把整件工作當成「1」,比較每天的速度。`,`① A 每天做 1/${t[0]}、B 每天做 1/${t[1]}。`,`② 合作每天:1/${t[0]} + 1/${t[1]} = 1/${t[2]}。`,`③ 做完「1」需要 ${t[2]} 天。`,`✔ 驗算:${t[2]}/${t[0]} + ${t[2]}/${t[1]} = 1(整件工作)✓`,`EN: Method. Each worker contributes a fraction of one job per day. Add those rates, then divide one whole job by the combined daily rate.`,`EN: Worked example. A completes 1/${t[0]} of the job per day and B completes 1/${t[1]}. Together: 1/${t[0]} + 1/${t[1]} = 1/${t[2]} per day. Time = 1 ÷ (1/${t[2]}) = ${t[2]} days. Check: ${t[2]}/${t[0]} + ${t[2]}/${t[1]} = 1.`,`EN: Check and avoid mistakes. Add rates, not completion times. The cooperative time should be shorter than either worker’s solo time.`])},
     ()=>{const s1=ri(1,3),s2=ri(1,4);const t=[s1,s2];for(let i=2;i<6;i++)t.push(t[i-1]+t[i-2]);return fi(`🏆 數列偵探終極版:${t.slice(0,5).join(', ')}, ?。下一個是?`,`Ultimate sequence detective: ${t.slice(0,5).join(', ')}, ?. Next?`,t[5],nearNums(t[5],4),
-      [`🔑 差不固定、倍率也不固定?第三招:每項 = 前兩項相加!`,`① 驗證:${t[0]}+${t[1]}=${t[2]} ✓、${t[1]}+${t[2]}=${t[3]} ✓、${t[2]}+${t[3]}=${t[4]} ✓`,`② 下一項:${t[3]} + ${t[4]} = ${t[5]}。`,`💡 這是費波那契數列——向日葵種子的螺旋、鳳梨表皮、鸚鵡螺殼裡都藏著它。`,`EN: Each term is the sum of the previous two — the Fibonacci rule.`])},
+      [`🔑 差不固定、倍率也不固定?第三招:每項 = 前兩項相加!`,`① 驗證:${t[0]}+${t[1]}=${t[2]} ✓、${t[1]}+${t[2]}=${t[3]} ✓、${t[2]}+${t[3]}=${t[4]} ✓`,`② 下一項:${t[3]} + ${t[4]} = ${t[5]}。`,`💡 這是費波那契數列——向日葵種子的螺旋、鳳梨表皮、鸚鵡螺殼裡都藏著它。`,`EN: Method. The rule combines the two immediately preceding terms. Test it across the shown terms before extending it.`,`EN: Worked example. Add the previous two terms: ${t[0]} + ${t[1]} = ${t[2]}, ${t[1]} + ${t[2]} = ${t[3]}, ${t[2]} + ${t[3]} = ${t[4]}. Therefore the next is ${t[3]} + ${t[4]} = ${t[5]}.`,`EN: Check and avoid mistakes. Use the last two displayed values for the next term. Adding a fixed gap would follow a different rule.`])},
     ()=>{const r=ri(2,6);const area=Math.round(314*r*r)/100;return fi(`半徑 ${r} 公分的圓,面積是多少平方公分?(圓周率用 3.14)`,`Area of a circle with radius ${r} cm? (use 3.14)`,area,[Math.round(314*2*r)/100,Math.round(314*(r+1)*(r+1))/100,Math.round(314*r)/100],
-      [`🔑 圓面積 = 圓周率 × 半徑 × 半徑(半徑要乘「兩次」!)。`,`① ${r} × ${r} = ${r*r}。`,`② 3.14 × ${r*r} = ${area}。`,`⚠ 陷阱:3.14 × ${r} × 2 = ${Math.round(314*2*r)/100} 是「圓周長」,不是面積!`,`EN: Area is pi times radius squared — square the radius first.`])},
+      [`🔑 圓面積 = 圓周率 × 半徑 × 半徑(半徑要乘「兩次」!)。`,`① ${r} × ${r} = ${r*r}。`,`② 3.14 × ${r*r} = ${area}。`,`⚠ 陷阱:3.14 × ${r} × 2 = ${Math.round(314*2*r)/100} 是「圓周長」,不是面積!`,`EN: Method. Circle area is pi times radius squared. Squaring creates an area scale from the length of the radius.`,`EN: Worked example. Square the radius: ${r} × ${r} = ${r*r}. Multiply by pi: 3.14 × ${r*r} = ${area} square centimeters. Do not use 2 × 3.14 × ${r}, which gives circumference.`,`EN: Check and avoid mistakes. Multiply the radius by itself, not by two. Doubling a radius belongs to diameter or circumference calculations.`])},
     ()=>{const v=ri(4,12)*10,t=ri(2,6);return fi(`一台車每小時走 ${v} 公里,走 ${v*t} 公里要幾小時?`,`At ${v} km per hour, how many hours to cover ${v*t} km?`,t,nearNums(t,2),
-      [`🔑 速率三兄弟:距離 = 速率 × 時間 → 時間 = 距離 ÷ 速率。`,`① ${v*t} ÷ ${v} = ${t} 小時。`,`✔ 驗算:${v} × ${t} = ${v*t} 公里 ✓`,`💡 同一條公式轉三個方向,記一個就有三個。`,`EN: Time equals distance divided by speed — one formula, three faces.`])},
+      [`🔑 速率三兄弟:距離 = 速率 × 時間 → 時間 = 距離 ÷ 速率。`,`① ${v*t} ÷ ${v} = ${t} 小時。`,`✔ 驗算:${v} × ${t} = ${v*t} 公里 ✓`,`💡 同一條公式轉三個方向,記一個就有三個。`,`EN: Method. Speed tells how much distance is covered each hour. Dividing the total distance by that hourly amount counts the required hours.`,`EN: Worked example. Time = distance ÷ speed: ${v*t} ÷ ${v} = ${t} hours. Check: ${v} × ${t} = ${v*t} km.`,`EN: Check and avoid mistakes. Multiplying distance by speed does not give time. Multiply your time by speed to recover the journey distance.`])},
     ()=>{const r=ri(2,7);const area=Math.round(314*r*r)/100;return fi(`看圖的圓,半徑 ${r} 公分。面積是多少平方公分?(圓周率 3.14)`,`This circle has radius ${r} cm. Find the area. (π=3.14)`,area,[Math.round(314*2*r)/100,Math.round(314*(r+1)*(r+1))/100,Math.round(628*r)/100],
-      [`🔑 圓面積 = 圓周率 × 半徑 × 半徑(半徑乘兩次!)。`,`① ${r} × ${r} = ${r*r}。`,`② 3.14 × ${r*r} = ${area}。`,`⚠ 陷阱:3.14×${r}×2=${Math.round(628*r)/100} 是周長,不是面積。`,`EN: Circle area = π × radius².`],
+      [`🔑 圓面積 = 圓周率 × 半徑 × 半徑(半徑乘兩次!)。`,`① ${r} × ${r} = ${r*r}。`,`② 3.14 × ${r*r} = ${area}。`,`⚠ 陷阱:3.14×${r}×2=${Math.round(628*r)/100} 是周長,不是面積。`,`EN: Method. Read whether the diagram labels a radius or diameter before choosing a formula. This diagram gives the radius needed for area.`,`EN: Worked example. The labeled radius is ${r} cm. Square it: ${r} × ${r} = ${r*r}. Area = 3.14 × ${r*r} = ${area} square centimeters.`,`EN: Check and avoid mistakes. Square the radius before multiplying by pi. The answer uses square units rather than boundary-length units.`],
       GEO.circle(r,`r=${r}`))},
     ()=>{const base=ri(4,12),h=ri(3,10);const area=base*h;return fi(`看圖的平行四邊形,底 ${base}、高 ${h} 公分。面積是多少?`,`This parallelogram has base ${base} and height ${h} cm. Find the area.`,area,nearNums(area,12),
-      [`🔑 平行四邊形面積 = 底 × 高(把斜邊切下來補過去,就變成長方形!)。`,`① ${base} × ${h} = ${area} 平方公分。`,`⚠ 用「高」不是斜邊長:高是垂直距離。`,`EN: Parallelogram area = base × perpendicular height.`],
+      [`🔑 平行四邊形面積 = 底 × 高(把斜邊切下來補過去,就變成長方形!)。`,`① ${base} × ${h} = ${area} 平方公分。`,`⚠ 用「高」不是斜邊長:高是垂直距離。`,`EN: Method. Sliding a triangular piece from one end to the other makes a rectangle without changing area. Its width is the perpendicular height.`,`EN: Worked example. Use the perpendicular height, not the slanted side. Area = base × height = ${base} × ${h} = ${area} square centimeters.`,`EN: Check and avoid mistakes. The slanted side is not the height. Use the perpendicular distance between the parallel bases.`],
       SVG(`<polygon points="30,78 100,78 84,26 14,26" class="gshape"/><line x1="30" y1="78" x2="30" y2="26" class="gdash"/><rect x="30" y="68" width="10" height="10" class="gright"/>`+gLabel(52,92,`${base}`)+gLabel(20,54,`${h}`)))},
     ()=>{const x=ri(2,7),y=ri(2,7);return fi(`看圖的座標平面上有一個點,從原點往右 ${x} 格、往上 ${y} 格。它的座標寫成 (${x}, ?),? 是多少?`,`A point sits ${x} right and ${y} up from the origin. Its coordinates are (${x}, ?). Find ?.`,y,nearNums(y,3),
-      [`🔑 座標 (x, y):x 是往右幾格、y 是往上幾格。`,`① 往上 ${y} 格 → y = ${y}。`,`② 完整座標:(${x}, ${y})。`,`💡 座標是「地圖上的地址」,兩個數字精準定位一個點。`,`EN: In (x, y), y is how far up from the origin.`],
+      [`🔑 座標 (x, y):x 是往右幾格、y 是往上幾格。`,`① 往上 ${y} 格 → y = ${y}。`,`② 完整座標:(${x}, ${y})。`,`💡 座標是「地圖上的地址」,兩個數字精準定位一個點。`,`EN: Method. An ordered pair records horizontal position first, then vertical position. The two values describe different directions.`,`EN: Worked example. Coordinates list horizontal distance first and vertical distance second. Moving ${x} right and ${y} up gives (${x}, ${y}), so the missing coordinate is ${y}.`,`EN: Check and avoid mistakes. Do not swap the coordinates. Retrace the horizontal and vertical moves from the origin to check the location.`],
       GEO.coord(x,y))},
     ()=>{const base=ri(4,10),h=ri(3,8);const tri=base*h/2;return fi(`看圖:一個底 ${base}、高 ${h} 的三角形,和一個長 ${base}、寬 ${h} 的長方形。三角形面積是長方形的幾分之幾?(用分數)`,`A triangle (base ${base}, height ${h}) sits beside a rectangle (${base}×${h}). The triangle's area is what fraction of the rectangle?`,'1/2',['1/3','1/4','2/3'],
-      [`🔑 同底同高時,三角形面積永遠是長方形的一半。`,`① 長方形:${base}×${h} = ${base*h}。`,`② 三角形:${base}×${h}÷2 = ${tri},剛好一半。`,`✔ 這就是三角形面積公式「÷2」的來源。`,`EN: Same base and height: triangle is always half the rectangle.`],
+      [`🔑 同底同高時,三角形面積永遠是長方形的一半。`,`① 長方形:${base}×${h} = ${base*h}。`,`② 三角形:${base}×${h}÷2 = ${tri},剛好一半。`,`✔ 這就是三角形面積公式「÷2」的來源。`,`EN: Method. With equal base and height, a triangle occupies half the corresponding rectangle. Compare their calculated areas to obtain the fraction.`,`EN: Worked example. Rectangle area = ${base} × ${h} = ${base*h}. Triangle area = ${base} × ${h} ÷ 2 = ${tri}. Their ratio is ${tri}/${base*h} = 1/2.`,`EN: Check and avoid mistakes. The ratio is triangle area divided by rectangle area, not the reverse. The dimensions may change while this fraction stays constant.`],
       SVG(`<rect x="12" y="30" width="44" height="46" class="gshape"/><polygon points="64,76 108,76 64,30" class="gshape"/>`+gLabel(34,90,`${base}`)+gLabel(86,90,`${base}`)))},
     ()=>{const r=ri(2,5),R=r+ri(2,4);const A=Math.round(314*(R*R-r*r))/100;return fi(`看圖的圓環(甜甜圈):外圓半徑 ${R}、內圓半徑 ${r} 公分。圓環面積是多少?(圓周率 3.14)`,`An annulus with outer radius ${R} and inner radius ${r}. Find its area. (π=3.14)`,A,[Math.round(314*(R-r)*(R-r))/100,Math.round(314*R*R)/100,Math.round(314*(R*R+r*r))/100],
-      [`🔑 圓環 = 大圓 − 小圓(挖洞法用在圓上)。`,`① 大圓:3.14 × ${R}² = ${Math.round(314*R*R)/100}。`,`② 小圓:3.14 × ${r}² = ${Math.round(314*r*r)/100}。`,`③ 相減:${A} 平方公分。`,`⚠ 陷阱:不能先算 (${R}−${r})² ——「差的平方」不等於「平方的差」!`,`EN: Annulus = big circle minus small circle; never square the difference.`],
+      [`🔑 圓環 = 大圓 − 小圓(挖洞法用在圓上)。`,`① 大圓:3.14 × ${R}² = ${Math.round(314*R*R)/100}。`,`② 小圓:3.14 × ${r}² = ${Math.round(314*r*r)/100}。`,`③ 相減:${A} 平方公分。`,`⚠ 陷阱:不能先算 (${R}−${r})² ——「差的平方」不等於「平方的差」!`,`EN: Method. An annulus is the outer disk with the inner disk removed. The empty center must not contribute to the area.`,`EN: Worked example. Outer circle area = 3.14 × ${R}² = ${Math.round(314*R*R)/100}. Inner area = 3.14 × ${r}² = ${Math.round(314*r*r)/100}. Subtract to get ${A} square centimeters. Subtract areas, not radii.`,`EN: Check and avoid mistakes. Square each radius separately before subtracting. Squaring the difference of the radii gives a different quantity.`],
       SVG(`<circle cx="60" cy="50" r="38" class="gshape"/><circle cx="60" cy="50" r="${Math.round(38*r/R)}" style="fill:var(--paper);stroke:var(--cobalt);stroke-width:2"/>`+gLabel(60,10,`R=${R}`)+gLabel(60,54,`r=${r}`)))},
-    ()=>{const r=ri(2,5),h=ri(4,9);const w=2*r;const A=Math.round((w*h+314*r*r/2)*100)/100;return fi(`看圖的「門形」:下面是 ${w}×${h} 的長方形,上面加一個半徑 ${r} 的半圓。總面積是多少?(圓周率 3.14)`,`A door shape: a ${w}×${h} rectangle topped by a semicircle of radius ${r}. Total area? (π=3.14)`,A,[Math.round((w*h+314*r*r)*100)/100,Math.round((w*h)*100)/100,Math.round((w*h+157*r)*100)/100],
-      [`🔑 組合圖形:長方形 + 半圓,分開算再相加。`,`① 長方形:${w} × ${h} = ${w*h}。`,`② 半圓:3.14 × ${r}² ÷ 2 = ${Math.round(314*r*r/2)/100}。`,`③ 相加:${A} 平方公分。`,`✔ 檢查:半圓直徑 ${2*r} 剛好等於長方形的寬 ${w},拼得起來 ✓`,`EN: Split into rectangle plus half circle, then add.`],
+    ()=>{const r=ri(2,5),h=ri(4,9);const w=2*r;const A=Math.round(w*h*100+314*r*r/2)/100;return fi(`看圖的「門形」:下面是 ${w}×${h} 的長方形,上面加一個半徑 ${r} 的半圓。總面積是多少?(圓周率 3.14)`,`A door shape: a ${w}×${h} rectangle topped by a semicircle of radius ${r}. Total area? (π=3.14)`,A,[Math.round(w*h*100+314*r*r)/100,Math.round((w*h)*100)/100,Math.round(w*h*100+157*r)/100],
+      [`🔑 組合圖形:長方形 + 半圓,分開算再相加。`,`① 長方形:${w} × ${h} = ${w*h}。`,`② 半圓:3.14 × ${r}² ÷ 2 = ${Math.round(314*r*r/2)/100}。`,`③ 相加:${A} 平方公分。`,`✔ 檢查:半圓直徑 ${2*r} 剛好等於長方形的寬 ${w},拼得起來 ✓`,`EN: Method. Separate the door into a rectangle and a semicircle that meet without overlapping. Compute both areas, then add them.`,`EN: Worked example. Rectangle area = ${w} × ${h} = ${w*h}. Semicircle area = 3.14 × ${r}² ÷ 2 = ${Math.round(314*r*r/2)/100}. Add: ${w*h} + ${Math.round(314*r*r/2)/100} = ${A} square centimeters. Its diameter ${2*r} matches the rectangle width ${w}.`,`EN: Check and avoid mistakes. Halve only the circle area, not the rectangle. The semicircle diameter must equal the rectangle width.`],
       SVG(`<rect x="32" y="42" width="56" height="44" class="gshape"/><path d="M32,42 A28,28 0 0,1 88,42" class="gshape"/>`+gLabel(60,96,`${w}`)+gLabel(98,66,`${h}`)+gLabel(60,30,`r=${r}`)))},
   ],
 };
+// 在出題入口補齊提醒,讓練習、復仇戰與直接取題的遊戲使用相同內容。
+for(const [level,gens] of Object.entries(MATH_GEN)){
+  const [zh,en]=MATH_CODA[level].split(' EN: ');
+  MATH_GEN[level]=gens.map(generate=>()=>{
+    const q=generate();
+    q.why=[...q.why,zh,`EN: Learning reminder. ${en}`];
+    return q;
+  });
+}
 function genMath(level,n){
   const gens=MATH_GEN[level]||[];
   return Array.from({length:n},()=>{
@@ -494,9 +503,27 @@ function genMath(level,n){
     const q=gens[i]();
     q.fp=`m:${level}:${i}`;
     q.topic=(MATH_TOPICS[level]||[])[i]||'';
-    q.why=enrichWhy(q.why,(MATH_LORE[level]||[])[i],MATH_CODA[level]);
+    q.why=enrichWhy(q.why,(MATH_LORE[level]||[])[i]);
     return q;
   });
+}
+function genMathRevenge(fps,n=5){
+  const parsed=[...new Set((fps||[]).map(fp=>String(fp)).filter(fp=>fp.startsWith('m:')))];
+  const qs=[];
+  for(const fp of shuffle(parsed)){
+    const [,lvS,iS]=fp.split(':');
+    const lv=Number(lvS),i=Number(iS);
+    const gen=MATH_GEN[lv]&&MATH_GEN[lv][i];
+    if(!gen)continue;
+    const q=gen();
+    q.fp=fp;
+    q.topic=(MATH_TOPICS[lv]||[])[i]||`L${lv} 題型 ${i+1}`;
+    q.revenge=true;
+    q.why=enrichWhy(q.why,(MATH_LORE[lv]||[])[i]);
+    qs.push(q);
+    if(qs.length>=n)break;
+  }
+  return qs;
 }
 
 /* ── 漢字出題:四種題型,題目與選項皆漢英對照 ── */
@@ -613,7 +640,22 @@ const DEFAULT={
   engHints:true, lastBackup:'',
   ledger:{v:1,items:{},days:{},recent:{}},
 };
-function load(){try{return {...DEFAULT,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...DEFAULT}}}
+function migrateSave(raw){
+  const s={...DEFAULT,...(raw||{})};
+  s.best={...DEFAULT.best,...((raw||{}).best||{})};
+  s.farm={...DEFAULT.farm,...((raw||{}).farm||{})};
+  s.subjects={
+    hanzi:{...DEFAULT.subjects.hanzi,...(((raw||{}).subjects||{}).hanzi||{})},
+    math:{...DEFAULT.subjects.math,...(((raw||{}).subjects||{}).math||{})},
+    science:{...DEFAULT.subjects.science,...(((raw||{}).subjects||{}).science||{})},
+  };
+  s.ledger={...DEFAULT.ledger,...((raw||{}).ledger||{})};
+  s.ledger.items=s.ledger.items||{};
+  s.ledger.days=s.ledger.days||{};
+  s.ledger.recent=s.ledger.recent||{};
+  return s;
+}
+function load(){try{return migrateSave(JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return migrateSave({})}}
 function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
 const today=()=>new Date().toISOString().slice(0,10);
 
@@ -658,6 +700,50 @@ function ledgerStats(state){
   }
   return {q,ok,lit:lit.size,rivals,days};
 }
+function mathProgress(state){
+  const L=(state.ledger&&state.ledger.items)||{};
+  const recent=(((state.ledger||{}).recent||{}).math||[]).slice(-10);
+  const rows=[];
+  let q=0,ok=0,mastered=0,practice=0,rivals=0,oldRivals=0;
+  const t=today();
+  for(const fp in L){
+    if(!fp.startsWith('m:'))continue;
+    const it=L[fp]||{};
+    const total=(it.ok||0)+(it.no||0);
+    if(!total)continue;
+    const parts=fp.split(':');
+    const lv=Number(parts[1]),idx=Number(parts[2]);
+    const topic=(MATH_TOPICS[lv]||[])[idx]||`L${lv} 題型 ${idx+1}`;
+    const acc=Math.round(((it.ok||0)/total)*100);
+    const rival=!!(it.lw&&(!it.lc||it.lw>it.lc));
+    const age=it.lw?Math.floor((new Date(t)-new Date(it.lw))/864e5):0;
+    q+=total;ok+=it.ok||0;
+    if((it.ok||0)>=3&&acc>=80&&!rival)mastered+=1;
+    if(total>0&&((it.ok||0)<3||acc<80))practice+=1;
+    if(rival){rivals+=1;if(age>=3)oldRivals+=1;}
+    rows.push({fp,lv,idx,topic,total,ok:it.ok||0,no:it.no||0,acc,rival,age,lw:it.lw||'',lc:it.lc||''});
+  }
+  rows.sort((a,b)=>{
+    if(a.rival!==b.rival)return a.rival?-1:1;
+    if(a.lv!==b.lv)return b.lv-a.lv;
+    return a.acc-b.acc;
+  });
+  const recentAcc=recent.length?Math.round(recent.reduce((a,b)=>a+b,0)/recent.length*100):null;
+  return {q,ok,acc:q?Math.round(ok/q*100):0,mastered,practice,rivals,oldRivals,recent,recentAcc,rows};
+}
+function recommendedMathLevel(state){
+  const lv=state.subjects&&state.subjects.math?state.subjects.math.level:1;
+  const mp=mathProgress(state);
+  if(mp.recent.length<8)return {level:lv,reason:'再完成一些題目後,系統會依最近 10 題建議等級。'};
+  if(mp.recentAcc>=90&&lv<6)return {level:lv+1,reason:'最近 10 題幾乎全對,可以上探一級。'};
+  if(mp.recentAcc<=40&&lv>1)return {level:lv-1,reason:'最近題目有點吃力,先降一級補穩地基。'};
+  return {level:lv,reason:'目前難度剛好,繼續在這一級累積掌握度。'};
+}
+function adaptMathLevel(s){
+  const r=recommendedMathLevel(s);
+  if(!s.subjects.math)s.subjects.math={level:1};
+  if(r.level!==s.subjects.math.level)s.subjects.math.level=r.level;
+}
 
 const SUBJECTS={
   hanzi:{name:'漢字解碼',glyph:'字',color:'var(--cinnabar)',bg:'var(--cinnabar-bg)',
@@ -687,6 +773,7 @@ function App(){
   const finishSprint=(subject,score,total,results)=>{
     up(s=>{
       recordLedger(s,subject,results);
+      if(subject==='math')adaptMathLevel(s);
       s.xp+=score*10;
       s.totalXp=(s.totalXp||0)+score*10;
       const t=today();
@@ -775,7 +862,7 @@ function App(){
 
       {view.page==='progress'&&
         <ProgressPage state={state} goHome={()=>setView({page:'home'})}
-          importSave={s=>setState({...DEFAULT,...s})}
+          importSave={s=>setState(migrateSave(s))}
           markBackup={()=>up(s=>{s.lastBackup=new Date().toISOString()})}/>}
 
       {needBackup&&view.page!=='progress'&&
@@ -871,15 +958,96 @@ function SubjectPage({k,state,setLevel,startSprint,goHome}){
       {k==='science'&&<SciLearn units={SCI[lv]||[]}/>}
       {k==='math'&&(
         <div>
-          <p className="note">本級 {(MATH_TOPICS[lv]||[]).length} 種題型,題目由引擎即時生成、永不重複;每題答完必附雙語「為什麼」。 / {(MATH_TOPICS[lv]||[]).length} question types at this level, freshly generated every time — and every answer comes with a bilingual why.</p>
-          <div className="topicgrid">
-            {(MATH_TOPICS[lv]||[]).map(t=>(<div key={t} className="topicchip">{t}</div>))}
-          </div>
+          <MathLearn state={state} level={lv} startSprint={startSprint}/>
         </div>
       )}
       {!hasContent&&k==='science'&&(
         <p className="empty">這一級的內容還沒放進資料庫。打開檔案裡的 HANZI / SCI 資料區,照同樣格式加入即可。</p>
       )}
+    </div>
+  );
+}
+
+function MathLearn({state,level,startSprint}){
+  const mp=mathProgress(state);
+  const rec=recommendedMathLevel(state);
+  const rivalRows=mp.rows.filter(r=>r.rival);
+  const old=rivalRows.filter(r=>r.age>=3);
+  const revengeRows=old.length?old:rivalRows;
+  const startRevenge=()=>{
+    const qs=genMathRevenge(revengeRows.map(r=>r.fp),5);
+    if(qs.length)startSprint(qs);
+  };
+  const levelTopics=(MATH_TOPICS[level]||[]).map((topic,i)=>{
+    const fp=`m:${level}:${i}`;
+    const row=mp.rows.find(r=>r.fp===fp);
+    return {topic,fp,row};
+  });
+  const bands=[
+    {k:'core',name:'課綱核心 Core',items:levelTopics.filter(x=>!x.topic.includes('🏆')&&!x.topic.includes('📐'))},
+    {k:'olympiad',name:'奧數推理 Olympiad',items:levelTopics.filter(x=>x.topic.includes('🏆'))},
+    {k:'geo',name:'幾何圖形 Geometry',items:levelTopics.filter(x=>x.topic.includes('📐'))},
+  ];
+  return (
+    <div>
+      <div className="mathdash">
+        <div className="stat"><b className="num">{mp.q}</b><span>數學答題 · Math answered</span></div>
+        <div className="stat"><b className="num">{mp.q?mp.acc+'%':'—'}</b><span>總正確率 · Accuracy</span></div>
+        <div className="stat"><b className="num">{mp.recentAcc===null?'—':mp.recentAcc+'%'}</b><span>最近 10 題 · Recent 10</span></div>
+        <div className="stat"><b className="num">{mp.mastered}</b><span>掌握題型 · Mastered</span></div>
+      </div>
+      <div className="mathcoach">
+        <div>
+          <b>難度導航 · Difficulty Pilot</b>
+          <p>目前 L{level};建議 L{rec.level}。{rec.reason} / Current L{level}; suggested L{rec.level}.</p>
+          <div className="recentdots">
+            {(mp.recent.length?mp.recent:Array(10).fill(null)).map((x,i)=>
+              <i key={i} className={x===null?'empty':x?'ok':'bad'} title={x===null?'尚無紀錄':x?'答對':'答錯'}></i>)}
+          </div>
+        </div>
+        <button className="btn ghost" disabled={rec.level===level}
+          onClick={()=>startSprint(genMath(rec.level,5))}>
+          試試建議等級 L{rec.level}
+        </button>
+      </div>
+      <div className="mathcoach revenge">
+        <div>
+          <b>錯題復仇戰 · Rival Rematch</b>
+          <p>{mp.rivals
+            ?`${mp.rivals} 種題型還沒雪恥;${mp.oldRivals} 種已超過 3 天,優先回來挑戰。`
+            :'目前沒有宿敵。下一次答錯時,這裡會自動留下同題型復仇入口。'} / Missed math types return here until you beat them.</p>
+        </div>
+        <button className="btn solid" disabled={!revengeRows.length} onClick={startRevenge}>
+          開始復仇戰
+        </button>
+      </div>
+      {rivalRows.length>0&&(
+        <div className="rivalgrid">
+          {rivalRows.slice(0,8).map(r=>(
+            <div key={r.fp} className="rivalchip">
+              <b>L{r.lv}</b><span>{r.topic}</span><small>{r.age} 天前失手 · {r.acc}%</small>
+            </div>
+          ))}
+        </div>
+      )}
+      <p className="note">本級 {(MATH_TOPICS[level]||[]).length} 種題型,題目即時生成、永不重複;每題答完都有雙語「規則→步驟→驗算→EN」。 / Fresh generated questions with bilingual reasoning after every answer.</p>
+      {bands.map(b=>(
+        <div key={b.k} className="topicband">
+          <h3>{b.name}</h3>
+          <div className="topicgrid">
+            {b.items.map(x=>{
+              const r=x.row;
+              const cls=r&&r.rival?'rival':r&&r.ok>=3&&r.acc>=80?'mastered':r?'seen':'';
+              return (
+                <div key={x.fp} className={`topicchip ${cls}`}>
+                  {x.topic}
+                  {r&&<small>{r.ok}/{r.total} · {r.acc}%</small>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -1732,7 +1900,7 @@ function parseBackup(text){
   const s=(obj&&obj.app==='logic-lab'&&obj.save)?obj.save:obj;
   const hasXp=s&&(typeof s.totalXp==='number'||typeof s.xp==='number');
   if(!s||typeof s!=='object'||!hasXp||!s.subjects)throw new Error('invalid backup');
-  return {save:{...DEFAULT,...s},exportedAt:(obj&&obj.exportedAt)||''};
+  return {save:migrateSave(s),exportedAt:(obj&&obj.exportedAt)||''};
 }
 function BackupVault({state,importSave,markBackup}){
   const fileRef=useRef(null);
@@ -1865,6 +2033,38 @@ function LedgerPanel({state}){
   );
 }
 
+function MathProgressPanel({state}){
+  const mp=mathProgress(state);
+  const rec=recommendedMathLevel(state);
+  const top=mp.rows.slice(0,10);
+  return (
+    <div className="ledger mathledger">
+      <h3>數學掌握圖 · Math Mastery</h3>
+      {mp.q===0
+        ?<p className="empty">數學帳本還是空的──完成一回合數學衝刺,這裡會顯示題型掌握度與宿敵。 / Finish a math sprint to see mastery by type.</p>
+        :<div>
+          <div className="stat-row">
+            <div className="stat"><b className="num">{mp.q}</b><span>數學答題 · Answered</span></div>
+            <div className="stat"><b className="num">{mp.acc}%</b><span>數學正確率 · Accuracy</span></div>
+            <div className="stat"><b className="num">L{rec.level}</b><span>建議等級 · Suggested</span></div>
+            <div className="stat"><b className="num">{mp.rivals}</b><span>數學宿敵 · Rivals</span></div>
+          </div>
+          <div className="masterylist">
+            {top.map(r=>(
+              <div key={r.fp} className={`masteryrow ${r.rival?'rival':''}`}>
+                <span>L{r.lv}</span>
+                <b>{r.topic}</b>
+                <i><em style={{width:`${r.acc}%`}}></em></i>
+                <small>{r.ok}/{r.total} · {r.acc}%</small>
+              </div>
+            ))}
+          </div>
+          <p className="note">列表優先顯示需要復仇或需要練穩的題型;滿 3 次且正確率 80% 以上會視為掌握。 / The list prioritizes rivals and weaker types; 3 correct answers and 80%+ counts as mastered.</p>
+        </div>}
+    </div>
+  );
+}
+
 function ProgressPage({state,goHome,importSave,markBackup}){
   return (
     <div style={{'--ac':'var(--cinnabar)'}}>
@@ -1886,6 +2086,7 @@ function ProgressPage({state,goHome,importSave,markBackup}){
           ))}
         </div>}
       <LedgerPanel state={state}/>
+      <MathProgressPanel state={state}/>
       <BackupVault state={state} importSave={importSave} markBackup={markBackup}/>
     </div>
   );
