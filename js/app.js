@@ -508,52 +508,52 @@ function genMathRevenge(fps,n=5){
   return qs;
 }
 
-/* ── 漢字出題:四種題型,題目與選項皆漢英對照 ── */
-function genHanzi(level,n){
+/* ── 台灣小學常用字：例詞讀音、選字填詞、部首、注音選詞 ── */
+function genHanzi(level,n,packName=null){
   const groups=HANZI[level]||[];
-  const pool=groups.flatMap(g=>g.chars.map(ch=>({...ch,f:g.f,fe:g.fe,rule:g.rule,re:g.re})));
-  if(pool.length===0)return [];
-  const qs=[];
-  const chars=shuffle(pool);
-  for(let i=0;i<n;i++){
-    const h=chars[i%chars.length];
-    const fam=groups.find(g=>g.f===h.f);
-    let type=i%4;
-    if(type===0&&(fam.chars.length<3||ALL_CHARS.filter(x=>x.f!==h.f).length===0))type=2;
-    if(type===0){
-      /* 臥底偵探:同族 3 字 + 外族 1 字,抓出不屬於這一族的 */
-      const insiders=shuffle(fam.chars).slice(0,3);
-      const out=pick(ALL_CHARS.filter(x=>x.f!==h.f));
-      const opts=shuffle([
-        ...insiders.map(x=>({t:x.c,sub:x.en,now:true})),
-        {t:out.c,sub:out.en,now:true},
-      ]);
-      qs.push({fp:`hf:${fam.f}`,q:`「${fam.f}」家族裡混進了一個臥底,把它抓出來!`,
-        en:`An undercover agent sneaked into the "${fam.fe}" family. Catch it!`,
-        options:opts,ansV:out.c,big:true,
-        why:`${out.c}(${out.en})來自「${out.f}」家族。本族規則:${fam.rule} / ${out.c} belongs to the "${out.fe}" family. This family rule: ${fam.re}`});
-    }else if(type===1){
-      /* 讀音 */
-      const zyPool=shuffle([...new Set(pool.map(o=>o.zy))].filter(z=>z!==h.zy)).slice(0,3);
-      qs.push({fp:`h:${h.c}`,q:`「${h.c}」怎麼唸?`,en:`How do you pronounce 「${h.c}」?`,
-        options:shuffle([h.zy,...zyPool]),ansV:h.zy,
-        why:`${h.c}(${h.zy})= ${h.en}。詞語 Word:${h.w} = ${h.we}`});
-    }else if(type===2){
-      /* 意思 → 字(英文線索在作答後揭曉,避免直接洩題)*/
-      const others=shuffle(pool.filter(x=>x.c!==h.c&&x.en!==h.en)).slice(0,3);
-      const opts=shuffle([h,...others]).map(x=>({t:x.c,sub:x.en,late:true}));
-      qs.push({fp:`h:${h.c}`,q:`哪個字的意思是「${h.en}」?`,en:`Which character means "${h.en}"?`,
-        options:opts,ansV:h.c,big:true,
-        why:`${h.c} = ${h.en}。詞語 Word:${h.w} = ${h.we}`});
+  const pool=groups.flatMap(g=>g.chars);
+  const targets=packName?(groups.find(g=>g.f===packName)||{chars:[]}).chars:pool;
+  if(!targets.length)return [];
+  const chars=shuffle(targets);
+  const types=shuffle(['reading','cloze','radical','word']);
+  return Array.from({length:n},(_,i)=>{
+    const h=chars[i%chars.length],type=types[i%types.length];
+    const why=[
+      `例詞：${h.w}（${h.wzy}）。本題的「${h.c}」讀作 ${h.zy}。`,
+      `詞義：${h.zh}`,
+      `字形：字典部首是「${h.radical}」，共 ${h.strokes} 畫。部首用來查字，不代表整個字的意思。`,
+      `EN: ${h.w} — ${h.we}. This question uses the reading in this example word.`,
+    ];
+    let q,answer,options;
+    if(type==='reading'){
+      q=`「${h.w}」中第 ${h.targetIndex+1} 個字「${h.c}」怎麼讀？`;
+      answer=h.zy;
+      options=[answer,...shuffle([...new Set(pool.map(x=>x.zy))].filter(x=>x!==answer)).slice(0,3)];
+    }else if(type==='cloze'){
+      const masked=Array.from(h.w).map((c,j)=>j===h.targetIndex?'□':c).join('');
+      q=`讀音是「${h.wzy}」，請選字填入「${masked}」。`;
+      answer=h.c;
+      // Exclude all registered readings of distractors to avoid homophone answers.
+      options=[answer,...shuffle(pool.filter(x=>x.c!==h.c&&!x.readings.includes(h.zy))).slice(0,3).map(x=>x.c)];
+    }else if(type==='radical'){
+      q=`「${h.c}」（例詞：${h.w}）在字典中屬於哪個部首？`;
+      answer=h.radical;
+      options=[answer,...shuffle([...new Set(pool.map(x=>x.radical))].filter(x=>x!==answer)).slice(0,3)];
     }else{
-      /* 字 → 意思(選項為英文)*/
-      const others=shuffle([...new Set(pool.map(x=>x.en))].filter(e=>e!==h.en)).slice(0,3);
-      qs.push({fp:`h:${h.c}`,q:`「${h.c}」是什麼意思?`,en:`What does 「${h.c}」 mean?`,
-        options:shuffle([h.en,...others]),ansV:h.en,
-        why:`${h.c}(${h.zy})= ${h.en}。詞語 Word:${h.w} = ${h.we}`});
+      q=`哪個詞語的讀音是「${h.wzy}」？`;
+      answer=h.w;
+      const seen=new Set([answer]);
+      const others=shuffle(pool).filter(x=>{
+        if(seen.has(x.w)||x.wordReadings.includes(h.wzy))return false;
+        seen.add(x.w);return true;
+      });
+      options=[answer,...others.slice(0,3).map(x=>x.w)];
     }
-  }
-  return qs.map(q=>({...q,ans:q.options.findIndex(o=>(typeof o==='object'?o.t:o)===q.ansV)}));
+    options=shuffle(options);
+    return {fp:`h:${h.c}`,character:h.c,skill:type,q,
+      en:{reading:'Choose the reading used in this example word.',cloze:'Use the pronunciation to fill in the missing character.',radical:'Choose the dictionary radical.',word:'Match the pronunciation to the word.'}[type],
+      options,ansV:answer,ans:options.indexOf(answer),big:type!=='reading',why};
+  });
 }
 
 /* ── 自然出題:抽取該等級所有概念的題庫 ── */
@@ -669,7 +669,7 @@ function ledgerStats(state){
   for(const fp in (L.items||{})){
     const it=L.items[fp];
     q+=it.ok+it.no;ok+=it.ok;
-    if(fp.startsWith('h:')&&it.ok>0)lit.add(fp.slice(2));
+    if(fp.startsWith('h:')&&it.ok>0&&ALL_CHARS.some(ch=>ch.c===fp.slice(2)))lit.add(fp.slice(2));
     if(it.lw&&(!it.lc||it.lw>it.lc))rivals+=1;
   }
   const days=[];
@@ -729,7 +729,7 @@ function adaptMathLevel(s){
 
 const SUBJECTS={
   hanzi:{name:'漢字解碼',glyph:'字',color:'var(--cinnabar)',bg:'var(--cinnabar-bg)',
-    desc:'把每個字當成「零件組合的謎題」:學會拆解邏輯,一個規則能解開一整個字族。'},
+    desc:'從台灣小學常見的一千字出發，用生活例詞練習讀音、認字與部首。'},
   math:{name:'數學引擎',glyph:'數',color:'var(--cobalt)',bg:'var(--cobalt-bg)',
     desc:'題目由程式即時生成,永遠不重複。每題都附「為什麼」,拆給你看背後的規則。'},
   science:{name:'自然偵探',glyph:'理',color:'var(--moss)',bg:'var(--moss-bg)',
@@ -791,7 +791,9 @@ function App(){
   const activePet=PETS.find(p=>p.id===state.activePet)||null;
 
   /* 今日之字:用日期挑選,每天固定一個 */
-  const dayChar=ALL_CHARS[new Date().getDate()%ALL_CHARS.length];
+  const now=new Date();
+  const dayIndex=Math.floor(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())/864e5);
+  const dayChar=ALL_CHARS[dayIndex%ALL_CHARS.length];
 
   /* 備份提醒:有一定進度,且從未備份或距上次備份超過 14 天 */
   const needBackup=(state.totalXp||0)>=100&&
@@ -866,10 +868,10 @@ function Home({state,dayChar,activePet,openSubject,openPlay}){
         <div>
           <div className="hero-eyebrow">今日之字 · CHARACTER OF THE DAY</div>
           <div className="hero-logic">
-            <span className="kai">{dayChar.c}</span>({dayChar.zy})= {dayChar.en} ── 「{dayChar.f} {dayChar.fe}」家族
+            <span className="kai">{dayChar.c}</span> ── 例詞：{dayChar.w}（{dayChar.wzy}）
           </div>
-          <div className="hero-en">{dayChar.rule}</div>
-          <div className="hero-en">{dayChar.re} · {dayChar.w} = {dayChar.we}</div>
+          <div className="hero-en">{dayChar.zh}</div>
+          {state.engHints&&<div className="hero-en">{dayChar.we}</div>}
         </div>
       </div>
 
@@ -936,7 +938,8 @@ function SubjectPage({k,state,setLevel,startSprint,goHome}){
         </button>
       </div>
 
-      {k==='hanzi'&&<HanziLearn groups={HANZI[lv]||[]}/>}
+      {k==='hanzi'&&<HanziLearn key={lv} groups={HANZI[lv]||[]} eng={state.engHints}
+        practice={name=>startSprint(genHanzi(lv,5,name))}/>}
       {k==='science'&&<SciLearn units={SCI[lv]||[]}/>}
       {k==='math'&&(
         <div>
@@ -1034,30 +1037,54 @@ function MathLearn({state,level,startSprint}){
   );
 }
 
-function HanziLearn({groups}){
-  if(!groups.length)return (
-    <p className="empty">這一級的千字文字族還在製作中,會分批加入(資料格式已備好)。 / This level arrives in the next content batch.</p>
-  );
+function HanziLearn({groups,eng,practice}){
+  const [pack,setPack]=useState(0);
+  const [query,setQuery]=useState('');
+  if(!groups.length)return <p className="empty">這一級目前沒有字卡。</p>;
   const total=groups.reduce((s,g)=>s+g.chars.length,0);
+  const term=query.trim();
+  const visible=term?groups.map(g=>({...g,chars:g.chars.filter(ch=>
+    ch.c.includes(term)||ch.w.includes(term)||ch.radical===term)})).filter(g=>g.chars.length):[groups[pack]];
+  const count=visible.reduce((n,g)=>n+g.chars.length,0);
   return (
-    <div>
-      <p className="note">本級共 {groups.length} 個字族、{total} 個字。先讀懂每一族的「破解規則」,再開衝刺──一條規則能解開一整族。 / {groups.length} families, {total} characters. Crack the family rule first; one rule unlocks the whole family.</p>
-      {groups.map(g=>(
-        <div key={g.f} className="fam">
-          <h3>{g.f} <span className="fam-en">{g.fe}</span><span className="fam-count num">{g.chars.length} 字</span></h3>
-          <p className="fam-rule">🔑 {g.rule}<br/><span className="fam-rule-en">{g.re}</span></p>
+    <div className="hanzi-learn">
+      <p className="note">台灣小學常用一千字 · 本級 {total} 字。{HANZI_META.levelNote}</p>
+      <div className="hanzi-controls">
+        <label>選擇練習包
+          <select value={pack} onChange={e=>{setPack(Number(e.target.value));setQuery('')}}>
+            {groups.map((g,i)=><option key={g.f} value={i}>{g.f}（{g.chars.length} 字）</option>)}
+          </select>
+        </label>
+        <label>找字、例詞或部首
+          <input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="搜尋本級，例如：水、學校"/>
+        </label>
+      </div>
+      {term&&<p className="note">本級找到 {count} 字。其他等級請切換上方 L1–L6。</p>}
+      {visible.map(g=>(
+        <section key={g.f} className="fam">
+          <div className="hanzi-pack-head">
+            <h3>{g.f}<span className="fam-count num">{g.chars.length} 字</span></h3>
+            <button className="btn ghost" onClick={()=>practice(g.f)}>練習這一包（5 題）</button>
+          </div>
+          <p className="fam-rule">{g.rule}{eng&&<><br/><span className="fam-rule-en">{g.re}</span></>}</p>
           <div className="chipgrid">
             {g.chars.map(ch=>(
               <div key={ch.c} className="cchip">
                 <div className="cc kai">{ch.c}</div>
-                <div className="cz">{ch.zy}</div>
-                <div className="ce">{ch.en}</div>
-                <div className="cw">{ch.w} · {ch.we}</div>
+                <div className="cw">部首：{ch.radical} · {ch.strokes} 畫</div>
+                <div className="hanzi-word kai">{ch.w}</div>
+                <div className="cz">{ch.wzy}</div>
+                <div className="hanzi-meaning">{ch.zh}</div>
+                {eng&&<div className="ce">{ch.we}</div>}
               </div>
             ))}
           </div>
-        </div>
+        </section>
       ))}
+      <p className="note hanzi-source">選字依據：<a href={HANZI_META.sourceUrl} target="_blank" rel="noreferrer">教育部國小學童字頻表</a>。
+        詞義摘錄與注音參考教育部《國語辭典簡編本》，部分例詞說明由本專案編寫。
+        <a href="docs/HANZI_SOURCES.md" target="_blank" rel="noreferrer">完整來源與授權</a>。
+      </p>
     </div>
   );
 }
@@ -1166,7 +1193,7 @@ function Sprint({k,qs,eng,pet,onDone,exit}){
         {picked!==null&&(
           <div className="why">
             {Array.isArray(q.why)
-              ? q.why.map((line,i)=>(
+              ? q.why.filter(line=>k!=='hanzi'||eng||!line.startsWith('EN:')).map((line,i)=>(
                   <p key={i} className={`why-line ${i===0?'why-rule':''} ${line.startsWith('EN:')?'why-en':''}`}>{line}</p>
                 ))
               : <span><b>為什麼:</b>{q.why}</span>}
@@ -2009,7 +2036,7 @@ function LedgerPanel({state}){
               </div>
             ))}
           </div>
-          <p className="note">每答一題,帳本記一筆。點亮的字會成為「千字文星圖」的星星;答錯的題三天後將以「宿敵」身分回歸復仇戰──都吃這條脊椎。 / Every answer is recorded: lit characters will become stars, missed ones will return as rivals.</p>
+          <p className="note">完成衝刺後記錄答題。點亮數只計算目前一千字字庫中曾答對的字；保留仍在字庫中的舊紀錄。點亮不等於已掌握，農場答題不列入。 / Completed sprints are recorded. Lit characters are those answered correctly in the current bank; this is not a mastery score. Farm answers are separate.</p>
         </div>}
     </div>
   );

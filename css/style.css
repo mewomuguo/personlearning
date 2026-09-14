@@ -179,6 +179,17 @@
   .ce{font-size:12.5px;font-weight:700;margin-top:2px}
   .cw{font-size:11.5px;color:var(--ink-soft)}
   .osub{margin-left:10px;font-size:13px;color:var(--ink-soft);font-weight:500}
+  .hanzi-controls{display:flex;flex-wrap:wrap;gap:16px;margin:20px 0}
+  .hanzi-controls label{display:flex;flex:1;min-width:200px;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+  .hanzi-controls input,.hanzi-controls select{width:100%;min-height:44px;padding:10px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+  .hanzi-pack-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .hanzi-pack-head h3{flex:1;min-width:190px}
+  .hanzi-learn .chipgrid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .hanzi-learn .cchip{padding:16px 12px}
+  .hanzi-word{font-size:24px;margin-top:12px}
+  .hanzi-meaning{font-size:14px;line-height:1.7;margin:8px 0;text-align:left;overflow-wrap:anywhere}
+  .hanzi-source a{color:var(--ac);text-underline-offset:3px}
+  .hanzi-controls input:focus-visible,.hanzi-controls select:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
 
   /* ── 遊樂園 ── */
   .sec-title{font-size:17px;font-weight:900;margin:24px 0 10px}
