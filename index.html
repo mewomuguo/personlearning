@@ -5,11 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Logic Lab 邏輯任務基地</title>
 <meta name="description" content="為 2e 自學者設計的台灣小學常用一千字、數學、自然科學學習基地 / A bilingual self-learning hub: 1,000 common Traditional Chinese characters, math engine, science detective.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=hanzi-review-restored-20260914">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<link rel="stylesheet" href="css/style.css?v=science-release-20260916-2">
 </head>
 <body>
 <div id="root"><div style="font-family:sans-serif;text-align:center;padding:60px 20px;color:#666">⏳ 載入中 Loading…<br><small>若超過 10 秒仍停在這裡,下方會出現紅色錯誤診斷,請截圖回報</small></div></div>
@@ -24,13 +20,24 @@
     var p=document.createElement('div');
     p.textContent=msg;d.appendChild(p);
   }
+  var loadingTimer=setTimeout(function(){
+    var root=document.getElementById('root');
+    if(root && root.textContent.indexOf('Loading…')>=0) show('載入超過10秒，請檢查網路後重新整理。 / Loading is taking longer than expected. Please check your connection and reload.');
+  },10000);
   window.addEventListener('error',function(e){
+    if(e.target && e.target.tagName==='SCRIPT') {show('程式資源載入失敗，請重新整理。 / A script failed to load: '+e.target.src);return;}
+
     show((e.message||'unknown')+'  @'+String(e.filename||'').split('/').pop()+':'+(e.lineno||'?'));
-  });
+  },true);
   window.addEventListener('unhandledrejection',function(e){show('Promise: '+String(e.reason))});
 })();
 </script>
-<script src="js/data.js?v=hanzi-review-restored-20260914"></script>
-<script src="js/app.js?v=hanzi-review-restored-20260914"></script>
+<script src="js/vendor/react.production.min.js"></script>
+<script src="js/vendor/react-dom.production.min.js"></script>
+<script src="js/data.js?v=science-release-20260916-2"></script>
+<script src="js/science-core.js?v=science-release-20260916-2"></script>
+<script src="js/science-data.js?v=science-release-20260916-2"></script>
+<script src="js/science-ui.js?v=science-release-20260916-2"></script>
+<script src="js/app.js?v=science-release-20260916-2"></script>
 </body>
 </html>

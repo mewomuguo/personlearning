@@ -2,10 +2,12 @@ const { useState, useEffect, useMemo, useRef } = React;
 if (typeof window.structuredClone !== "function") {
   window.structuredClone = (o) => JSON.parse(JSON.stringify(o));
 }
-if (typeof DATA_OK === "undefined" || typeof HANZI === "undefined") {
-  document.getElementById("root").innerHTML = '<div style="font-family:sans-serif;max-width:560px;margin:60px auto;padding:24px;background:#FFF3F1;border:3px solid #C8432F;border-radius:16px;line-height:1.8"><h2 style="margin:0 0 10px">\u26A0\uFE0F \u8CC7\u6599\u6A94 data.js \u4E0D\u5B8C\u6574</h2><p><b>\u539F\u56E0:</b>\u4E0A\u50B3\u5230 GitHub \u6642\u6A94\u6848\u88AB\u622A\u65B7\u4E86(\u5E38\u898B\u65BC\u7528\u300C\u8907\u88FD\u8CBC\u4E0A\u300D\u65B9\u5F0F\u7DE8\u8F2F,\u5C24\u5176\u5728\u624B\u6A5F\u4E0A)\u3002</p><p><b>\u89E3\u6CD5:</b>\u5230 GitHub repo \u2192 <b>Add file \u2192 Upload files</b> \u2192 \u9078\u53D6\u5B8C\u6574\u7684 <code>js/data.js</code> \u6A94\u6848\u4E0A\u50B3\u8986\u84CB(\u4E0D\u8981\u8CBC\u5167\u5BB9),\u518D Commit\u3002</p><p><b>\u6838\u5C0D:</b>\u4E0A\u50B3\u5F8C\u9EDE\u958B GitHub \u4E0A\u7684 data.js,\u9801\u9762\u9802\u7AEF\u6703\u986F\u793A\u884C\u6578\u2014\u2014\u5B8C\u6574\u7248\u672C\u61C9\u63A5\u8FD1\u5169\u5343\u884C;\u82E5\u53EA\u6709\u5E7E\u767E\u884C\u5C31\u662F\u53C8\u88AB\u622A\u65B7\u4E86\u3002</p></div>';
-  throw new Error("data.js incomplete \u2014 re-upload the full file");
+if (typeof DATA_OK === "undefined" || typeof HANZI === "undefined" || typeof SCIENCE_BANK === "undefined" || typeof Science === "undefined") {
+  document.getElementById("root").textContent = "學習資料載入失敗，請重新整理；若仍失敗，請檢查網路或稍後再試。 / Learning data could not load. Please reload.";
+  throw new Error("Learning data unavailable");
 }
+Science.validateBank(SCIENCE_BANK);
+
 const ri = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 const pick = (a) => a[ri(0, a.length - 1)];
 const shuffle = (a) => {
@@ -1417,53 +1419,8 @@ function hanziReview(state, level, skill) {
     ([key, it]) => chars.has(it.character) && it.skill === skill && it.lastOk === false
   ).map(([key, it]) => ({ character: it.character, skill: it.skill }));
 }
-const SCI_LORE = {
-  1: [
-    "\u{1F52D} \u5927\u6982\u5FF5:\u300C\u69CB\u9020\u6C7A\u5B9A\u529F\u80FD\u300D\u662F\u6574\u500B\u751F\u7269\u5B78\u7684\u7B2C\u4E00\u628A\u9470\u5319\u3002\u770B\u898B\u4E00\u500B\u8EAB\u9AD4\u90E8\u4F4D,\u5148\u554F\u5B83\u9577\u4EC0\u9EBC\u5F62\u72C0,\u518D\u731C\u5B83\u80FD\u505A\u4EC0\u9EBC\u2014\u2014\u7FC5\u8180\u7684\u5F62\u72C0\u6D29\u6F0F\u4E86\u98DB\u884C,\u9C2D\u7684\u5F62\u72C0\u6D29\u6F0F\u4E86\u6E38\u6CF3\u3002\u9019\u689D\u898F\u5247\u8B93\u6211\u5011\u5149\u770B\u5316\u77F3\u5C31\u80FD\u63A8\u6E2C\u7260\u600E\u9EBC\u751F\u6D3B\u3002 EN: Structure decides function is biology first key: a body part shape hints at its job, so a fin means swimming and a wing means flying, even in fossils.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u690D\u7269\u4E0D\u80FD\u8DD1\u3001\u4E0D\u80FD\u8EB2,\u537B\u6D3B\u5F97\u6BD4\u8AB0\u90FD\u4E45\u2014\u2014\u56E0\u70BA\u7260\u5011\u628A\u300C\u6C42\u751F\u300D\u5BEB\u9032\u4E86\u69CB\u9020\u88E1:\u6839\u5F80\u4E0B\u6293\u6C34\u3001\u8449\u5F80\u4E0A\u8FFD\u5149\u3001\u523A\u8207\u6BD2\u8D95\u8D70\u6575\u4EBA\u3002\u4E0D\u52D5\u8072\u8272\u7684\u751F\u5B58\u7B56\u7565,\u662F\u6F14\u5316\u6700\u5B89\u975C\u4E5F\u6700\u53B2\u5BB3\u7684\u5091\u4F5C\u3002 EN: Plants cannot run or hide yet outlive almost everything, because survival is built into their form: roots chase water, leaves chase light, thorns and toxins repel enemies.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u4E94\u5B98\u662F\u8EAB\u9AD4\u7684\u5075\u6E2C\u5668,\u5404\u81EA\u8CA0\u8CAC\u4E00\u7A2E\u8A0A\u865F\u2014\u2014\u773C\u775B\u6536\u5149\u3001\u8033\u6735\u6536\u9707\u52D5\u3001\u9F3B\u5B50\u6536\u6C23\u5473\u5206\u5B50\u3002\u5927\u8166\u628A\u9019\u4E9B\u8A0A\u865F\u62FC\u6210\u4E00\u5E45\u4E16\u754C\u7684\u5730\u5716\u3002\u5C11\u4E86\u4EFB\u4F55\u4E00\u7A2E\u5075\u6E2C\u5668,\u4E16\u754C\u5C31\u7F3A\u4E86\u4E00\u500B\u7DAD\u5EA6\u3002 EN: The senses are detectors, each tuned to one signal \u2014 eyes read light, ears read vibration, the nose reads molecules \u2014 and the brain stitches them into one map of the world.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u767D\u5929\u8207\u9ED1\u591C\u4E0D\u662F\u592A\u967D\u5728\u52D5,\u662F\u5730\u7403\u81EA\u5DF1\u5728\u8F49\u3002\u9019\u662F\u4EBA\u985E\u6700\u96E3\u653E\u4E0B\u7684\u932F\u89BA\u4E4B\u4E00:\u660E\u660E\u770B\u898B\u592A\u967D\u5347\u843D,\u771F\u76F8\u537B\u662F\u6211\u5011\u7AD9\u5728\u4E00\u9846\u65CB\u8F49\u7684\u7403\u4E0A\u3002\u79D1\u5B78\u5E38\u5E38\u8981\u6211\u5011\u76F8\u4FE1\u63A8\u7406,\u800C\u4E0D\u662F\u773C\u775B\u3002 EN: Day and night come from Earth spinning, not the Sun moving. Science often asks us to trust reasoning over what our eyes seem to show."
-  ],
-  2: [
-    "\u{1F52D} \u5927\u6982\u5FF5:\u5F71\u5B50\u662F\u5149\u8D70\u76F4\u7DDA\u7684\u8B49\u64DA\u3002\u5149\u4E0D\u6703\u8F49\u5F4E\u7E5E\u904E\u969C\u7919\u7269,\u6240\u4EE5\u64CB\u4F4F\u5149\u7684\u5730\u65B9\u5C31\u7559\u4E0B\u4E00\u584A\u9ED1\u2014\u2014\u5F71\u5B50\u7684\u5F62\u72C0\u3001\u9577\u77ED\u3001\u65B9\u5411,\u5168\u90FD\u88AB\u5149\u6E90\u7684\u4F4D\u7F6E\u6C7A\u5B9A\u3002\u8B80\u61C2\u5F71\u5B50,\u5C31\u8B80\u61C2\u4E86\u5149\u7684\u813E\u6C23\u3002 EN: Shadows prove that light travels in straight lines: light cannot bend around an obstacle, so blocked light leaves a dark shape ruled entirely by the source position.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u6C34\u7684\u4E09\u614B\u544A\u8A34\u6211\u5011\u4E00\u4EF6\u9A5A\u4EBA\u7684\u4E8B\u2014\u2014\u51B0\u3001\u6C34\u3001\u6C34\u84B8\u6C23\u5176\u5BE6\u662F\u540C\u4E00\u7A2E\u6771\u897F,\u53EA\u662F\u5206\u5B50\u8DD1\u5F97\u5FEB\u6162\u4E0D\u540C\u3002\u52A0\u71B1\u8B93\u5206\u5B50\u8E81\u52D5\u3001\u51B7\u537B\u8B93\u5206\u5B50\u5B89\u975C\u3002\u7269\u8CEA\u6C92\u6709\u6D88\u5931,\u53EA\u662F\u63DB\u4E86\u500B\u6A23\u5B50,\u9019\u53EB\u72C0\u614B\u8B8A\u5316\u3002 EN: Ice, water and vapour are the same substance with molecules moving at different speeds. Heating excites them, cooling calms them; matter changes state without disappearing.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u529B\u770B\u4E0D\u898B,\u4F46\u5B83\u7684\u6548\u679C\u770B\u5F97\u898B\u2014\u2014\u63A8\u3001\u62C9\u6703\u6539\u8B8A\u7269\u9AD4\u7684\u901F\u5EA6\u6216\u65B9\u5411\u3002\u6C92\u6709\u529B,\u904B\u52D5\u7684\u6771\u897F\u6703\u4E00\u76F4\u52D5\u4E0B\u53BB\u3002\u5B78\u6703\u8FA8\u8A8D\u6BCF\u4E00\u500B\u529B\u662F\u8AB0\u65BD\u52A0\u7684\u3001\u5F80\u54EA\u500B\u65B9\u5411,\u662F\u7406\u89E3\u6574\u500B\u7269\u7406\u4E16\u754C\u7684\u8D77\u9EDE\u3002 EN: Forces are invisible but their effects are not: pushes and pulls change speed or direction. Naming who applies each force and where is the start of understanding physics.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u8072\u97F3\u662F\u9707\u52D5\u5728\u7A7A\u6C23\u88E1\u50B3\u958B\u7684\u6CE2\u3002\u7269\u9AD4\u6296\u52D5,\u63A8\u52D5\u65C1\u908A\u7684\u7A7A\u6C23\u4E00\u5C64\u5C64\u50B3\u51FA\u53BB,\u50B3\u5230\u8033\u6735\u5C31\u807D\u898B\u4E86\u3002\u6C92\u6709\u4ECB\u8CEA(\u5982\u771F\u7A7A)\u8072\u97F3\u5C31\u50B3\u4E0D\u904E\u53BB\u2014\u2014\u9019\u89E3\u91CB\u4E86\u70BA\u4EC0\u9EBC\u592A\u7A7A\u4E00\u7247\u5BC2\u975C\u3002 EN: Sound is vibration spreading as waves through air: a shaking object nudges the air outward layer by layer. Without a medium, like in a vacuum, sound cannot travel \u2014 space is silent."
-  ],
-  3: [
-    "\u{1F52D} \u5927\u6982\u5FF5:\u78C1\u9435\u6709\u770B\u4E0D\u898B\u7684\u78C1\u5834,\u540C\u6975\u76F8\u65A5\u3001\u7570\u6975\u76F8\u5438\u3002\u9019\u80A1\u300C\u9694\u7A7A\u4F5C\u7528\u300D\u7684\u529B\u548C\u91CD\u529B\u3001\u96FB\u529B\u540C\u5C6C\u81EA\u7136\u754C\u7684\u57FA\u672C\u529B\u3002\u6307\u5357\u91DD\u4E4B\u6240\u4EE5\u6307\u5317,\u662F\u56E0\u70BA\u6574\u9846\u5730\u7403\u672C\u8EAB\u5C31\u662F\u4E00\u584A\u5DE8\u5927\u7684\u78C1\u9435\u3002 EN: Magnets carry an invisible field: like poles repel, opposite poles attract. This action at a distance is a fundamental force, and a compass points north because Earth itself is a giant magnet.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u690D\u7269\u662F\u5730\u7403\u7684\u592A\u967D\u80FD\u5DE5\u5EE0\u3002\u8449\u5B50\u7528\u5149\u3001\u6C34\u3001\u4E8C\u6C27\u5316\u78B3\u88FD\u9020\u990A\u5206,\u9806\u4FBF\u653E\u51FA\u6211\u5011\u547C\u5438\u7684\u6C27\u6C23\u3002\u5730\u7403\u4E0A\u5E7E\u4E4E\u6240\u6709\u80FD\u91CF,\u6700\u521D\u90FD\u662F\u690D\u7269\u5F9E\u967D\u5149\u6293\u4E0B\u4F86\u7684\u2014\u2014\u98DF\u7269\u93C8\u7684\u7B2C\u4E00\u7B46\u9322\u7531\u5B83\u5011\u5370\u3002 EN: Plants are Earth solar factories: leaves turn light, water and carbon dioxide into food while releasing oxygen. Almost all energy in life traces back to sunlight captured by plants.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u98DF\u7269\u93C8\u662F\u4E00\u689D\u80FD\u91CF\u7684\u50B3\u905E\u7DDA,\u5F9E\u592A\u967D\u5230\u690D\u7269\u3001\u5230\u5403\u690D\u7269\u7684\u52D5\u7269\u3001\u518D\u5230\u5403\u52D5\u7269\u7684\u52D5\u7269\u3002\u6BCF\u50B3\u4E00\u5C64,\u80FD\u91CF\u90FD\u6703\u6D41\u5931\u5927\u534A\u2014\u2014\u9019\u89E3\u91CB\u4E86\u70BA\u4EC0\u9EBC\u7345\u5B50\u7E3D\u662F\u6BD4\u7F9A\u7F8A\u5C11,\u9802\u7AEF\u7684\u63A0\u98DF\u8005\u6C38\u9060\u7A00\u6709\u3002 EN: A food chain passes energy from sun to plant to herbivore to predator, losing most of it at each step. That is why top predators are always rare compared with their prey.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u7A7A\u6C23\u96D6\u7136\u770B\u4E0D\u898B,\u537B\u771F\u5BE6\u4F54\u64DA\u7A7A\u9593\u3001\u4E5F\u6709\u91CD\u91CF\u3002\u628A\u676F\u5B50\u5012\u6263\u58D3\u9032\u6C34\u88E1,\u6C34\u9032\u4E0D\u53BB\u2014\u2014\u56E0\u70BA\u88E1\u9762\u65E9\u88AB\u7A7A\u6C23\u4F54\u6EFF\u4E86\u3002\u770B\u4E0D\u898B\u4E0D\u7B49\u65BC\u4E0D\u5B58\u5728,\u662F\u79D1\u5B78\u601D\u8003\u6700\u91CD\u8981\u7684\u63D0\u9192\u4E4B\u4E00\u3002 EN: Air is invisible yet truly takes up space and has weight: push an upside-down cup into water and water cannot enter, because air already fills it. Invisible never means nonexistent."
-  ],
-  4: [
-    "\u{1F52D} \u5927\u6982\u5FF5:\u6708\u4EAE\u81EA\u5DF1\u4E0D\u767C\u5149,\u6211\u5011\u770B\u5230\u7684\u662F\u5B83\u53CD\u5C04\u7684\u967D\u5149\u3002\u6708\u76F8\u7684\u5713\u7F3A,\u662F\u5730\u7403\u3001\u6708\u4EAE\u3001\u592A\u967D\u4E09\u8005\u76F8\u5C0D\u4F4D\u7F6E\u7684\u5E7E\u4F55\u904A\u6232\u2014\u2014\u540C\u4E00\u9846\u88AB\u7167\u4EAE\u7684\u7403,\u5F9E\u4E0D\u540C\u89D2\u5EA6\u770B,\u4EAE\u9762\u5927\u5C0F\u5C31\u4E0D\u540C\u3002\u62AC\u982D\u770B\u6708,\u5176\u5BE6\u5728\u770B\u4E00\u9053\u7ACB\u9AD4\u5E7E\u4F55\u984C\u3002 EN: The Moon shines by reflecting sunlight, and its phases are pure geometry: the same lit sphere seen from changing angles shows different bright fractions.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u96FB\u8DEF\u662F\u96FB\u6D41\u7E5E\u7684\u4E00\u5708\u8DEF,\u5FC5\u9808\u9996\u5C3E\u76F8\u9023\u3001\u6C92\u6709\u65B7\u9EDE,\u96FB\u624D\u6703\u6D41\u52D5\u3001\u71C8\u624D\u6703\u4EAE\u3002\u4EFB\u4F55\u4E00\u8655\u65B7\u958B,\u6574\u689D\u8DEF\u5C31\u5931\u6548\u3002\u628A\u62BD\u8C61\u7684\u96FB\u60F3\u6210\u4E00\u689D\u5FC5\u9808\u9589\u5408\u7684\u74B0,\u5927\u90E8\u5206\u96FB\u8DEF\u554F\u984C\u5C31\u8FCE\u5203\u800C\u89E3\u3002 EN: A circuit is a complete loop the current travels: any break stops the flow and the bulb goes dark. Picture electricity as a ring that must stay closed.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u71B1\u7E3D\u662F\u5F9E\u6EAB\u5EA6\u9AD8\u7684\u5730\u65B9\u6D41\u5411\u4F4E\u7684\u5730\u65B9,\u76F4\u5230\u5169\u908A\u4E00\u6A23\u70BA\u6B62\u2014\u2014\u9019\u53EB\u71B1\u5E73\u8861\u3002\u71B1\u7684\u65C5\u884C\u6709\u4E09\u7A2E\u65B9\u5F0F:\u50B3\u5C0E\u3001\u5C0D\u6D41\u3001\u8F3B\u5C04\u3002\u7406\u89E3\u71B1\u5F80\u54EA\u8D70\u3001\u8D70\u591A\u5FEB,\u5C31\u80FD\u89E3\u91CB\u4FDD\u6EAB\u676F\u3001\u6696\u6C23\u3001\u751A\u81F3\u5730\u7403\u6C23\u5019\u3002 EN: Heat always flows from hot to cold until both match, called thermal equilibrium, travelling by conduction, convection and radiation.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u6D6E\u6216\u6C89,\u6BD4\u7684\u4E0D\u662F\u8F15\u91CD,\u800C\u662F\u5BC6\u5EA6\u2014\u2014\u540C\u9AD4\u7A4D\u4E0B\u8AB0\u6BD4\u6C34\u91CD\u3002\u9435\u584A\u6C89\u3001\u9435\u9020\u7684\u8239\u537B\u6D6E,\u95DC\u9375\u5728\u8239\u628A\u7A7A\u6C23\u5305\u9032\u9AD4\u7A4D\u88E1,\u5E73\u5747\u5BC6\u5EA6\u8B8A\u5C0F\u4E86\u3002\u770B\u7A7F\u300C\u91CD\u91CF\u300D\u80CC\u5F8C\u7684\u5BC6\u5EA6,\u662F\u6D41\u9AD4\u4E16\u754C\u7684\u901A\u95DC\u5BC6\u8A9E\u3002 EN: Floating depends on density, not weight: a steel ship floats because trapping air lowers its average density below water. Look past weight to density."
-  ],
-  5: [
-    "\u{1F52D} \u5927\u6982\u5FF5:\u6EB6\u89E3\u662F\u5206\u5B50\u7D1A\u7684\u8EB2\u8C93\u8C93\u2014\u2014\u7CD6\u4E0D\u898B\u4E86,\u4E0D\u662F\u6D88\u5931,\u800C\u662F\u62C6\u6210\u770B\u4E0D\u898B\u7684\u5C0F\u5206\u5B50\u8EB2\u9032\u6C34\u5206\u5B50\u4E4B\u9593\u3002\u6EAB\u5EA6\u3001\u652A\u62CC\u6703\u52A0\u5FEB\u9019\u500B\u904E\u7A0B\u3002\u7269\u8CEA\u5B88\u6046\u7684\u4FE1\u5FF5\u544A\u8A34\u6211\u5011:\u770B\u4E0D\u898B,\u4E0D\u4EE3\u8868\u4E0D\u5728\u3002 EN: Dissolving is molecular hide and seek: sugar scatters into invisible particles among water molecules rather than vanishing. Conservation says the unseen still exists.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u9178\u8207\u9E7C\u662F\u4E00\u5C0D\u5316\u5B78\u4E0A\u7684\u76F8\u53CD\u529B\u91CF,\u76F8\u9047\u6703\u4E92\u76F8\u4E2D\u548C\u3002\u7528\u77F3\u854A\u8A66\u7D19\u7684\u984F\u8272\u5C31\u80FD\u5206\u8FA8\u2014\u2014\u9019\u662F\u628A\u770B\u4E0D\u898B\u7684\u5316\u5B78\u6027\u8CEA\u8B8A\u6210\u770B\u5F97\u898B\u7684\u8A0A\u865F\u3002\u5206\u985E\u8207\u6AA2\u6E2C,\u662F\u5316\u5B78\u5BB6\u8A8D\u8B58\u7269\u8CEA\u7684\u5169\u5927\u57FA\u672C\u529F\u3002 EN: Acids and bases are chemical opposites that neutralize each other, revealed by indicator colours that turn invisible chemistry into a visible signal.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u5FAE\u751F\u7269\u770B\u4E0D\u898B,\u537B\u4E3B\u5BB0\u8457\u767C\u9175\u3001\u8150\u6557\u8207\u75BE\u75C5\u3002\u5B83\u5011\u8B49\u660E\u4E86\u4E00\u4EF6\u4E8B:\u4E16\u754C\u7684\u904B\u4F5C\u5E38\u5E38\u767C\u751F\u5728\u8089\u773C\u770B\u4E0D\u5230\u7684\u5C3A\u5EA6\u3002\u986F\u5FAE\u93E1\u64F4\u5927\u4E86\u4EBA\u985E\u7684\u773C\u754C,\u4E5F\u64F4\u5927\u4E86\u6211\u5011\u5C0D\u300C\u4EC0\u9EBC\u662F\u6D3B\u8457\u300D\u7684\u7406\u89E3\u3002 EN: Microbes are invisible yet drive fermentation, decay and disease, proving that much of the world works at scales the naked eye cannot reach.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u5CA9\u77F3\u662F\u5730\u7403\u7684\u65E5\u8A18\u672C\u3002\u6C89\u7A4D\u5CA9\u4E00\u5C64\u5C64\u5806\u758A,\u8D8A\u4E0B\u9762\u8D8A\u53E4\u8001;\u5316\u77F3\u5C01\u5B58\u5728\u5176\u4E2D,\u8A18\u9304\u8457\u5343\u842C\u5E74\u524D\u7684\u751F\u547D\u3002\u8B80\u61C2\u5CA9\u5C64\u7684\u9806\u5E8F,\u5C31\u80FD\u5012\u5E36\u64AD\u653E\u5730\u7403\u7684\u6B77\u53F2\u2014\u2014\u9019\u662F\u6642\u9593\u7684\u7269\u8B49\u3002 EN: Rocks are Earth diary: sedimentary layers stack oldest at the bottom, and fossils inside record ancient life, letting us rewind the planet history."
-  ],
-  6: [
-    "\u{1F52D} \u5927\u6982\u5FF5:\u69D3\u687F\u8B93\u6211\u5011\u4EE5\u5C0F\u535A\u5927\u2014\u2014\u7528\u8F03\u5C0F\u7684\u529B\u64AC\u52D5\u8F03\u5927\u7684\u91CD\u7269,\u4EE3\u50F9\u662F\u8981\u79FB\u52D5\u66F4\u9577\u7684\u8DDD\u96E2\u3002\u7701\u4E86\u529B\u5C31\u8CBB\u4E86\u8DDD\u96E2,\u5929\u4E0B\u6C92\u6709\u767D\u5403\u7684\u5348\u9910\u3002\u9019\u500B\u300C\u529F\u5B88\u6046\u300D\u7684\u9053\u7406,\u662F\u6240\u6709\u6A5F\u68B0\u7684\u5171\u540C\u5E95\u7DDA\u3002 EN: A lever trades force for distance: less effort but a longer push. You never get something for nothing \u2014 this conservation of work underlies all machines.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u80FD\u91CF\u4E0D\u6703\u6191\u7A7A\u7522\u751F\u6216\u6D88\u5931,\u53EA\u6703\u5F9E\u4E00\u7A2E\u5F62\u5F0F\u8B8A\u6210\u53E6\u4E00\u7A2E\u2014\u2014\u52D5\u80FD\u8B8A\u71B1\u3001\u96FB\u80FD\u8B8A\u5149\u3001\u5316\u5B78\u80FD\u8B8A\u904B\u52D5\u3002\u5B87\u5B99\u50CF\u4E00\u672C\u6C38\u9060\u6536\u652F\u5E73\u8861\u7684\u5E33\u672C\u3002\u8FFD\u8E64\u80FD\u91CF\u7684\u6D41\u5411\u8207\u8F49\u63DB,\u662F\u7269\u7406\u5B78\u6700\u5F37\u5927\u7684\u89E3\u984C\u5DE5\u5177\u3002 EN: Energy is never created or destroyed, only transformed \u2014 motion to heat, electricity to light. The universe is a perfectly balanced ledger of energy.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u91CD\u529B\u3001\u78C1\u529B\u3001\u96FB\u529B\u90FD\u662F\u300C\u9694\u7A7A\u4F5C\u7528\u300D\u7684\u529B\u5834\u2014\u2014\u4E0D\u5FC5\u63A5\u89F8\u5C31\u80FD\u65BD\u529B\u3002\u5834\u7684\u6982\u5FF5\u662F\u7269\u7406\u5B78\u7684\u4E00\u6B21\u601D\u60F3\u98DB\u8E8D:\u7A7A\u9593\u672C\u8EAB\u5E36\u8457\u770B\u4E0D\u898B\u7684\u6027\u8CEA,\u7269\u9AD4\u53EA\u662F\u56DE\u61C9\u5B83\u3002\u770B\u4E0D\u898B\u7684\u5834,\u6490\u8D77\u4E86\u770B\u5F97\u898B\u7684\u4E16\u754C\u3002 EN: Gravity, magnetism and electricity act at a distance through fields: space itself carries invisible properties that objects respond to.",
-    "\u{1F52D} \u5927\u6982\u5FF5:\u751F\u614B\u7CFB\u662F\u4E00\u5F35\u727D\u4E00\u9AEE\u52D5\u5168\u8EAB\u7684\u7DB2\u3002\u6BCF\u500B\u7269\u7A2E\u90FD\u9023\u8457\u5176\u4ED6\u7269\u7A2E,\u4E00\u500B\u6D88\u5931\u53EF\u80FD\u5F15\u767C\u9023\u9396\u5D29\u584C\u3002\u5E73\u8861\u4E0D\u662F\u975C\u6B62,\u800C\u662F\u52D5\u614B\u7684\u76F8\u4E92\u5236\u8861\u3002\u7406\u89E3\u9019\u5F35\u7DB2,\u5C31\u7406\u89E3\u4E86\u70BA\u4EC0\u9EBC\u4FDD\u8B77\u4E00\u500B\u7269\u7A2E\u7B49\u65BC\u4FDD\u8B77\u6574\u7247\u7CFB\u7D71\u3002 EN: An ecosystem is a web where removing one species can trigger cascading collapse. Balance is dynamic, not static \u2014 protecting one species protects the whole."
-  ]
-};
-const SCI_CODA = "\u{1F9EA} \u79D1\u5B78\u5BB6\u601D\u7DAD:\u79D1\u5B78\u4E0D\u662F\u80CC\u7B54\u6848,\u800C\u662F\u4E00\u5957\u8FFD\u554F\u7684\u65B9\u6CD5\u2014\u2014\u5148\u4ED4\u7D30\u89C0\u5BDF\u73FE\u8C61,\u63D0\u51FA\u731C\u6E2C,\u518D\u60F3\u8FA6\u6CD5\u52D5\u624B\u9A57\u8B49\u3002\u9047\u5230\u300C\u70BA\u4EC0\u9EBC\u300D,\u5225\u6025\u8457\u67E5\u7B54\u6848,\u5148\u81EA\u5DF1\u63A8\u7406\u4E00\u904D:\u6211\u770B\u5230\u7684\u8B49\u64DA\u662F\u4EC0\u9EBC?\u9019\u500B\u63A8\u8AD6\u5408\u4E0D\u5408\u7406?\u6709\u6C92\u6709\u53CD\u4F8B\u53EF\u4EE5\u63A8\u7FFB\u5B83?\u80FD\u990A\u6210\u9019\u6A23\u601D\u8003\u7FD2\u6163\u7684\u4EBA,\u4E0D\u7BA1\u8D70\u5230\u54EA\u88E1\u3001\u9762\u5C0D\u4EC0\u9EBC\u65B0\u554F\u984C,\u90FD\u80FD\u4E00\u5C64\u5C64\u525D\u958B\u8868\u8C61\u3001\u770B\u7A7F\u4E8B\u7269\u80CC\u5F8C\u771F\u6B63\u7684\u9053\u7406\u3002 EN: Science is not memorizing answers but a method of questioning: observe carefully, guess, then test by doing. Before looking up why, reason it out yourself \u2014 what is the evidence, is the inference sound, are there counterexamples? This habit lets you see through appearances anywhere.";
 function genSci(level, n) {
-  const units = SCI[level] || [];
-  const bank = units.flatMap((u, ui) => u.qs.map((q, qi) => ({
-    ...q,
-    fp: `s:${level}:${ui}:${qi}`,
-    why: enrichWhy(q.why, [(SCI_LORE[level] || [])[ui]].filter(Boolean), SCI_CODA)
-  })));
-  return shuffle(bank).slice(0, Math.min(n, bank.length));
+  return Science.generate(SCIENCE_BANK, level, n);
 }
 const KEY = "logic-lab-v1";
 const DEFAULT = {
@@ -1483,6 +1440,7 @@ const DEFAULT = {
   ledger: { v: 1, items: {}, days: {}, recent: {} }
 };
 function migrateSave(raw) {
+  raw = { ...structuredClone(DEFAULT), ...raw };
   const s = { ...DEFAULT, ...raw || {} };
   s.best = { ...DEFAULT.best, ...(raw || {}).best || {} };
   s.farm = { ...DEFAULT.farm, ...(raw || {}).farm || {} };
@@ -1497,15 +1455,101 @@ function migrateSave(raw) {
   s.ledger.recent = s.ledger.recent || {};
   return s;
 }
+const STORAGE_GUARD = {blocked:false, raw:null, error:"", lastSaved:null, expected:undefined, conflict:false};
+function validateSave(raw) {
+  const obj = x => x !== null && typeof x === "object" && !Array.isArray(x);
+  const nonnegative = x => typeof x === "number" && Number.isFinite(x) && x >= 0;
+  const require = (ok, field) => {if(!ok) throw new Error(`Invalid save: ${field}`);};
+  require(obj(raw), "root");
+  const inspect = value => {
+    if(!value || typeof value !== "object") return;
+    for(const key of Object.keys(value)) {
+      require(!["__proto__","constructor","prototype"].includes(key), "unsafe key");
+      inspect(value[key]);
+    }
+  };
+  inspect(raw);
+  for(const key of ["xp","totalXp","streak"]) if(key in raw) require(nonnegative(raw[key]),key);
+  for(const key of ["lastDay","lastBackup"]) if(key in raw) require(typeof raw[key]==="string",key);
+  if("engHints" in raw) require(typeof raw.engHints==="boolean","engHints");
+  if("subjects" in raw) {
+    require(obj(raw.subjects),"subjects");
+    for(const subject of ["hanzi","math","science"]) if(subject in raw.subjects) {
+      const value=raw.subjects[subject];
+      require(obj(value),subject);
+      if("level" in value) require(Number.isInteger(value.level)&&value.level>=1&&value.level<=6,subject+".level");
+    }
+  }
+  if("seals" in raw) require(Array.isArray(raw.seals)&&raw.seals.every(x=>obj(x)&&typeof x.ch==="string"&&["hanzi","math","science"].includes(x.subject)&&typeof x.date==="string"),"seals");
+  if("pets" in raw) require(Array.isArray(raw.pets)&&raw.pets.every(x=>typeof x==="string"),"pets");
+  if("activePet" in raw) require(raw.activePet===null||typeof raw.activePet==="string","activePet");
+  for(const key of ["best","farm","petData","ledger"]) if(key in raw) require(obj(raw[key]),key);
+  if(raw.best) for(const key of ["match","storm","defense"]) if(key in raw.best) require(raw.best[key]===null||nonnegative(raw.best[key]),"best."+key);
+  if(raw.farm) {
+    for(const key of ["coins","seeds","harvested","day","energy"]) if(key in raw.farm) require(nonnegative(raw.farm[key]),"farm."+key);
+    if("plots" in raw.farm) require(Array.isArray(raw.farm.plots)&&raw.farm.plots.every(x=>x===null||obj(x)),"farm.plots");
+  }
+  if(raw.petData) for(const value of Object.values(raw.petData)) {
+    require(obj(value),"petData item");
+    for(const key of ["lv","bond","sprints"]) if(key in value) require(nonnegative(value[key]),"petData."+key);
+  }
+  const ledger=raw.ledger;
+  if(ledger) {
+    for(const key of ["items","days","recent","skills","scienceAttempts","scienceSessions"]) if(key in ledger) require(obj(ledger[key]),"ledger."+key);
+    for(const item of Object.values(ledger.items||{})) {
+      require(obj(item)&&nonnegative(item.ok)&&nonnegative(item.no),"ledger item counts");
+      if("lastOk" in item) require(typeof item.lastOk==="boolean","ledger lastOk");
+      for(const key of ["lc","lw"]) if(key in item) require(typeof item[key]==="string","ledger date");
+    }
+    for(const day of Object.values(ledger.days||{})) {
+      require(obj(day),"ledger day");
+      for(const cell of Object.values(day)) require(Array.isArray(cell)&&cell.length===2&&cell.every(nonnegative),"ledger day counts");
+    }
+    for(const row of Object.values(ledger.recent||{})) require(Array.isArray(row)&&row.every(x=>x===0||x===1),"ledger recent");
+    for(const item of Object.values(ledger.skills||{})) require(obj(item)&&nonnegative(item.ok)&&nonnegative(item.no),"ledger skill");
+    Science.validateLedger(ledger);
+  }
+  return true;
+}
 function load() {
   try {
-    return migrateSave(JSON.parse(localStorage.getItem(KEY) || "{}"));
-  } catch (e) {
+    const raw=localStorage.getItem(KEY);
+    STORAGE_GUARD.raw=raw;
+    STORAGE_GUARD.expected=raw;
+    const parsed=JSON.parse(raw || "{}");
+    validateSave(parsed);
+    return migrateSave(parsed);
+  } catch(e) {
+    STORAGE_GUARD.blocked=true;
+    STORAGE_GUARD.error="舊進度無法讀取，已停止自動覆寫。請先下載原始資料，再從備份還原。 / Existing progress could not be read; automatic overwriting is paused.";
     return migrateSave({});
   }
 }
 function save(s) {
-  localStorage.setItem(KEY, JSON.stringify(s));
+  if(STORAGE_GUARD.blocked) return false;
+  try {
+    const serialized=JSON.stringify(s);
+    if(serialized!==STORAGE_GUARD.lastSaved) {
+      if(STORAGE_GUARD.expected!==undefined && localStorage.getItem(KEY)!==STORAGE_GUARD.expected) {
+        STORAGE_GUARD.blocked=true; STORAGE_GUARD.conflict=true;
+        STORAGE_GUARD.error="其他分頁已更新進度，已停止覆寫。請先匯出本頁備份，再重新載入最新進度。";
+        return false;
+      }
+      localStorage.setItem(KEY,serialized);
+      STORAGE_GUARD.expected=serialized;
+    }
+    STORAGE_GUARD.lastSaved=serialized;
+    STORAGE_GUARD.error="";
+    return true;
+  } catch(e) {
+    STORAGE_GUARD.error="進度尚未保存，請重試或匯出備份；關閉頁面可能失去本次變更。 / Progress is not saved. Retry or export a backup.";
+    return false;
+  }
+}
+function downloadSaveText(text,name,type="application/json") {
+  const url=URL.createObjectURL(new Blob([text],{type}));
+  const link=document.createElement("a"); link.href=url;link.download=name;link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 function localDay(date = /* @__PURE__ */ new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -1563,7 +1607,7 @@ function ledgerStats(state) {
     q += it.ok + it.no;
     ok += it.ok;
     if (fp.startsWith("h:") && it.ok > 0 && ALL_CHARS.some((ch) => ch.c === fp.slice(2))) lit.add(fp.slice(2));
-    if (needsReview(it)) rivals += 1;
+    if (needsReview(it) && (!fp.startsWith("s:") || SCIENCE_BANK.units.some(u=>u.qs.some(q=>Science.fingerprint(q)===fp)))) rivals += 1;
   }
   const days = [];
   for (let i = 6; i >= 0; i--) {
@@ -1650,21 +1694,27 @@ const SUBJECTS = {
   }
 };
 const ALL_CHARS = Object.values(HANZI).flat().flatMap((g) => g.chars.map((ch) => ({ ...ch, f: g.f, fe: g.fe, rule: g.rule, re: g.re })));
-const BUILD_INFO = (typeof CONTENT_VERSION !== "undefined" ? CONTENT_VERSION : "\u26A0 \u820A\u7248 data.js(\u8ACB\u66F4\u65B0\u5F8C\u5F37\u5236\u91CD\u65B0\u6574\u7406)") + ` | \u5404\u7D1A\u5B57\u6578 ${[1, 2, 3, 4, 5, 6].map((n) => "L" + n + ":" + (HANZI[n] || []).reduce((s, g) => s + g.chars.length, 0)).join(" ")}`;
+const BUILD_INFO = SCIENCE_BANK.version + " | " + (typeof CONTENT_VERSION !== "undefined" ? CONTENT_VERSION : "\u26A0 \u820A\u7248 data.js(\u8ACB\u66F4\u65B0\u5F8C\u5F37\u5236\u91CD\u65B0\u6574\u7406)") + ` | \u5404\u7D1A\u5B57\u6578 ${[1, 2, 3, 4, 5, 6].map((n) => "L" + n + ":" + (HANZI[n] || []).reduce((s, g) => s + g.chars.length, 0)).join(" ")}`;
 console.log("[Logic Lab]", BUILD_INFO);
 function App() {
   const [state, setState] = useState(load);
   const [hanziPosition, setHanziPosition] = useState({});
   const [view, setView] = useState({ page: "home" });
-  useEffect(() => save(state), [state]);
+  const [storageMessage, setStorageMessage] = useState(STORAGE_GUARD.error);
+  useEffect(() => { save(state); setStorageMessage(STORAGE_GUARD.error); }, [state]);
   const up = (fn) => setState((s) => {
     const n = structuredClone(s);
     fn(n);
+    save(n);
     return n;
   });
-  const finishSprint = (subject, score, total, results, sealCh) => {
-    up((s) => {
-      recordLedger(s, subject, results);
+  const rewardSprint = (s, subject, score, total, results, sealCh, sessionId) => {
+      if (subject === "science") {
+        const completed = Science.complete(s, sessionId);
+        if (!completed) return;
+        score = completed.score;
+        total = completed.total;
+      } else recordLedger(s, subject, results);
       if (subject === "math") adaptMathLevel(s);
       s.xp += score * 10;
       s.totalXp = (s.totalXp || 0) + score * 10;
@@ -1675,7 +1725,7 @@ function App() {
         s.lastDay = t;
       }
       if (score === total) {
-        s.seals.push({ ch: sealCh, subject, date: t });
+        s.seals.push({ ch: sealCh, subject, date: t, ...(subject === "science" ? { sessionId, total, questionFps: s.ledger.scienceSessions[sessionId].questionFps } : {}) });
       }
       if (s.activePet) {
         s.petData = s.petData || {};
@@ -1687,7 +1737,9 @@ function App() {
           pd.lv += 1;
         }
       }
-    });
+  };
+  const finishSprint = (subject, score, total, results, sealCh, sessionId) => {
+    up(s=>rewardSprint(s,subject,score,total,results,sealCh,sessionId));
   };
   const actions = {
     spend: (c) => {
@@ -1726,7 +1778,15 @@ function App() {
   const dayIndex = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5);
   const dayChar = ALL_CHARS[dayIndex % ALL_CHARS.length];
   const needBackup = (state.totalXp || 0) >= 100 && (!state.lastBackup || Date.now() - new Date(state.lastBackup).getTime() > 14 * 864e5);
-  return /* @__PURE__ */ React.createElement("div", { className: "wrap" }, /* @__PURE__ */ React.createElement("header", null, /* @__PURE__ */ React.createElement("div", { className: "logo", onClick: () => setView({ page: "home" }) }, /* @__PURE__ */ React.createElement("div", { className: "logo-seal kai" }, "\u908F"), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "Logic Lab"), /* @__PURE__ */ React.createElement("small", null, "\u908F\u8F2F\u4EFB\u52D9\u57FA\u5730"))), /* @__PURE__ */ React.createElement("div", { className: "hud" }, /* @__PURE__ */ React.createElement("div", { className: "chip" }, "\u{1F525} \u9023\u7E8C ", /* @__PURE__ */ React.createElement("b", { className: "num" }, state.streak), " \u5929"), /* @__PURE__ */ React.createElement("div", { className: "chip" }, "\u26A1 ", /* @__PURE__ */ React.createElement("b", { className: "num" }, state.xp), " XP"), /* @__PURE__ */ React.createElement("div", { className: "chip", style: { cursor: "pointer" }, onClick: () => setView({ page: "play" }) }, activePet ? activePet.emoji : "\u{1F3AE}", " \u904A\u6A02\u5712"), /* @__PURE__ */ React.createElement("div", { className: "chip", style: { cursor: "pointer" }, onClick: () => setView({ page: "progress" }) }, /* @__PURE__ */ React.createElement("span", { style: { color: "var(--cinnabar)" } }, "\u5370"), " ", /* @__PURE__ */ React.createElement("b", { className: "num" }, state.seals.length)), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { className: "wrap" },
+    storageMessage && React.createElement("div", {className:"storage-alert",role:"alert"},
+      React.createElement("p",null,storageMessage),
+      React.createElement("button",{className:"btn",onClick:()=>downloadSaveText(buildBackup(state),`logic-lab-unsaved-${today()}.json`)},"匯出目前進度"),
+      STORAGE_GUARD.raw !== null && React.createElement("button",{className:"btn",onClick:()=>downloadSaveText(STORAGE_GUARD.raw,`logic-lab-original-${today()}.json`)},"下載原始資料"),
+      STORAGE_GUARD.conflict && React.createElement("button",{className:"btn",onClick:()=>window.location.reload()},"重新載入最新進度"),
+      !STORAGE_GUARD.blocked && React.createElement("button",{className:"btn",onClick:()=>{save(state);setStorageMessage(STORAGE_GUARD.error);}},"重試保存"),
+      React.createElement("button",{className:"btn",onClick:()=>setView({page:"progress"})},"開啟備份還原")
+    ), /* @__PURE__ */ React.createElement("header", null, /* @__PURE__ */ React.createElement("div", { className: "logo", role:"button", tabIndex:0, "aria-label":"回基地", onKeyDown:e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();setView({page:"home"});}}, onClick: () => setView({ page: "home" }) }, /* @__PURE__ */ React.createElement("div", { className: "logo-seal kai" }, "\u908F"), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "Logic Lab"), /* @__PURE__ */ React.createElement("small", null, "\u908F\u8F2F\u4EFB\u52D9\u57FA\u5730"))), /* @__PURE__ */ React.createElement("div", { className: "hud" }, /* @__PURE__ */ React.createElement("div", { className: "chip" }, "\u{1F525} \u9023\u7E8C ", /* @__PURE__ */ React.createElement("b", { className: "num" }, state.streak), " \u5929"), /* @__PURE__ */ React.createElement("div", { className: "chip" }, "\u26A1 ", /* @__PURE__ */ React.createElement("b", { className: "num" }, state.xp), " XP"), /* @__PURE__ */ React.createElement("button", { className: "chip", style: { cursor: "pointer" }, onClick: () => setView({ page: "play" }) }, activePet ? activePet.emoji : "\u{1F3AE}", " \u904A\u6A02\u5712"), /* @__PURE__ */ React.createElement("button", { className: "chip", style: { cursor: "pointer" }, onClick: () => setView({ page: "progress" }) }, /* @__PURE__ */ React.createElement("span", { style: { color: "var(--cinnabar)" } }, "\u5370"), " ", /* @__PURE__ */ React.createElement("b", { className: "num" }, state.seals.length)), /* @__PURE__ */ React.createElement(
     "button",
     {
       className: `chip toggle ${state.engHints ? "on" : ""}`,
@@ -1755,10 +1815,25 @@ function App() {
       setLevel: (k, lv) => up((s) => {
         s.subjects[k].level = lv;
       }),
-      startSprint: (qs) => setView({ page: "sprint", key: view.key, qs }),
+      archiveRound: (id,archived)=>up(s=>Science.archive(s,id,archived)),
+      startSprint: (qs, sessionId = Science.newId(), initialAnswers = {}) => {
+        if(view.key==="science") up(s=>{Science.begin(s,sessionId,qs);Science.archive(s,sessionId,false);});
+        setView({ page: "sprint", key: view.key, qs, sessionId, initialAnswers });
+      },
       goHome: () => setView({ page: "home" })
     }
-  ), view.page === "sprint" && /* @__PURE__ */ React.createElement(
+  ), view.page === "sprint" && view.key === "science" && React.createElement(ScienceSprint, {
+    key: view.sessionId, initialAnswers: view.initialAnswers, qs: view.qs, eng: state.engHints, sessionId: view.sessionId,
+    onAnswer: (event, question, sessionId, questionFps) => up(s => {
+      const answer = Science.record(s, event, question, sessionId, questionFps, today());
+      if (answer) {
+        recordLedger(s, "science", [answer]);
+        rewardSprint(s,"science",0,0,[],pick(SEAL_CHARS),sessionId);
+      }
+    }),
+    onComplete: sessionId => finishSprint("science", 0, 0, [], pick(SEAL_CHARS), sessionId),
+    exit: () => setView({page:"subject",key:"science"})
+  }), view.page === "sprint" && view.key !== "science" && /* @__PURE__ */ React.createElement(
     Sprint,
     {
       k: view.key,
@@ -1773,7 +1848,20 @@ function App() {
     {
       state,
       goHome: () => setView({ page: "home" }),
-      importSave: (s) => setState(migrateSave(s)),
+      importSave: (s) => {
+        validateSave(s);
+        const previous = localStorage.getItem(KEY);
+        if(previous !== null) localStorage.setItem(KEY+"-before-import",previous);
+        const restored = migrateSave(s);
+        // Commit storage first: if writing fails, leave both current UI and old save intact.
+        localStorage.setItem(KEY,JSON.stringify(restored));
+        STORAGE_GUARD.blocked=false;
+        STORAGE_GUARD.conflict=false;
+        STORAGE_GUARD.expected=JSON.stringify(restored);
+        STORAGE_GUARD.error="";
+        STORAGE_GUARD.lastSaved=JSON.stringify(restored);
+        setState(restored);
+      },
       markBackup: () => up((s) => {
         s.lastBackup = (/* @__PURE__ */ new Date()).toISOString();
       })
@@ -1782,8 +1870,9 @@ function App() {
 }
 function Home({ state, dayChar, activePet, openSubject, openPlay }) {
   return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "hero" }, /* @__PURE__ */ React.createElement("div", { className: "hero-char kai" }, dayChar.c), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "hero-eyebrow" }, "\u4ECA\u65E5\u4E4B\u5B57 \xB7 CHARACTER OF THE DAY"), /* @__PURE__ */ React.createElement("div", { className: "hero-logic" }, /* @__PURE__ */ React.createElement("span", { className: "kai" }, dayChar.c), " \u2500\u2500 \u4F8B\u8A5E\uFF1A", dayChar.w, "\uFF08", dayChar.wzy, "\uFF09"), /* @__PURE__ */ React.createElement("div", { className: "hero-en" }, dayChar.zh), state.engHints && /* @__PURE__ */ React.createElement("div", { className: "hero-en" }, dayChar.we))), /* @__PURE__ */ React.createElement("div", { className: "grid" }, Object.entries(SUBJECTS).map(([k, s]) => /* @__PURE__ */ React.createElement(
-    "div",
+    "button",
     {
+      type: "button",
       key: k,
       className: "subj",
       style: { "--sc": s.color, "--sc-bg": s.bg },
@@ -1792,10 +1881,10 @@ function Home({ state, dayChar, activePet, openSubject, openPlay }) {
     /* @__PURE__ */ React.createElement("div", { className: "glyph kai" }, s.glyph),
     /* @__PURE__ */ React.createElement("h2", null, s.name),
     /* @__PURE__ */ React.createElement("p", { className: "desc" }, s.desc),
-    /* @__PURE__ */ React.createElement("span", { className: "lvl" }, "\u6311\u6230\u7B49\u7D1A L", state.subjects[k].level)
-  ))), /* @__PURE__ */ React.createElement("div", { className: "playbar", onClick: openPlay }, /* @__PURE__ */ React.createElement("span", { className: "pbe" }, activePet ? activePet.emoji : "\u{1F95A}"), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", null, "\u795E\u7378\u904A\u6A02\u5712 Beast Arcade"), /* @__PURE__ */ React.createElement("small", null, "\u7528 XP \u89E3\u9396\u795E\u7378\u5925\u4F34\u3001\u6311\u6230\u5C0F\u904A\u6232 / Spend XP to unlock beast companions and play mini games \u2192"))), /* @__PURE__ */ React.createElement("p", { className: "note", style: { marginTop: 18 } }, "\u4E09\u500B\u79D1\u76EE\u7684\u7B49\u7D1A\u5404\u81EA\u7368\u7ACB\u2500\u2500\u64C5\u9577\u7684\u79D1\u76EE\u76F4\u63A5\u5F80\u4E0A\u8DF3\u7D1A,\u4E0D\u5FC5\u7B49\u5176\u4ED6\u79D1\u76EE\u3002 / Each subject levels up independently \u2014 race ahead where you are strong."));
+    /* @__PURE__ */ React.createElement("span", { className: "lvl" }, k==="science" ? "主題批次 L" : "挑戰等級 L", state.subjects[k].level)
+  ))), /* @__PURE__ */ React.createElement("button", { className: "playbar", onClick: openPlay }, /* @__PURE__ */ React.createElement("span", { className: "pbe" }, activePet ? activePet.emoji : "\u{1F95A}"), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", null, "\u795E\u7378\u904A\u6A02\u5712 Beast Arcade"), /* @__PURE__ */ React.createElement("small", null, "\u7528 XP \u89E3\u9396\u795E\u7378\u5925\u4F34\u3001\u6311\u6230\u5C0F\u904A\u6232 / Spend XP to unlock beast companions and play mini games \u2192"))), /* @__PURE__ */ React.createElement("p", { className: "note", style: { marginTop: 18 } }, "各科可獨立選擇內容。自然科 L1–L6 是主題批次，不代表年級或能力排名。 / Choose content independently; science levels are topic collections, not ability ranks."));
 }
-function SubjectPage({ k, state, setLevel, startSprint, goHome, hanziPosition, setHanziPosition }) {
+function SubjectPage({ k, state, setLevel, startSprint, archiveRound, goHome, hanziPosition, setHanziPosition }) {
   const s = SUBJECTS[k];
   const lv = state.subjects[k].level;
   const gen = { hanzi: genHanzi, math: genMath, science: genSci }[k];
@@ -1814,7 +1903,7 @@ function SubjectPage({ k, state, setLevel, startSprint, goHome, hanziPosition, s
       n,
       cnt !== null && /* @__PURE__ */ React.createElement("span", { className: "cnt" }, empty ? "\u5099\u7F6E\u4E2D" : cnt + (k === "hanzi" ? " \u5B57" : " \u55AE\u5143"))
     );
-  })), /* @__PURE__ */ React.createElement("div", { className: "mode-row" }, /* @__PURE__ */ React.createElement(
+  })), k !== "science" && /* @__PURE__ */ React.createElement("div", { className: "mode-row" }, /* @__PURE__ */ React.createElement(
     "button",
     {
       className: "btn solid",
@@ -1853,7 +1942,7 @@ function SubjectPage({ k, state, setLevel, startSprint, goHome, hanziPosition, s
       eng: state.engHints,
       practice: (name) => startSprint(genHanzi(lv, 5, name))
     }
-  ), k === "science" && /* @__PURE__ */ React.createElement(SciLearn, { units: SCI[lv] || [] }), k === "math" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(MathLearn, { state, level: lv, startSprint })), !hasContent && k === "science" && /* @__PURE__ */ React.createElement("p", { className: "empty" }, "\u9019\u4E00\u7D1A\u7684\u5167\u5BB9\u9084\u6C92\u653E\u9032\u8CC7\u6599\u5EAB\u3002\u6253\u958B\u6A94\u6848\u88E1\u7684 HANZI / SCI \u8CC7\u6599\u5340,\u7167\u540C\u6A23\u683C\u5F0F\u52A0\u5165\u5373\u53EF\u3002"));
+  ), k === "science" && /* @__PURE__ */ React.createElement(ScienceLearn, { key: lv, state, level: lv, eng: state.engHints, startSprint, archiveRound }), k === "math" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(MathLearn, { state, level: lv, startSprint })), !hasContent && k === "science" && /* @__PURE__ */ React.createElement("p", { className: "empty" }, "\u9019\u4E00\u7D1A\u7684\u5167\u5BB9\u9084\u6C92\u653E\u9032\u8CC7\u6599\u5EAB\u3002\u6253\u958B\u6A94\u6848\u88E1\u7684 HANZI / SCI \u8CC7\u6599\u5340,\u7167\u540C\u6A23\u683C\u5F0F\u52A0\u5165\u5373\u53EF\u3002"));
 }
 function MathLearn({ state, level, startSprint }) {
   const mp = mathProgress(state);
@@ -1903,9 +1992,6 @@ function HanziLearn({ groups, eng, practice, position, setPosition }) {
     setPack(Number(e.target.value));
     setQuery("");
   } }, groups.map((g, i) => /* @__PURE__ */ React.createElement("option", { key: g.f, value: i }, g.f, "\uFF08", g.chars.length, " \u5B57\uFF09")))), /* @__PURE__ */ React.createElement("label", null, "\u627E\u5B57\u3001\u4F8B\u8A5E\u6216\u90E8\u9996", /* @__PURE__ */ React.createElement("input", { type: "search", value: query, onChange: (e) => setQuery(e.target.value), placeholder: "\u641C\u5C0B\u672C\u7D1A\uFF0C\u4F8B\u5982\uFF1A\u6C34\u3001\u5B78\u6821" }))), term && /* @__PURE__ */ React.createElement("p", { className: "note" }, "\u672C\u7D1A\u627E\u5230 ", count, " \u5B57\u3002\u5176\u4ED6\u7B49\u7D1A\u8ACB\u5207\u63DB\u4E0A\u65B9 L1\u2013L6\u3002"), visible.map((g) => /* @__PURE__ */ React.createElement("section", { key: g.f, className: "fam" }, /* @__PURE__ */ React.createElement("div", { className: "hanzi-pack-head" }, /* @__PURE__ */ React.createElement("h3", null, g.f, /* @__PURE__ */ React.createElement("span", { className: "fam-count num" }, term ? `\u7B26\u5408 ${g.chars.length} \u5B57` : `${g.chars.length} \u5B57`)), /* @__PURE__ */ React.createElement("button", { className: "btn ghost", onClick: () => practice(g.f) }, term ? "\u7DF4\u7FD2\u539F\u6574\u5305\uFF085 \u984C\uFF09" : "\u7DF4\u7FD2\u9019\u4E00\u5305\uFF085 \u984C\uFF09")), /* @__PURE__ */ React.createElement("p", { className: "fam-rule" }, g.rule, eng && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("span", { className: "fam-rule-en" }, g.re))), /* @__PURE__ */ React.createElement("div", { className: "chipgrid" }, g.chars.map((ch) => /* @__PURE__ */ React.createElement("div", { key: ch.c, className: "cchip" }, /* @__PURE__ */ React.createElement("div", { className: "cc kai" }, ch.c), /* @__PURE__ */ React.createElement("div", { className: "cw" }, "\u90E8\u9996\uFF1A", ch.radical, " \xB7 ", ch.strokes, " \u756B"), /* @__PURE__ */ React.createElement("div", { className: "hanzi-word kai" }, ch.w), /* @__PURE__ */ React.createElement("div", { className: "cz" }, ch.wzy), /* @__PURE__ */ React.createElement("div", { className: "hanzi-meaning" }, ch.zh), eng && /* @__PURE__ */ React.createElement("div", { className: "ce" }, ch.we)))))), /* @__PURE__ */ React.createElement("p", { className: "note hanzi-source" }, "\u9078\u5B57\u4F9D\u64DA\uFF1A", /* @__PURE__ */ React.createElement("a", { href: HANZI_META.sourceUrl, target: "_blank", rel: "noreferrer" }, "\u6559\u80B2\u90E8\u570B\u5C0F\u5B78\u7AE5\u5B57\u983B\u8868"), "\u3002 \u8A5E\u7FA9\u6458\u9304\u8207\u6CE8\u97F3\u53C3\u8003\u6559\u80B2\u90E8\u300A\u570B\u8A9E\u8FAD\u5178\u7C21\u7DE8\u672C\u300B\uFF0C\u90E8\u5206\u4F8B\u8A5E\u8AAA\u660E\u7531\u672C\u5C08\u6848\u7DE8\u5BEB\u3002", /* @__PURE__ */ React.createElement("a", { href: "docs/HANZI_SOURCES.md", target: "_blank", rel: "noreferrer" }, "\u5B8C\u6574\u4F86\u6E90\u8207\u6388\u6B0A"), "\u3002"));
-}
-function SciLearn({ units }) {
-  return /* @__PURE__ */ React.createElement("div", { className: "cards" }, units.map((u) => /* @__PURE__ */ React.createElement("div", { key: u.title, className: "lcard" }, /* @__PURE__ */ React.createElement("h3", null, u.title), /* @__PURE__ */ React.createElement("p", { className: "concept" }, u.concept), /* @__PURE__ */ React.createElement("div", { className: "meta", style: { marginTop: 10, fontStyle: "italic" } }, u.en))));
 }
 function Sprint({ k, qs, eng, pet, onDone, exit }) {
   const s = SUBJECTS[k];
@@ -2565,9 +2651,11 @@ function buildBackup(state) {
 }
 function parseBackup(text) {
   const obj = JSON.parse(text);
+  if (obj && Object.hasOwn(obj,"app") && (obj.app !== "logic-lab" || obj.format !== 1)) throw new Error("Unsupported backup format");
   const s = obj && obj.app === "logic-lab" && obj.save ? obj.save : obj;
   const hasXp = s && (typeof s.totalXp === "number" || typeof s.xp === "number");
   if (!s || typeof s !== "object" || !hasXp || !s.subjects) throw new Error("invalid backup");
+  validateSave(s);
   return { save: migrateSave(s), exportedAt: obj && obj.exportedAt || "" };
 }
 function BackupVault({ state, importSave, markBackup }) {
@@ -2693,4 +2781,16 @@ function MathProgressPanel({ state }) {
 function ProgressPage({ state, goHome, importSave, markBackup }) {
   return /* @__PURE__ */ React.createElement("div", { style: { "--ac": "var(--cinnabar)" } }, /* @__PURE__ */ React.createElement("button", { className: "back", onClick: goHome }, "\u2190 \u56DE\u57FA\u5730"), /* @__PURE__ */ React.createElement("div", { className: "page-head" }, /* @__PURE__ */ React.createElement("h2", null, "\u5370\u7AE0\u7246")), /* @__PURE__ */ React.createElement("div", { className: "stat-row" }, /* @__PURE__ */ React.createElement("div", { className: "stat" }, /* @__PURE__ */ React.createElement("b", { className: "num" }, state.totalXp || 0), /* @__PURE__ */ React.createElement("span", null, "\u7D2F\u7A4D XP \xB7 Lifetime")), /* @__PURE__ */ React.createElement("div", { className: "stat" }, /* @__PURE__ */ React.createElement("b", { className: "num" }, state.xp), /* @__PURE__ */ React.createElement("span", null, "\u53EF\u7528 XP \xB7 Spendable")), /* @__PURE__ */ React.createElement("div", { className: "stat" }, /* @__PURE__ */ React.createElement("b", { className: "num" }, state.streak), /* @__PURE__ */ React.createElement("span", null, "\u9023\u7E8C\u5929\u6578 \xB7 Streak")), /* @__PURE__ */ React.createElement("div", { className: "stat" }, /* @__PURE__ */ React.createElement("b", { className: "num" }, state.seals.length), /* @__PURE__ */ React.createElement("span", null, "\u5370\u7AE0 \xB7 Seals")), /* @__PURE__ */ React.createElement("div", { className: "stat" }, /* @__PURE__ */ React.createElement("b", { className: "num" }, state.pets.length, "/", PETS.length), /* @__PURE__ */ React.createElement("span", null, "\u795E\u7378 \xB7 Beasts"))), /* @__PURE__ */ React.createElement("p", { className: "note" }, "\u6EFF\u5206\u5B8C\u6210\u4E00\u56DE\u5408\u885D\u523A,\u5C31\u80FD\u84CB\u4E00\u679A\u7843\u7802\u5370\u3002"), state.seals.length === 0 ? /* @__PURE__ */ React.createElement("p", { className: "empty" }, "\u9084\u6C92\u6709\u5370\u7AE0\u2500\u2500\u53BB\u5B8C\u6210\u4E00\u56DE\u5408\u6EFF\u5206\u885D\u523A\u5427!") : /* @__PURE__ */ React.createElement("div", { className: "seal-wall" }, state.seals.map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "seal-mini kai", title: `${SUBJECTS[x.subject].name} \xB7 ${x.date}` }, x.ch))), /* @__PURE__ */ React.createElement(LedgerPanel, { state }), /* @__PURE__ */ React.createElement(MathProgressPanel, { state }), /* @__PURE__ */ React.createElement(BackupVault, { state, importSave, markBackup }));
 }
-ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));
+class AppErrorBoundary extends (React.Component || class {}) {
+  constructor(props){super(props);this.state={failed:false};}
+  static getDerivedStateFromError(){return {failed:true};}
+  render(){
+    if(!this.state.failed)return this.props.children;
+    return React.createElement('main',{className:'wrap',role:'alert'},
+      React.createElement('h1',null,'畫面暫時無法顯示'),
+      React.createElement('p',null,'已保存的紀錄不會因此清除。可先下載保存資料，再重新載入。'),
+      React.createElement('button',{className:'btn solid',onClick:()=>{try{downloadSaveText(localStorage.getItem(KEY)||'{}','logic-lab-recovery.json');}catch(e){window.alert('無法讀取瀏覽器保存資料。');}}},'下載保存資料'),
+      React.createElement('button',{className:'btn solid',onClick:()=>window.location.reload()},'重新載入'));
+  }
+}
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(AppErrorBoundary,null,React.createElement(App,null)));

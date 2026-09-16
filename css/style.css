@@ -98,7 +98,7 @@
     cursor:pointer;font-family:inherit;transition:transform .12s;
   }
   .btn:hover{transform:scale(1.03)}
-  .btn.solid{background:var(--ac);color:#fff}
+  .btn.solid{background:var(--ac,var(--cobalt));color:#fff}
   .btn.ghost{background:var(--card);border:2px solid var(--ac);color:var(--ac)}
 
   /* ── 學習卡 ── */
@@ -573,3 +573,19 @@
 @media (prefers-reduced-motion:no-preference){
   .ldg-bar i{transition:height .5s ease}.ldg-bar b{transition:height .5s ease}
 }
+
+/* Science controls retain the existing card/sprint layout. */
+.science-learn select{font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper,#fff);color:var(--ink)}
+.opt.selected{outline:2px solid var(--ac);outline-offset:2px}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--ac,var(--cobalt));outline-offset:3px}
+.science-learn .mode-row{flex-wrap:wrap}
+.science-learn .lcard .mode-row{margin-top:14px}
+.storage-alert{padding:14px;margin-bottom:14px;border:2px solid var(--bad);border-radius:10px;background:var(--cinnabar-bg)}
+button.subj{text-align:left;font:inherit;color:inherit}
+
+.science-reason{display:block;margin:16px 0;font-size:.9rem}.science-reason textarea{display:block;box-sizing:border-box;width:100%;min-height:80px;margin-top:8px;padding:10px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+textarea:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px}
+
+button.chip,button.playbar{font:inherit;color:inherit}button.playbar{width:100%;text-align:left} [role="button"]:focus-visible{outline:3px solid var(--cobalt);outline-offset:3px}
+
+.science-table{overflow-x:auto;margin:16px 0}.science-table table{width:100%;border-collapse:collapse}.science-table th,.science-table td{padding:8px;border:1px solid var(--line);text-align:left}.science-table caption{padding:8px;font-weight:700}

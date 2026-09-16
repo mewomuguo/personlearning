@@ -1,0 +1,24 @@
+{
+  "version": "science-2026-09-16.2",
+  "kind": "deploy",
+  "units": 24,
+  "questions": 247,
+  "sha256": {
+    "DEPLOY.md": "292ed3c8e28b8d7ca9043808820ec8ed3a67a15ec14e1459a154fd7ba7a591eb",
+    "css/style.css": "6ebfe61ec9f3639e894c7b4f78cc93883591d2a64c9bee6f81846994a2c743a8",
+    "docs/HANZI_SOURCES.md": "59f76b0189c429a097119e92fa2454b0211c4b3e1650e211874c728edf7f1eca",
+    "docs/MOE_CONCISED_LICENSE.pdf": "0bb35da2444915b3b747e57b0b5833698b54dc439edb0e3b2873bef74bb259b6",
+    "docs/RELEASE_STATUS.md": "e43a5944130080702bad09b5e311f87448c31c003753f32331860a89d40367e0",
+    "docs/SCIENCE_CHANGES.md": "7d107412a2ce190cc58a769b6fc4b78fc32f3183ef53e3c72dbd0af2273faa80",
+    "index.html": "5ba133f26b3db19bfaefc8d1ecd468aea49d5e1168739e9f681d6a7c724466b4",
+    "js/app.js": "1c0dde370508b9fcf57e8d14ff5456a656d66d515ee4dd5e219a6309991496b2",
+    "js/data.js": "7c613fd3b7b35f71d1b921a6bb7a24035442fc9f58ce015bdce35d39d635e8d6",
+    "js/science-core.js": "2c464eb17eda479f0ca78ce9f5d0644570324fb789ff9d3235701f3e365e715c",
+    "js/science-data.js": "0f46f88d9b30faf375d5c418122fde3197058a9165460ade234787444e9eb08e",
+    "js/science-ui.js": "d60a06ff4850647ce8d15b958e28054baf5251a84e070064f5acb190a2f3648e",
+    "js/vendor/react-LICENSE.txt": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85",
+    "js/vendor/react-dom-LICENSE.txt": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85",
+    "js/vendor/react-dom.production.min.js": "21758ed084cd0e37e735722ee4f3957ea960628a29dfa6c3ce1a1d47a2d6e4f7",
+    "js/vendor/react.production.min.js": "4b4969fa4ef3594324da2c6d78ce8766fbbc2fd121fff395aedf997db0a99a06"
+  }
+}
